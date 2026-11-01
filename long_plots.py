@@ -38,8 +38,7 @@ def make_plots(rows,series,config,directory):
     # One context is selected by rule, not by observed performance.
     h=config.get('observability_index',2)
     r=h if h in contexts else min(contexts,key=lambda r:abs(r-h))
-    es=sorted(set(config['executions']) & {200,500,1000})
-    if not es: es=[max(config['executions'])]
+    es=sorted(e for e in set(config['executions']) if 1 < e <= maxH)
     selections=[('one_step',1)]+[('chunk',e) for e in es]
     fig,axes=plt.subplots(nr,cols,figsize=(max(9,4*cols),4.5*nr),squeeze=False,layout='constrained')
     block=max(1,min(100,config['steps']//20))

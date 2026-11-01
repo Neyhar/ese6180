@@ -1,10 +1,11 @@
-"""Dimension sweep with matched one-step/chunk training and long rollouts."""
+"""Observability study with matched training and 600-step evaluation episodes."""
 import os
 # Avoid oversubscribing tiny batched linear algebra on desktop CPUs.
 os.environ.setdefault('OPENBLAS_NUM_THREADS', '1')
 os.environ.setdefault('VECLIB_MAXIMUM_THREADS', '1')
 import argparse
 import copy
+import shutil
 import csv
 import json
 from pathlib import Path
@@ -21,15 +22,28 @@ def write_csv(path, rows):
         writer.writeheader(); writer.writerows(rows)
 
 
+def prepare_output(root, overwrite=False):
+    root = Path(root)
+    if root.exists() and any(root.iterdir()):
+        if not overwrite:
+            raise ValueError(f'{root} already contains results; use --overwrite or a new --output')
+        allowed = Path(__file__).resolve().parent / 'results'
+        resolved = root.resolve()
+        if root.is_symlink() or allowed not in resolved.parents or not (root/'sweep_config.json').is_file():
+            raise ValueError('Overwrite requires a generated sweep subfolder inside this repository/results')
+        shutil.rmtree(root)
+    root.mkdir(parents=True, exist_ok=True)
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--dimensions', nargs='+', type=int, default=[2,3,4,5,10,50,100])
-    p.add_argument('--horizons', nargs='+', type=int, default=[200,500,1000])
-    p.add_argument('--executions', nargs='+', type=int, default=[1,10,50,100,200,500,1000])
+    p.add_argument('--horizons', nargs='+', type=int, default=[16])
+    p.add_argument('--executions', nargs='+', type=int, default=[1,2,4,8,16])
     p.add_argument('--contexts', nargs='+', type=int, default=None, help='Default per case: 1,h-1,h,h+1 (positive, unique)')
     p.add_argument('--observability-indices', nargs='+', default=['2','4','8','n'], help='Exact requested indices; n means full state dimension; values > n skipped')
-    p.add_argument('--steps', type=int, default=5000, help='Scored steps AFTER expert warm-up')
-    p.add_argument('--tail-steps', type=int, default=1000)
+    p.add_argument('--steps', type=int, default=600, help='Scored steps AFTER expert warm-up')
+    p.add_argument('--tail-steps', type=int, default=200)
     p.add_argument('--seeds', nargs='+', type=int, default=[618,619,620], help='Independent data/evaluation replicates')
     p.add_argument('--system-seed', type=int, default=618, help='Fixed plant across training seeds')
     p.add_argument('--decay', type=float, default=.995)
@@ -41,7 +55,8 @@ def main():
     p.add_argument('--windows-per-trajectory', type=int, default=24)
     p.add_argument('--training-prefix', type=int, default=128, help='Candidate training boundary times beyond maximum context')
     p.add_argument('--ridge', type=float, default=1e-6)
-    p.add_argument('--output', default='results/observability_sweep')
+    p.add_argument('--output', default='results/latest')
+    p.add_argument('--overwrite', action='store_true', help='Replace an existing generated run under results/')
     args=p.parse_args()
     if (min(args.dimensions)<2 or min((args.contexts or [1])+args.horizons+args.executions)<1
         or min(args.steps,args.tail_steps,args.train_trajectories,args.eval_trajectories,
@@ -57,7 +72,11 @@ def main():
         plan=build_plan(args)
     except ValueError as exc:
         p.error(str(exc))
-    root=Path(args.output); root.mkdir(parents=True,exist_ok=True)
+    root=Path(args.output)
+    try:
+        prepare_output(root, args.overwrite)
+    except ValueError as exc:
+        p.error(str(exc))
     (root/'sweep_config.json').write_text(json.dumps(vars(args)|{'cases':plan},indent=2)+'\n')
     combined={name:[] for name in ('metrics','episodes','fit_diagnostics','systems')}
     for item in plan:
