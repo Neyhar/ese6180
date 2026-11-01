@@ -1,0 +1,374 @@
+\documentclass[12 pt]{article}        	%sets the font to 12 pt and says this is an article (as opposed to book or other documents)
+\usepackage{amsfonts, amssymb, amsmath}% packages to get the fonts, symbols used in most math
+\usepackage{bbm}
+\usepackage{graphicx}
+\usepackage{float}
+  
+%\usepackage{setspace}               		% Together with \doublespacing below allows for doublespacing of the document
+
+\oddsidemargin=-0.5cm                 	% These three commands create the margins required for class
+\setlength{\parskip}{0.5\baselineskip}
+\setlength{\textwidth}{6.5in}         	%
+\addtolength{\voffset}{-20pt}        		%
+\addtolength{\headsep}{25pt}           	%
+\setlength\parindent{0pt}
+\usepackage{enumitem}
+
+\pagestyle{myheadings}
+\markright{Nihar Ballamudi\hfill ESE 6180 \hfill Project Notes \hfill \today \hfill} 
+\newcommand{\eqn}[0]{\begin{array}{rcl}}
+\newcommand{\eqnend}[0]{\end{array} }
+\newcommand{\R}[0]{\mathbb{R}}
+\newcommand{\Rd}[0]{\mathbb{R}^d}
+\newcommand{\rightrightarrow}[0]{\substack{\rightarrow\\[-1em] \rightarrow}}
+\newcommand{\Div}[0]{\text{div}}
+\newcommand{\grad}[0]{\nabla}
+\newcommand{\lap}[0]{\Delta}
+\newcommand{\A}[0]{\mathbb{A}}
+\newcommand{\E}[0]{\mathbb{E}}
+\newcommand{\Z}[0]{\mathbb{Z}}
+\newcommand{\C}[0]{\mathbb{C}}
+\usepackage{bigints}
+\usepackage{esint}
+\usepackage{stix}
+
+\usepackage{amsthm}
+\usepackage[hidelinks]{hyperref}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+\newcommand{\norm}[1]{\left\|#1\right\|}
+\DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\diag}{diag}
+
+\begin{document}
+\begin{center}
+{\Large\textbf{History, Observability, and Action Chunking}}\\[4pt]
+{\large Linear foundations and a route to nonlinear dynamics}
+\end{center}
+
+\textbf{Purpose and status.} These are working notes for the ESE 6180 project. The numbered results below are classical linear-algebra/control facts or elementary derivations proved here; they are not claims of research novelty. The final section identifies questions that remain open for this project. The objective is to understand when observation history makes frequent replanning reliable, not to assume that longer history always makes shorter chunks optimal.
+
+\textbf{Reading guide.} Sections 1--3 explain the information available to the learner. Section 4 explains why representability does not guarantee learnability. Sections 5--6 connect prediction errors to control errors. Section 7 states explicit assumptions under which the same reasoning extends to nonlinear dynamics.
+
+\section{Problem formulation and three different horizons}
+Consider
+\begin{equation}\label{eq:plant}
+x_{t+1}=Ax_t+Bu_t+w_t,\qquad y_t=Cx_t,
+\end{equation}
+where $x_t\in\R^n$, $u_t\in\R^m$, and $y_t\in\R^p$. The expert observes the full state and uses $u_t^*=K^*x_t$. Write $F=A+BK^*$. Unless stated otherwise, reconstruction statements assume $w_t=0$. All vector norms are Euclidean and matrix norms are the induced operator norms.
+
+The learner observes a history, not $x_t$. Define
+\[
+Y_t^{(r)}=\begin{bmatrix}y_{t-r+1}\\\vdots\\y_t\end{bmatrix},\quad
+U_t^{(r)}=\begin{bmatrix}u_{t-r+1}\\\vdots\\u_{t-1}\end{bmatrix},\quad
+z_t^{(r)}=\begin{bmatrix}Y_t^{(r)}\\U_t^{(r)}\end{bmatrix}.
+\]
+The input-history block is empty when $r=1$. Past actions mean the actions actually applied to the plant.
+\begin{itemize}
+\item Context $r$: number of observations, including the current one.
+\item Prediction horizon $H$: number of actions predicted per policy query.
+\item Execution horizon $\ell\le H$: number of predicted actions applied before replanning.
+\end{itemize}
+At a chunk boundary $b$, a linear policy predicts $Wz_b^{(r)}$, with block rows $W_0,\ldots,W_{H-1}$. It applies
+\[
+u_{b+j}=W_jz_b^{(r)},\qquad j=0,\ldots,\ell-1.
+\]
+Here and throughout, $u$ denotes the action. New measurements are retained during the chunk, but do not change its committed actions. Replanning occurs at $b+\ell$. At $\ell=1$, only the first prediction is used.
+
+\textbf{What is learned?} For fixed $r,H$, $W\in\R^{Hm\times d_r}$, where $d_r=rp+(r-1)m$. This is a parametric policy with $Hm d_r$ scalar parameters. The learner need not know $A,B,C,K^*$ even though these matrices define the data-generating system and the analytical baseline.
+
+\section{Partial observability and exact reconstruction}
+\begin{definition}[Observability index]
+For an observable pair $(A,C)$, define
+\[
+\mathcal O_r=\begin{bmatrix}C\\CA\\\vdots\\CA^{r-1}\end{bmatrix},
+\qquad h=\min\{r\ge1:\rank\mathcal O_r=n\}.
+\]
+Thus $\mathcal O_h$ has a left inverse. Observability concerns information in a history, not the quality of a learned estimator.
+\end{definition}
+
+\begin{lemma}[Input-corrected history]\label{lem:history}
+For a noiseless trajectory,
+\[
+Y_t^{(r)}=\mathcal O_r x_{t-r+1}+\mathcal T_rU_t^{(r)},\qquad
+x_t=A^{r-1}x_{t-r+1}+\mathcal R_rU_t^{(r)},
+\]
+where, using zero-based block indices,
+\[
+(\mathcal T_r)_{ij}=\begin{cases}CA^{i-1-j}B,&j<i,\\0,&j\ge i,\end{cases}
+\quad 0\le i<r,\quad 0\le j<r-1,
+\]
+and $\mathcal R_r=[A^{r-2}B\ \cdots\ B]$. For $r=1$, both input maps have zero columns.
+\end{lemma}
+\begin{proof}
+Iterating the state equation from $s=t-r+1$ gives
+\[
+x_{s+i}=A^ix_s+\sum_{j=0}^{i-1}A^{i-1-j}Bu_{s+j}.
+\]
+Multiply by $C$ and stack for $i=0,\ldots,r-1$ to obtain the first identity. Taking $i=r-1$ gives the second.
+\end{proof}
+
+\begin{theorem}[Finite-history state reconstruction]\label{thm:recon}
+If $\rank\mathcal O_r=n$, let $L_r\mathcal O_r=I_n$. Then every noiseless trajectory, including one generated by arbitrary learner actions, satisfies $x_t=M_rz_t^{(r)}$, where
+\[
+M_r=\left[A^{r-1}L_r\quad
+\mathcal R_r-A^{r-1}L_r\mathcal T_r\right].
+\]
+\end{theorem}
+\begin{proof}
+Lemma~\ref{lem:history} implies $x_{t-r+1}=L_r(Y_t^{(r)}-\mathcal T_rU_t^{(r)})$. Substitute this into the second identity of that lemma.
+\end{proof}
+
+\textbf{Interpretation.} The history initially identifies the state at the \emph{start} of the window, which must then be propagated to the present. This is why $A^{r-1}$ appears. The input correction cannot generally be omitted. In the code, $L_r=\mathcal O_r^\dagger$.
+
+\begin{remark}[Noise and conditioning]
+If only the observations have additive errors stacked into $V$, with exact dynamics and recorded inputs, reconstruction error is $A^{r-1}L_rV$. Hence
+\[
+\norm{\hat x_t-x_t}\le\norm{A^{r-1}L_r}\norm{V}.
+\]
+Full rank does not guarantee good conditioning. Process disturbances require additional terms and invalidate exact reconstruction. Neither the estimation error nor the best execution horizon is determined by $h$ alone. Also, for singular $A$, recovering the current state can require less information than recovering the window's initial state.
+\end{remark}
+
+\textbf{Example used in the code.}
+\[
+A=\begin{bmatrix}.9&.2\\0&.8\end{bmatrix},\quad
+B=\begin{bmatrix}0\\.2\end{bmatrix},\quad
+C=\begin{bmatrix}1&0\end{bmatrix},\quad K^*=\begin{bmatrix}-.5&-.6\end{bmatrix}.
+\]
+Here $y_t=x_{1,t}$ and $h=2$. Two states $(1,1)$ and $(1,-1)$ give the same observation but expert actions $-1.1$ and $.1$. In a noiseless history,
+\[
+x_{2,t-1}=5(y_t-.9y_{t-1}),\qquad
+x_{2,t}=.8x_{2,t-1}+.2u_{t-1}.
+\]
+Thus history resolves the missing coordinate.
+
+\section{Recovering actions can require less than recovering states}
+\begin{lemma}[Factorization criterion]\label{lem:factor}
+For matrices $O,D$ with the same number of columns, a matrix $G$ satisfying $D=GO$ exists if and only if $\ker O\subseteq\ker D$.
+\end{lemma}
+\begin{proof}
+If $D=GO$, then $Ov=0$ implies $Dv=0$. Conversely, define a map on $\operatorname{im}O$ by $Ov\mapsto Dv$. Kernel inclusion makes it well defined. Extend this linear map to the full codomain of $O$.
+\end{proof}
+
+\begin{proposition}[Current-action recoverability]\label{prop:functional}
+For arbitrary initial states and fixed known input histories, a noiseless history of length $r$ determines $K^*x_t$ if and only if
+\[
+\boxed{\ker\mathcal O_r\subseteq\ker(K^*A^{r-1}).}
+\]
+If the condition holds, there is a linear history policy reproducing the current expert action for every such trajectory.
+\end{proposition}
+\begin{proof}
+Subtract the known input contribution from $Y$. The unknown part of the target is $K^*A^{r-1}x_{t-r+1}$. Apply Lemma~\ref{lem:factor}. If the condition fails, two initial states differing by a vector in $\ker\mathcal O_r$ have identical histories under the same inputs but different target actions.
+\end{proof}
+\textbf{Caution.} This is an all-states, arbitrary-known-input statement. Restricting inputs to expert feedback can give additional information. For an entire $H$-step expert chunk, replace $K^*A^{r-1}$ above by $\mathcal K_H A^{r-1}$, where
+\[
+\mathcal K_H=\begin{bmatrix}K^*\\K^*F\\\vdots\\K^*F^{H-1}\end{bmatrix}.
+\]
+Recovering today's action need not suffice to recover every future action. These conditions connect the project to functional observability.
+
+\begin{theorem}[Exact chunk representation and noiseless equivalence]\label{thm:exact}
+If $r\ge h$, the matrix $W_r^*=\mathcal K_H M_r$ represents the exact expert chunk. Starting from a common valid noiseless history, applying its first $\ell$ actions and then replanning reproduces the expert trajectory for every $1\le\ell\le H$.
+\end{theorem}
+\begin{proof}
+Reconstruction yields the true boundary state $x_b$. The predicted actions are $K^*F^jx_b$. Inductively,
+\[
+x_{b+j+1}=AF^jx_b+BK^*F^jx_b=F^{j+1}x_b.
+\]
+At the next boundary reconstruction is again exact. Repeat for every chunk.
+\end{proof}
+\textbf{Consequence.} Observability alone cannot establish a uniquely optimal execution horizon: all horizons tie in this ideal case. Learning error, disturbances, or model mismatch are needed for a nontrivial comparison.
+
+\section{Learning from demonstrations: representation versus identification}
+For each of $N$ independent initial states, generate a noiseless expert trajectory. Each training example pairs $z_t^{(r)}$ with $a_t^*=(u_t^*,\ldots,u_{t+H-1}^*)$. The code solves
+\[
+\widehat W=\arg\min_W\left\{\sum_{i,t}\norm{Wz_t^{(r,i)}-a_t^{*,i}}^2
++\lambda\norm{W}_F^2\right\}.
+\]
+Windows overlap within a trajectory. They must not automatically be counted as independent samples in a generalization theorem. For a fixed $H$, the same fitted $W$ is evaluated at different $\ell$; execution length does not change this training objective.
+
+\begin{proposition}[Expert histories have restricted rank]\label{prop:rank}
+For a noiseless autonomous linear expert with $F=A+BK^*$, there exists $S_r$ such that
+\[
+z_t^{(r)}=S_rx_{t-r+1},\qquad
+S_r=\begin{bmatrix}C\\CF\\\vdots\\CF^{r-1}\\K^*\\K^*F\\\vdots\\K^*F^{r-2}\end{bmatrix}.
+\]
+(The action rows are omitted at $r=1$.) Therefore a design matrix whose rows are expert history features has rank at most $n$, independently of the number of demonstrations.
+\end{proposition}
+\begin{proof}
+On expert trajectories, $x_{s+j}=F^jx_s$. Substitute this into the observations and actions and stack. Every feature lies in $\operatorname{im}S_r$, whose dimension is at most $n$.
+\end{proof}
+
+\begin{corollary}[Indistinguishable predictors]
+If $\Delta W S_r=0$, then $W$ and $W+\Delta W$ agree on every noiseless expert history. They need not agree on histories outside $\operatorname{im}S_r$.
+\end{corollary}
+\begin{proof}
+Their prediction difference on an expert history is $\Delta W S_rx=0$. A vector outside that image need not be annihilated by $\Delta W$.
+\end{proof}
+\textbf{Interpretation.} In the example, the observation--action feature dimensions for $r=2,3,4$ are $3,5,7$, but the measured rank is always $2$. More noiseless expert trajectories cannot identify arbitrary off-subspace behavior. Positive ridge regularization selects a unique minimizer, but does not create information about those directions. The result does not say failure is inevitable: exact noiseless initialization and exact predictions can keep the learner on the expert trajectory.
+
+\begin{lemma}[A data-coverage bridge for a realizable target]\label{lem:coverage}
+Suppose the target is $W^*z$ under both a training-history distribution and a deployment-history distribution. Let their second-moment matrices be $\Sigma_D=\E_D[zz^\top]$ and $\Sigma_L=\E_L[zz^\top]$. If $\Sigma_L\preceq\kappa\Sigma_D$, then, for $\Delta=\widehat W-W^*$,
+\[
+\E_L\norm{\Delta z}^2\le\kappa\E_D\norm{\Delta z}^2.
+\]
+\end{lemma}
+\begin{proof}
+The left side is $\tr(\Delta\Sigma_L\Delta^\top)$. Apply the positive-semidefinite inequality and take the trace.
+\end{proof}
+\textbf{Limit.} The coverage assumption is substantial and can fail when deployment leaves the training subspace. This lemma transfers population prediction loss only; it does not establish empirical generalization, prove coverage, or repair a changed/noisy target. With process noise, the nominal noiseless chunk map need not equal the true expert target.
+
+\section{From action errors to trajectory errors}
+Let $x_t^*$ be a separate expert rollout receiving the same disturbance sequence as the learner. Define
+\[
+e_t=x_t-x_t^*,\qquad \delta_t=u_t-K^*x_t.
+\]
+Here $\delta_t$ compares against the expert action at the \emph{learner's} state, not at $x_t^*$.
+\begin{theorem}[Linear trajectory-error recursion]\label{thm:tracking}
+Under the common-disturbance coupling,
+\[
+e_{t+1}=Fe_t+B\delta_t.
+\]
+If $\norm{F^j}\le c\rho^j$ for all $j\ge0$, with $c\ge1$ and $0<\rho<1$, then
+\[
+\norm{e_t}\le c\rho^t\norm{e_0}+c\norm{B}\sum_{s=0}^{t-1}\rho^{t-1-s}\norm{\delta_s}.
+\]
+If $e_0=0$, for every finite $T$,
+\[
+\sum_{t=1}^{T}\norm{e_t}^2
+\le\left(\frac{c\norm{B}}{1-\rho}\right)^2
+\sum_{s=0}^{T-1}\norm{\delta_s}^2.
+\]
+\end{theorem}
+\begin{proof}
+Subtract the dynamics and substitute $u_t=K^*x_t+\delta_t$. Iteration gives the first bound. For the squared bound use
+\[
+\left(\sum_s\rho^{t-1-s}a_s\right)^2
+\le\left(\sum_s\rho^{t-1-s}\right)
+\left(\sum_s\rho^{t-1-s}a_s^2\right),
+\]
+then sum in $t$ and bound both geometric sums by $(1-\rho)^{-1}$.
+\end{proof}
+\textbf{Why this matters.} Stability converts on-rollout action error into trajectory error. Small loss on expert histories alone does not bound $\delta_t$. This is the missing bridge a learning theorem must supply.
+
+\section{What open-loop execution does to disturbances}
+\begin{proposition}[Disturbance accumulation within an exact nominal chunk]\label{prop:noise}
+Suppose the exact state $x_b$ is known at a chunk boundary and execute $u_{b+j}=K^*F^jx_b$ without replanning. Then
+\[
+x_{b+j}=F^jx_b+\sum_{i=0}^{j-1}A^{j-1-i}w_{b+i},\qquad
+\delta_{b+j}=-K^*\sum_{i=0}^{j-1}A^{j-1-i}w_{b+i}.
+\]
+If future disturbances are independent, zero-mean, and have covariance $Q$, then
+\[
+\E\norm{\delta_{b+j}}^2
+=\sum_{q=0}^{j-1}\tr\left(K^*A^qQ(A^q)^\top(K^*)^\top\right).
+\]
+This quantity is nondecreasing in the phase $j$.
+\end{proposition}
+\begin{proof}
+Induct on $j$ in the plant equation, using $F=A+BK^*$. Subtract $K^*x_{b+j}$ from the committed action. Independence and zero means eliminate cross terms in the squared norm; each remaining covariance contribution has nonnegative trace.
+\end{proof}
+\textbf{Scope.} This isolates the loss of disturbance feedback when boundary state estimation is perfect. It does not prove that every learned controller has monotone trajectory error in $\ell$. In particular, our ``exact history map'' under process noise does not satisfy the exact-boundary-state assumption.
+
+\begin{lemma}[Boundary state uncertainty and chunk prediction error]\label{lem:chunk}
+Suppose $\hat x_b=x_b+e_b^{\rm est}$ and a committed chunk has the form
+\[
+u_{b+j}=K^*F^j\hat x_b+\eta_j.
+\]
+Compare with the noiseless expert rollout $\bar x_j=F^jx_b$ starting at the same boundary state. Then $d_j=x_{b+j}-\bar x_j$ satisfies
+\[
+d_j=\sum_{i=0}^{j-1}A^{j-1-i}
+\left(BK^*F^ie_b^{\rm est}+B\eta_i+w_{b+i}\right).
+\]
+\end{lemma}
+\begin{proof}
+Subtract the reference update to get $d_{j+1}=Ad_j+BK^*F^je_b^{\rm est}+B\eta_j+w_{b+j}$, with $d_0=0$, and unroll.
+\end{proof}
+This separates reconstruction error, prediction error, and disturbances. For a direct regression policy, $\eta_j$ can be defined by this identity; the code need not explicitly compute $\hat x_b$. Controlling these terms statistically is additional work.
+
+\section{A conditional route to nonlinear systems}
+Now consider $x_{t+1}=f(x_t,u_t)+w_t$, $y_t=g(x_t)$, and expert $\pi^*(x)$. Define $\Phi(x)=f(x,\pi^*(x))$ and the nominal expert action map $G_j(x)=\pi^*(\Phi^j(x))$.
+
+\textbf{Required assumptions on the region of interest:}
+\begin{enumerate}[label=(\alph*)]
+\item A history estimator $\phi_r$ exists with $\norm{\phi_r(z_b)-x_b}\le\varepsilon_r$ on the histories actually encountered.
+\item Each $G_j$ is Lipschitz with constant $L_j$.
+\item The learned component obeys $\norm{\widehat G_{r,j}(z_b)-G_j(\phi_r(z_b))}\le\eta_{r,j}$.
+\item $\norm{f(x,u)-f(x',u')}\le L_x\norm{x-x'}+L_u\norm{u-u'}$.
+\end{enumerate}
+These are assumptions to establish or enforce, not automatic properties of nonlinear systems. If they are local, all trajectories and predictions used below must remain in the specified region.
+
+\begin{lemma}[Nonlinear chunk-action decomposition]
+Under (a)--(c),
+\[
+\norm{\widehat G_{r,j}(z_b)-G_j(x_b)}
+\le\eta_{r,j}+L_j\varepsilon_r.
+\]
+\end{lemma}
+\begin{proof}
+Add and subtract $G_j(\phi_r(z_b))$, then apply the triangle inequality and Lipschitz bound.
+\end{proof}
+
+\begin{theorem}[Conditional nonlinear finite-chunk bound]\label{thm:nonlinear}
+Under (a)--(d), let $\bar x_j=\Phi^j(x_b)$ and execute the learned chunk without feedback. Then
+\[
+\norm{x_{b+j}-\bar x_j}
+\le\sum_{i=0}^{j-1}L_x^{j-1-i}
+\left[L_u(\eta_{r,i}+L_i\varepsilon_r)+\norm{w_{b+i}}\right].
+\]
+\end{theorem}
+\begin{proof}
+The one-step comparison obeys $d_{j+1}\le L_xd_j+L_u(\eta_{r,j}+L_j\varepsilon_r)+\norm{w_{b+j}}$, with $d_0=0$. Iterate this scalar inequality.
+\end{proof}
+
+\textbf{What is still needed across chunks?} The reference in Theorem~\ref{thm:nonlinear} restarts from the learner's state at each boundary. It is not the single expert trajectory used for the reported tracking metric. A further stability argument must connect boundaries. For example, if
+\[
+\norm{f(x,\pi^*(x)+v)-f(x',\pi^*(x'))}
+\le\rho\norm{x-x'}+\beta\norm{v},\qquad \rho<1,
+\]
+then common-disturbance learner/expert comparisons satisfy
+\[
+\norm{e_{t+1}}\le\rho\norm{e_t}+\beta\norm{\delta_t},
+\quad \delta_t=u_t-\pi^*(x_t).
+\]
+Unrolling gives a geometric bound analogous to Theorem~\ref{thm:tracking}. This contraction condition is sufficient and stronger than general asymptotic stability. Weighted norms or incremental input-to-state stability can broaden it. A local argument must also prove that the relevant region is invariant.
+
+\textbf{Why linear theory comes first.} In the linear case, $M_r$, $G_j=K^*F^j$, and their gains are explicit. For nonlinear systems, the corresponding hard questions are existence and conditioning of $\phi_r$, sensitivity of the expert flow, and stability of the closed loop. A finite universal observability index is not assumed.
+
+\section{What to prove next, and what not to claim yet}
+\textbf{A feasible research program.}
+\begin{enumerate}
+\item Use Theorem~\ref{thm:recon} and Proposition~\ref{prop:functional} as the representability foundation; distinguish state recovery from action recovery.
+\item For linear learned history policies, form an augmented state containing the plant, history buffers, and pending actions. With fixed $\ell$, the phase-dependent linear updates yield a boundary-to-boundary matrix. Analyze its stability and disturbance gain as functions of $r,\ell,W$. This construction is a next task, not a result already established here.
+\item Combine a prediction guarantee with a justified deployment-coverage condition or structural policy constraint. Do not infer deployment guarantees from noiseless validation loss alone.
+\item Seek a sufficient condition under which a specified short horizon achieves a prescribed tracking error. Compare with longer horizons under the same learning protocol.
+\item Extend the proof using history estimation and incremental stability assumptions, with Theorem~\ref{thm:nonlinear} as the finite-chunk component.
+\end{enumerate}
+
+\textbf{Open project question (not a theorem).} Under what reconstruction, learning, and stability assumptions does increasing context reduce the execution horizon needed to attain a specified error guarantee? An optimal horizon need not vary monotonically with context. To explain a benefit of long chunks, the analysis must include harmful repeated feedback or another concrete mechanism; a disturbance-accumulation bound alone tends to favor short execution.
+
+\textbf{Current empirical interpretation.} The example has $h=2$, fixed $H=8$, contexts $1,2,3,4$, and execution horizons $1,2,4,8$. Noiseless sufficiently contextual policies nearly reproduce the expert. Disturbed evaluation usually favors shorter execution, but training is still noiseless, so this also measures distribution shift. The current results use one training seed and are not a significance test. Multiple independently trained datasets and paired evaluation rollouts are needed for statistical comparisons. The quadratic cost in the code is not an objective for which the chosen expert is claimed optimal.
+
+\textbf{Map to the implementation.}
+\begin{itemize}
+\item \texttt{history\_matrices}, \texttt{reconstruction}: Lemma~\ref{lem:history} and Theorem~\ref{thm:recon}.
+\item \texttt{exact\_policy}: Theorem~\ref{thm:exact}.
+\item \texttt{fit\_policy} and its rank diagnostic: Section 4.
+\item \texttt{rollout\_action\_mse}: empirical squared $\delta_t$ from Section 5.
+\item \texttt{trajectory\_mse}: deviation from a separate, commonly disturbed expert trajectory.
+\end{itemize}
+
+\section*{Reading connections}
+These sources motivate the project; the proofs above are self-contained and are not attributed as new results from these papers.
+\begin{enumerate}
+\item Zhang et al. (2025), \emph{Action Chunking and Exploratory Data Collection Yield Exponential Improvements in Behavior Cloning for Continuous Control}. Stability-based motivation. \url{https://arxiv.org/abs/2507.09061}
+\item Zeng et al. (2026), \emph{Revisiting Open-Loop Execution in Robotics: Toward Reactive, Higher-Performing Policies}. Empirical motivation for context versus execution horizon. \url{https://arxiv.org/abs/2608.15938}
+\item Lazzati et al. (2026), \emph{Why Does Action Chunking Improve Behavioral Cloning Performance in Robotic Control?} Delayed-policy comparisons motivate an additional baseline. \url{https://arxiv.org/abs/2608.02547}
+\item Fernando, Trinh, and Jennings (2010), \emph{Functional Observability and the Design of Minimum Order Linear Functional Observers}. Background for recovering functions of state rather than the entire state. \url{https://doi.org/10.1109/TAC.2010.2042761}
+\end{enumerate}
+\end{document}

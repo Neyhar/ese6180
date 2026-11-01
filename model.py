@@ -153,3 +153,30 @@ def example_system():
     system = LinearSystem([[0.9, 0.2], [0, 0.8]], [[0], [0.2]], [[1, 0]])
     K = np.array([[-0.5, -0.6]])
     return system, K
+
+
+def coupled_system(dimension, seed=618, decay=0.995, sensors=None, observability_index=None):
+    """Stable cyclic coupling, scalar control, partial sensors; not independent copies.
+
+    A=aP, B=b (unit norm), K=-g b^T P, so F=(aI-g bb^T)P
+    and ||F||_2 <= a < 1 for 0<g<a. Default sensors see every other
+    coordinate, giving h=2 for every n>=2. One sensor gives h=n.
+    """
+    if dimension < 2 or not 0.1 < decay < 1:
+        raise ValueError('Require dimension >= 2 and 0.1 < decay < 1')
+    P = np.roll(np.eye(dimension), -1, axis=1)
+    rng = np.random.default_rng(seed + dimension)
+    b = rng.normal(size=(dimension, 1))
+    b /= np.linalg.norm(b)
+    if observability_index is not None:
+        if sensors is not None or not 1 <= observability_index <= dimension:
+            raise ValueError('Specify either sensors or an index in [1,n]')
+        # The largest cyclic gap between sensors is exactly h, hence index h.
+        indices = np.arange(0, dimension, observability_index)
+    elif sensors is None:
+        indices = np.arange(0, dimension, 2)
+    else:
+        if not 1 <= sensors < dimension:
+            raise ValueError('Sensor count must be between 1 and n-1')
+        indices = np.arange(sensors) * dimension // sensors
+    return LinearSystem(decay * P, b, np.eye(dimension)[indices]), -0.05 * b.T @ P
