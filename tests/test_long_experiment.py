@@ -1,8 +1,9 @@
 import unittest
 import numpy as np
-from model import coupled_system, demonstrations, HistoryPolicy, rollout
+from model import coupled_system, demonstrations, HistoryPolicy, rollout, history_feature
 from long_experiment import (window_ids,matched_arrays,fit_matched,batch_rollout,
-                             trajectory_errors,summarize_errors,paired_tail_difference)
+                             trajectory_errors,summarize_errors,paired_tail_difference,
+                             augmented_matrices,boundary_matrix)
 
 
 class LongExperimentTests(unittest.TestCase):
@@ -65,6 +66,34 @@ class LongExperimentTests(unittest.TestCase):
         self.assertTrue(np.isinf(xs[0,1:]).all())
         self.assertTrue(np.isnan(paired_tail_difference(np.array([np.inf]),np.array([np.inf]),1)))
         self.assertEqual(paired_tail_difference(np.array([1.,3.]),np.array([2.,5.]),1),-2.)
+
+
+    def test_boundary_matrix_matches_rollout(self):
+        s,K=coupled_system(5,observability_index=2)
+        rng=np.random.default_rng(4)
+        for r,ell in ((1,1),(2,3),(3,4)):
+            p=HistoryPolicy(rng.normal(scale=.1,size=(4,r*s.C.shape[0]+r-1)),r,4,1)
+            D,E,J,P,X=augmented_matrices(s,r)
+            # Arbitrary plant history, then one committed chunk on the real plant.
+            xs=[rng.normal(size=5)]; ys=[s.observe(xs[0])]; us=[]
+            for _ in range(r-1):
+                us.append(rng.normal(size=1)); xs.append(s.step(xs[-1],us[-1])); ys.append(s.observe(xs[-1]))
+            def buffer(t):
+                return np.concatenate([xs[t]]+ys[t-r+1:t]+us[t-r+1:t])
+            b=r-1; s0=buffer(b)
+            np.testing.assert_allclose(P@s0,history_feature(ys,us,b,r))
+            chunk=p.predict(P@s0)
+            for j in range(ell):
+                us.append(chunk[j]); xs.append(s.step(xs[-1],us[-1])); ys.append(s.observe(xs[-1]))
+            np.testing.assert_allclose(boundary_matrix(s,p,ell)@s0,buffer(b+ell),atol=1e-12)
+        # Exact policy reproduces the expert, so its boundary matrix restricted
+        # to consistent histories decays at the expert rate.
+        from model import exact_policy
+        s,K=coupled_system(4,observability_index=2)
+        p=exact_policy(s,K,2,4)
+        rho=max(abs(np.linalg.eigvals(s.A+s.B@K)))
+        self.assertLess(max(abs(np.linalg.eigvals(boundary_matrix(s,p,2)))),1)
+        self.assertGreaterEqual(max(abs(np.linalg.eigvals(boundary_matrix(s,p,2))))+1e-9,rho**2)
 
 
 if __name__=='__main__': unittest.main()

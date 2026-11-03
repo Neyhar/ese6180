@@ -12,7 +12,8 @@ from pathlib import Path
 import numpy as np
 from model import coupled_system, demonstrations, HistoryPolicy
 from long_experiment import (window_ids, matched_arrays, fit_matched, batch_rollout,
-                             expert_reference, trajectory_errors, summarize_errors, paired_tail_difference)
+                             expert_reference, trajectory_errors, summarize_errors, paired_tail_difference,
+                             boundary_radius)
 
 
 def write_csv(path, rows):
@@ -180,9 +181,10 @@ def run_case(args):
                     validation=val_cache[(kind,H)]
                     first_val=float(np.mean((XV@weights[:K.shape[0]].T-YV[:,:K.shape[0]])**2))
                     summary=summarize_errors(errors,args.tail_steps)
+                    rho,rate=boundary_radius(system,one if kind=='one_step' else chunk,e)
                     row=dict(dimension=n,observability_index=h,seed=seed,context=r,policy=kind,prediction=H,execution=e,
                              **summary,validation_first_action_mse=first_val,validation_chunk_mse=validation,
-                             failed_episodes=int(np.sum(fail>=0)),
+                             failed_episodes=int(np.sum(fail>=0)),boundary_radius=rho,per_step_rate=rate,
                              paired_tail_difference=paired_tail_difference(errors,base_errors,args.tail_steps))
                     rows.append(row)
                     for ep in range(args.eval_trajectories):

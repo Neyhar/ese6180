@@ -114,3 +114,40 @@ def paired_tail_difference(errors, baseline, tail_steps):
     """Infinity minus infinity is deliberately undefined; never discard failures."""
     with np.errstate(invalid='ignore'):
         return float(np.mean(errors[..., -tail_steps:] - baseline[..., -tail_steps:]))
+
+
+def augmented_matrices(system, context):
+    """Buffer state s=[x_t, y_(t-r+1:t-1), u_(t-r+1:t-1)]: s+=Ds+Eu+Jw, z=Ps, x=Xs."""
+    n, m, p, r = system.A.shape[0], system.B.shape[1], system.C.shape[0], context
+    yo, uo = n, n+(r-1)*p
+    N = uo+(r-1)*m
+    D, E, J = np.zeros((N,N)), np.zeros((N,m)), np.zeros((N,n))
+    D[:n,:n], E[:n], J[:n] = system.A, system.B, np.eye(n)
+    P = np.zeros((r*p+(r-1)*m, N))
+    for k in range(r-1):
+        if k < r-2:
+            D[yo+k*p:yo+(k+1)*p, yo+(k+1)*p:yo+(k+2)*p] = np.eye(p)
+            D[uo+k*m:uo+(k+1)*m, uo+(k+1)*m:uo+(k+2)*m] = np.eye(m)
+        P[k*p:(k+1)*p, yo+k*p:yo+(k+1)*p] = np.eye(p)
+        P[r*p+k*m:r*p+(k+1)*m, uo+k*m:uo+(k+1)*m] = np.eye(m)
+    if r > 1:
+        D[uo-p:uo, :n] = system.C
+        E[N-m:] = np.eye(m)
+    P[(r-1)*p:r*p, :n] = system.C
+    return D, E, J, P, np.eye(N)[:n]
+
+
+def boundary_matrix(system, policy, execution):
+    """M_(r,ell) = D^ell + sum_j D^(ell-1-j) E W_j P; stable iff spectral radius < 1."""
+    D, E, _, P, _ = augmented_matrices(system, policy.context)
+    m = system.B.shape[1]
+    M = np.linalg.matrix_power(D, execution)
+    for j in range(execution):
+        M = M + np.linalg.matrix_power(D, execution-1-j) @ E @ policy.weights[j*m:(j+1)*m] @ P
+    return M
+
+
+def boundary_radius(system, policy, execution):
+    """Spectral radius of the boundary map and its per-plant-step rate."""
+    rho = float(np.max(np.abs(np.linalg.eigvals(boundary_matrix(system, policy, execution)))))
+    return rho, rho**(1/execution)
