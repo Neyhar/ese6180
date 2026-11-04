@@ -18,7 +18,7 @@ Part B, the 2D challenging pair, Def. 4.1, p. 15 (mu = 1/8 as in Appendix J, p. 
   there; we read that as a typo for e1 e1^T, because only that version acts on e_1 as the
   proof requires. Also simulated: the smooth Markov learners (Prop. 4.1(b), p. 15), zero
   control (Remark 4.1, p. 15), open-loop action chunks (Sec. 5.1, pp. 17-18; Prop. H.1(c)),
-  and a *linear* controller with one step of memory found by search.
+  and a *linear* controller with one step of memory given by an analytic construction.
 
 Run from repo root:  python3 pitfalls/controllers.py
 """
@@ -111,18 +111,16 @@ def part_a(rho=1.5, eps=1e-3, T=30, mc=4000):
 
 # ---------------------------------------------------------------- Part B: 2D challenging pair
 def memory_controller(mu):
-    """Look for a LINEAR controller with one step of memory that matches the expert on V.
+    """Construct a LINEAR controller with one step of memory that matches the expert on V.
     It adds an e_1-channel action v_t = k0 x1_t + k1 x1_{t-1} + g v_{t-1}, which is 0 on expert data.
     Both plants are lower triangular once u keeps K_1 e_2, so e_1 obeys x1+ = a_i x1 + v with
     a_1 = 1+mu, a_2 = -(1-mu/4). This is simultaneous stabilisation of two scalar plants."""
-    a = [1 + mu, -(1 - mu / 4)]
-
-    def worst(p):
-        k0, k1, g = p
-        return max(max(abs(np.roots([1, -(ai + g + k0), ai * g - k1]))) for ai in a)
-    best = min((minimize(worst, x0, method='Nelder-Mead', options=dict(xatol=1e-10, fatol=1e-12, maxiter=4000))
-                for x0 in np.random.default_rng(0).normal(size=(40, 3))), key=lambda r: r.fun)
-    return best.x, float(best.fun)
+    a1, a2 = 1 + mu, -(1 - mu / 4)
+    k0 = -(a1 + a2) / 2
+    k1 = -((a1 - a2) / 4) ** 2
+    # e1 recurrence has double roots +/- (a1-a2)/4; include the x2 mode.
+    full_rho = max(abs((a1 - a2) / 4), abs(1 - 2 * mu))
+    return np.array([k0, k1, 0.0]), float(full_rho)
 
 
 def run_2d(name, i, mu, eps, T, rng, chunk=None, mem=None):

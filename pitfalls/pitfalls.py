@@ -139,44 +139,8 @@ def write_csv(rows, path):
 
 
 def main():
-    p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument('--mu', type=float, default=0.2)
-    p.add_argument('--noise', type=float, default=0.01)
-    p.add_argument('--steps', type=int, default=200)
-    p.add_argument('--horizon', type=int, default=16)
-    p.add_argument('--output', default=str(Path(__file__).parent / 'results'))
-    a = p.parse_args()
-    out = Path(a.output); out.mkdir(parents=True, exist_ok=True)
-
-    static = part1_static(a.mu, a.steps, a.noise, 618, out)
-    write_csv(static, out / 'static_controllers.csv')
-
-    contexts, executions = [1, 2, 3, 4, 6, 8], [1, 2, 4, 8, 16]
-    warmup, seeds = max(contexts) - 1, [618, 619, 620]
-    observations = {'full': np.eye(2), 'partial': np.array([[0.0, 1.0]])}  # partial: see e_2 only
-    summary, all_rows = {}, []
-    for obs, C in observations.items():
-        for data, excite in [('narrow', 0.0), ('excited', 0.3)]:
-            tag = f'{obs}_{data}'
-            rows = part2_framework(a.mu, C, contexts, executions, a.horizon, a.steps + warmup,
-                                   warmup, a.noise, excite, seeds, out, tag)
-            M = heatmap(rows, contexts, executions, out / f'grid_{tag}.png',
-                        f'{obs} obs, {data} data (mu={a.mu})')
-            summary[tag] = M.round(4).tolist()
-            all_rows += rows
-    write_csv(all_rows, out / 'framework_sweep.csv')
-    json.dump(dict(mu=a.mu, noise=a.noise, steps=a.steps, horizon=a.horizon, contexts=contexts,
-                   executions=executions, static=static, median_late_rms=summary),
-              open(out / 'summary.json', 'w'), indent=1)
-
-    print('Static controllers on plant 1 (all match expert data exactly):')
-    for r in static:
-        print(f"  {r['controller']:13s} rho(A1+K)={r['rho_plant1']:.3f} rho(A2+K)={r['rho_plant2']:.3f} "
-              f"final ||x||={r['final_norm']:.3g}")
-    for tag, M in summary.items():
-        print(f'\n{tag}: median late RMS (rows r={contexts}, cols ell={executions})')
-        for r, row in zip(contexts, M):
-            print(f'  r={r}: ' + '  '.join(f'{v:9.3g}' for v in row))
+    from aligned import main as aligned_main
+    aligned_main()
 
 
 if __name__ == '__main__':
