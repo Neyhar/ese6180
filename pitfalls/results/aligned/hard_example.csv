@@ -1,0 +1,9 @@
+controller,initial_x1,radius,final_abs_x1
+expert K1,0.0,0.75,0.0
+wrong K2,0.0,2.09375,0.0
+minimax,0.0,1.046875,0.0
+min-norm fit,0.0,1.125,0.0
+expert K1,0.001,0.75,0.0
+wrong K2,0.001,2.09375,1.800899439278585e+16
+minimax,0.001,1.046875,0.015620312675950149
+min-norm fit,0.001,1.125,1.172603933907101
