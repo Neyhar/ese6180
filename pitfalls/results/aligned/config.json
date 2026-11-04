@@ -3,6 +3,7 @@
   "noise": 0.01,
   "steps": 200,
   "horizon": 16,
+  "tracking_tolerance": 0.05,
   "output": "/Users/nball/ESE618/pitfalls/results/aligned",
   "seeds": [
     618,

@@ -56,3 +56,28 @@ This witnesses representability, not identification from narrow data. Ordinary l
 `controllers.py` retains the scalar and 2D non-simple-controller comparisons. Its metrics are explicitly **clipped** expectations E[min(1,|x1|)], not full-state tracking. The memory witness is now analytic and reports the full radius. Its Monte Carlo BGR scaling fit is exploratory: rare long-survival paths are poorly sampled at small epsilon; it is not an exponent estimate with established precision.
 
 `train.py` compares narrow BC, noisy single-plant/pooled demonstrations, and a model-informed spectral penalty. Its robust objective knows both candidate plants, and its rollout summaries clip |x1| at one. These results establish numerical feasibility and selection behavior, not a guarantee for unknown plants or all linear-learning procedures. The main aligned experiment remains the fixed-plant context/chunk study requested for this project.
+
+## Test the context-versus-execution hypothesis
+
+The main run now performs tolerance analysis automatically. Set the tracking RMS limit before running:
+
+```sh
+python3 pitfalls/pitfalls.py --tracking-tolerance 0.05
+```
+
+The default 0.05 is an illustrative absolute error threshold, not a theoretically prescribed tolerance. A setting qualifies only if **every evaluated seed** has tracking RMS <= the threshold and boundary spectral radius < 1. This avoids accepting an unstable setting with small finite-horizon error, or hiding a failed seed behind a median. No confidence or population guarantee is implied.
+
+For each observation/data/context combination, select the shortest qualifying **tested** execution length. Missing feasible settings are recorded as `None` in the report/plot (blank in the CSV), never as zero. Generated files:
+
+- `shortest_execution.csv`: selected length, status, and worst seed tracking error.
+- `tolerance_candidates.csv`: all candidates with pass/fail reasons, median/worst tracking errors, and worst boundary radius.
+- `shortest_execution.png`: context-versus-selected-length panels; crosses in the None row indicate no tested feasible setting.
+- `tolerance_report.md` and `tolerance_config.json`: readable table and exact criterion/threshold/grid/seeds.
+
+Analyze an existing sweep without retraining (an exploratory threshold comparison):
+
+```sh
+python3 pitfalls/tolerance.py --input pitfalls/results/aligned/framework_sweep.csv --tracking-tolerance 0.05
+```
+
+Use `--output /path/to/analysis` to keep multiple threshold analyses separately. Incomplete paired seed grids and duplicate records are rejected. A falling required execution length supports the proposed relationship within that setting; an already constant length of one leaves no room for reduction. Choose a scientifically meaningful threshold independently of the desired outcome, and confirm selected settings with fresh seeds before claiming generalization.

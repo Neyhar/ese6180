@@ -7,6 +7,7 @@ from scipy.linalg import solve_discrete_lyapunov
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+from tolerance import write_analysis
 from pitfalls import challenging_pair, gains, train_set, write_csv
 from model import LinearSystem, HistoryPolicy, fit_policy, rollout
 
@@ -135,10 +136,14 @@ def main():
     parser.add_argument('--noise',type=float,default=.01)
     parser.add_argument('--steps',type=int,default=200)
     parser.add_argument('--horizon',type=int,default=16)
+    parser.add_argument('--tracking-tolerance',type=float,default=.05,
+                        help='Absolute tracking RMS limit; every evaluated seed must pass (default: .05)')
     parser.add_argument('--output',type=Path,default=Path(__file__).parent/'results'/'aligned')
     args=parser.parse_args()
     if args.steps < 50 or args.noise < 0 or args.horizon < 1:
         parser.error('Require steps >= 50, noise >= 0, horizon >= 1')
+    if not np.isfinite(args.tracking_tolerance) or args.tracking_tolerance <= 0:
+        parser.error('Tracking tolerance must be finite and positive')
     out=args.output;out.mkdir(parents=True,exist_ok=True)
     hard_example(args.mu,out)
     A,_,K,_=challenging_pair(args.mu)
@@ -183,6 +188,7 @@ def main():
         fig.suptitle(f'{obs}: median tracking RMS; * = unstable for at least one seed')
         fig.colorbar(im,ax=axes.ravel().tolist(),label='log10 tracking RMS (color range capped)')
         fig.savefig(out/f'grid_{obs}.png',dpi=160,bbox_inches='tight');plt.close(fig)
+    write_analysis(rows,args.tracking_tolerance,out)
     config=vars(args).copy();config['output']=str(out);config.update(seeds=seeds,contexts=contexts,executions=executions,
         warmup=warmup,scope='Definition 4.1 linear core; extension, not Appendix J replication')
     (out/'config.json').write_text(json.dumps(config,indent=2))
