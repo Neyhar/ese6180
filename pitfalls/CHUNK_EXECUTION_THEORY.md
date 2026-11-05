@@ -62,3 +62,34 @@ against the expert and analytic memory baseline, and do not equate reduced
 finite loss with successful identification of the expert. Full observation
 already reveals the current state: memory's effect here is on controller
 selection and dynamics, not recovery of an unobserved state.
+
+## Partial observation: distinguish information from coverage
+
+The optional sensor C=[0,1] observes y=x2. Its observability matrix is
+O2=[[0,1],[-c,q]], whose determinant is c>0. With noiseless known-action
+histories, reconstruct
+
+    x1_(t-1) = (q*y_(t-1) + u2_(t-1) - y_t)/c,
+    x1_t = (1+mu)*x1_(t-1) + c*y_(t-1) + u1_(t-1).
+
+The unannounced x1 jump injected at deployment violates the noiseless history
+relation for that transition. It is invisible in y at the first decision;
+its effect appears in the next observation, when the reconstruction becomes
+valid again. Exactness is mathematical; absolute floating-point reconstruction
+errors can grow on divergent trajectories. A partial controller cannot choose
+the full-state expert's first corrective action for both indistinguishable
+initial histories. The known-model observer is therefore a useful nonzero-loss
+baseline, not an oracle with instantaneous hidden-state access.
+
+Narrow expert histories have x1=0, so removing the identically zero x1 feature
+leaves the ridge fit's effective action rule unchanged. Full and partial narrow
+runs consequently agree, despite different observation capabilities. This is
+an identification limitation, not a failure of observability.
+
+The recovery intervention uses known applied probes to cover reconstructible
+histories; expert targets are KF^j x at each visited boundary. It creates no
+unknown process disturbances, and does not substitute expert labels for past
+applied actions. At context two the partial feature vector has rank four in
+these runs, enabling the learned rule to approximate the model observer.
+These noiseless results do not extend directly to continuing process noise,
+measurement noise, or unknown-model reconstruction.

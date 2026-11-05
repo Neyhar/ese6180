@@ -1,15 +1,34 @@
-# ESE 6180 midterm report
+# ESE 6180 report
 
-`main.tex` uses the unmodified `l4dc2026.cls` from the supplied L4DC2026 template archive. The main report targets four pages; references follow separately, as permitted by the assignment.
+`main.tex` is the active L4DC report, four pages total including references.
+It uses the supplied, unmodified `l4dc2026.cls` and integrates observability,
+Kyle Horton's chunk-stability proposition, the conditional history/execution
+certificate, and current pitfalls results.
 
-## Reproduce
+## Build
 
-Compile `main.tex` using the Codex LaTeX editor or a TeX installation with the JMLR/PMLR class, BibTeX and the standard packages. For example: `latexmk -pdf main.tex` or `tectonic main.tex`.
+```sh
+tectonic main.tex
+```
 
-`make_figure.py` regenerates the report figure from the frozen `data/metrics.csv` using NumPy and Matplotlib. The saved `data/sweep_config.json` records the experiment settings. Data were copied from `../results/latest` on November 2, 2026; no experiments were rerun for this report.
+Tectonic resolves the JMLR and font dependencies. Alternatively use
+`latexmk -pdf main.tex` with the JMLR/PMLR packages installed. Fonts, margins,
+and title layout follow the L4DC template; content was shortened to meet the
+four-page limit.
 
-The report describes the implementation in `../model.py`, `../long_experiment.py`, and `../run_experiment.py`, and condenses the mathematical framework in `../theory-notes/main.tex`. Spectral tests, asymptotic covariance validation, and nonlinear experiments are explicitly future work.
+The figure is `synthesis/figures/context_hypothesis.png`; frozen data and figure
+regeneration instructions are in [synthesis/README.md](synthesis/README.md).
+`main.pdf` is the current compiled report. The synthesis folder retains earlier
+article-layout and extended working drafts; use `main.tex` for the active report.
 
-## Before submission
+The preamble selects `times` for pdfLaTeX and `fontspec` with Times New Roman
+for XeLaTeX/LuaLaTeX/Tectonic, so bold and italic faces are loaded correctly.
 
-Review the scientific claims and author details. Only Nihar Ballamudi is listed, matching the theory notes; if this is a two-person project, add the second author and the required actual contribution/responsibility statement. This draft and portions of the existing code/theory were developed with Codex assistance; describe that assistance according to the course's policy. No individual contribution claims were invented.
+## Partial-observation results note
+
+[partial-observation-note.tex](partial-observation-note.tex) is a separate
+two-page L4DC note, including its reference. It compares the four hard-example
+sensing/coverage conditions and connects them to Horton's reconstruction and
+chunk-stability arguments, stating which theorem assumptions were not verified.
+Build with `tectonic partial-observation-note.tex`; the compiled PDF is alongside
+it. Its numerical source is `../pitfalls/results/partial_observation/`.

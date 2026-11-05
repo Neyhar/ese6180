@@ -1,0 +1,52 @@
+{
+  "observation": "full",
+  "training": "narrow",
+  "probe_scale": 0.05,
+  "contexts": [
+    1,
+    2,
+    4,
+    8,
+    16
+  ],
+  "horizons": [
+    1,
+    4,
+    16
+  ],
+  "executions": [
+    1,
+    2,
+    4,
+    8,
+    16
+  ],
+  "seeds": [
+    618,
+    619,
+    620
+  ],
+  "steps": 200,
+  "long_steps": 1000,
+  "test_pairs": 20,
+  "test_seed": 20261105,
+  "loss_tolerance": 1e-05,
+  "output": "pitfalls/results/partial_observation/full_narrow",
+  "mu": 0.125,
+  "warmup": 15,
+  "sensor_matrix": [
+    [
+      1.0,
+      0.0
+    ],
+    [
+      0.0,
+      1.0
+    ]
+  ],
+  "observability_index": 1,
+  "training_description": "narrow expert histories",
+  "test": "paired support/perturbed initial states; no continuing noise",
+  "loss": "mean squared full-state tracking error; exclude initial state",
+  "long_sample": "single canonical initial state [0.001,1]; diagnostic, not test-set mean"
+}

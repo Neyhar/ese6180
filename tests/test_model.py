@@ -11,11 +11,12 @@ class ModelTests(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        if cls.reconstruction_errors and cls.chunk_errors:
-            import os
-            from plots import test_plots
+        import os
+        directory = os.environ.get('ESE618_TEST_PLOTS')
+        if directory and cls.reconstruction_errors and cls.chunk_errors:
+            from observability.plotting_utils import test_plots
             test_plots(cls.reconstruction_errors, cls.chunk_errors,
-                       os.environ.get('ESE618_TEST_PLOTS', 'results/tests/figures'))
+                       directory)
 
     def test_reconstruct_arbitrary_inputs(self):
         s, _ = example_system()

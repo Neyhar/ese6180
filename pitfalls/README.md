@@ -77,3 +77,30 @@ Previous broad noisy/partial-observation sweeps, scalar examples, optimization
 studies, duplicate analysis scripts and old outputs were moved to
 `../archive/pitfalls-before-focus/`. This is a reference snapshot with an archival
 README; it is not part of the active workflow.
+
+## Partial-observation extension
+
+Use `--observation partial` to give the learner only y=x2; the expert still
+uses full state to supply labels. The plant's observability index is two.
+`--training narrow` retains x1=0 demonstrations. `--training recovery` collects
+known exploratory actions and labels visited histories with nominal expert
+chunks, keeping the actual actions in the history features. This is a coverage
+intervention, not an exact reproduction of the paper's restricted data.
+
+```sh
+python3 pitfalls/chunk_sweep.py --observation partial --training narrow --horizons 1 4 16 --seeds 618 619 620 --output pitfalls/results/partial_observation/partial_narrow
+python3 pitfalls/chunk_sweep.py --observation partial --training recovery --horizons 1 4 16 --seeds 618 619 620 --output pitfalls/results/partial_observation/partial_recovery
+```
+
+For paired full-observation controls, repeat with `--observation full` and
+outputs `full_narrow`/`full_recovery` under the same parent. Then run
+`python3 pitfalls/compare_partial.py` to summarize all four saved suites.
+See [the comparison and explanation](results/partial_observation/README.md),
+[comparison graph](results/partial_observation/observation_coverage_comparison.png),
+and [learner-view figure](results/partial_observation/partial_recovery/learner_view.png).
+
+`partial_view.py` records actual observation/action features and shows the
+hidden perturbation, visible output change, model-reconstruction error and
+executed action error. `recovery_data.py` reuses matched ridge fitting from the
+observability study. Both extensions use the original shared plant/policy and
+rollout classes. The original full-observation outputs remain unchanged.

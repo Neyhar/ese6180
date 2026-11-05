@@ -1,0 +1,43 @@
+{
+  "contexts": [
+    1,
+    2,
+    4,
+    8,
+    16
+  ],
+  "horizons": [
+    1,
+    2,
+    4,
+    8,
+    16
+  ],
+  "executions": [
+    1,
+    2,
+    4,
+    8,
+    16
+  ],
+  "seeds": [
+    618,
+    619,
+    620,
+    621,
+    622
+  ],
+  "steps": 200,
+  "long_steps": 1000,
+  "test_pairs": 20,
+  "test_seed": 20261105,
+  "loss_tolerance": 1e-05,
+  "output": "/Users/nball/ESE618/pitfalls/results/context_chunking",
+  "mu": 0.125,
+  "warmup": 15,
+  "observation": "full state C=I",
+  "training": "narrow noiseless expert demonstrations; matched target times across r and H",
+  "test": "paired support/perturbed initial states; no continuing noise",
+  "loss": "mean squared full-state tracking error; exclude initial state",
+  "long_sample": "single canonical initial state [0.001,1]; diagnostic, not test-set mean"
+}

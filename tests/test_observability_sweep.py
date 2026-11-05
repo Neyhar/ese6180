@@ -2,8 +2,8 @@ import unittest
 from argparse import Namespace
 import numpy as np
 from model import coupled_system, demonstrations
-from run_experiment import build_plan
-from long_experiment import window_ids
+from observability.run import build_plan
+from observability.experiment import window_ids
 
 
 class ObservabilitySweepTests(unittest.TestCase):

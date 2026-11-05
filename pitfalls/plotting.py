@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def plot_results(rows, baselines, paths, out, contexts, hs, steps):
+def plot_results(rows, baselines, paths, out, contexts, hs, steps, description="full observations / narrow training"):
     executions = sorted({v['execution'] for v in rows})
     fig,axes=plt.subplots(int(np.ceil(len(contexts)/2)),2,figsize=(12,4*int(np.ceil(len(contexts)/2))),sharex=True,sharey=True,squeeze=False)
     for ax in axes.flat[len(contexts):]: ax.set_visible(False)
@@ -23,7 +23,7 @@ def plot_results(rows, baselines, paths, out, contexts, hs, steps):
         ax.set_xticks(hs,[str(h) for h in hs]); ax.grid(alpha=.2)
     handles,labels=axes.flat[0].get_legend_handles_labels()
     fig.legend(handles,labels,loc='lower center',ncol=4,fontsize=9)
-    fig.suptitle('Hard example on A1: Held-out perturbed initial states; no continuing noise\nMean test loss per controller, median across training seeds; red × = unstable; K1 loss=0; wrong K2 (see baselines.csv) (both omitted for readability)')
+    fig.suptitle(f'{description} | Hard example on A1: Held-out perturbed initial states; no continuing noise\nMean test loss per controller, median across training seeds; red × = unstable; K1 loss=0; wrong K2 (see baselines.csv) (both omitted for readability)')
     fig.tight_layout(rect=[0,.08,1,.93]); fig.savefig(out/'test_loss.png',dpi=170); plt.close(fig)
     # Use the largest prediction horizon to cover all execution lengths.
     # Earlier-output fits are invariant to H, so the other H curves overlap.
@@ -43,14 +43,14 @@ def plot_results(rows, baselines, paths, out, contexts, hs, steps):
         ax.axhline(b['test_loss'],color='gray',ls=style,label=b['controller'])
     ax.set(xscale='log',yscale='log',xlabel='Execution horizon ℓ (steps before replanning)',
            ylabel='Mean squared tracking error on held-out test set',
-           title=f'Hard example: history lengths compared on one plot\nH={max(hs)}; median over training seeds; shading = min–max; red × = unstable')
+           title=f'{description} | Hard example: history lengths compared on one plot\nH={max(hs)}; median over training seeds; shading = min–max; red × = unstable')
     ax.set_xticks(hs,[str(h) for h in hs]); ax.grid(alpha=.25)
     ax.legend(ncol=2)
     fig.text(.5,.01,'Held-out perturbed test states; no continuing noise. K1 loss=0; wrong K2 (see baselines.csv) (omitted).',ha='center',fontsize=9)
     fig.tight_layout(rect=[0,.035,1,1]); fig.savefig(out/'combined_test_loss.png',dpi=180); plt.close(fig)
     fig,ax=plt.subplots(figsize=(11,6))
     for name,xs in paths.items(): ax.semilogy(range(steps+1),np.maximum(abs(xs[:,0]),1e-16),label=name)
-    ax.set(xlabel='Deployment step',ylabel='|x₁| (display floor 1e-16)',title='Hard-example sample rollout: seed 618; no continuing noise')
+    ax.set(xlabel='Deployment step',ylabel='|x₁| (display floor 1e-16)',title=f'{description} | Hard-example sample rollout; no continuing noise')
     ax.grid(alpha=.2); ax.legend(fontsize=8,ncol=2); fig.tight_layout(); fig.savefig(out/'sample_rollouts.png',dpi=170); plt.close(fig)
 
 

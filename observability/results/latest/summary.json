@@ -1,0 +1,11 @@
+{
+  "cases": 20,
+  "prediction_horizon": 16,
+  "seed_configuration_rows": 1095,
+  "unique_context_execution_settings": 365,
+  "unstable_seed_settings": 30,
+  "failed_seed_settings": 21,
+  "unstable_without_cutoff_failure": 9,
+  "unstable_at_or_above_observability_index": 0,
+  "cases_with_one_step_lowest_mean_tail_error": 19
+}

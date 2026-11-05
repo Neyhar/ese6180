@@ -14,19 +14,23 @@ def make_test_states(count, seed):
     return states
 
 
-def deploy(system, expert_gain, policy, execution, initial, steps, warmup):
-    """Supply on-support expert history, then perturb only at deployment."""
+def deploy_trace(system, expert_gain, policy, execution, initial, steps, warmup):
+    """Return complete history buffers and rollout for learner-input inspection."""
     decay = float((system.A + expert_gain)[1, 1])
     disturbances = np.zeros((warmup + steps, 2))
     x0 = np.array(initial, dtype=float)
     if warmup:
         disturbances[warmup - 1, 0] = initial[0]
         x0 = np.array([0., initial[1] * decay**(-warmup)])
-    xs = rollout(system, expert_gain, policy, execution, x0,
-                 warmup + steps, warmup, disturbances)['x'][warmup:]
-    if not np.allclose(xs[0], initial, atol=1e-12):
+    trace = rollout(system, expert_gain, policy, execution, x0,
+                    warmup + steps, warmup, disturbances)
+    if not np.allclose(trace['x'][warmup], initial, atol=1e-12):
         raise RuntimeError('Warm-up changed the deployment initial state')
-    return xs
+    return trace
+
+
+def deploy(system, expert_gain, policy, execution, initial, steps, warmup):
+    return deploy_trace(system,expert_gain,policy,execution,initial,steps,warmup)['x'][warmup:]
 
 
 def tracking_loss(xs, reference):

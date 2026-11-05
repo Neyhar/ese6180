@@ -1,0 +1,70 @@
+\documentclass{l4dc2026}
+\usepackage{iftex,booktabs}
+\ifPDFTeX
+\usepackage{times}
+\else
+\usepackage{fontspec}
+\setmainfont{Times New Roman}
+\fi
+\jmlrvolume{}
+\jmlrproceedings{ESE 6180}{ESE 6180 Results Note}
+\jmlrworkshop{ESE 6180 Results Note}
+\title[History, Coverage, and Partial Observation]{History, Coverage, and Partial Observation\\in the Linear Hard Example}
+\author{\Name{Nihar Ballamudi}\and\Name{Kyle Horton}\\\addr University of Pennsylvania}
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\begin{document}
+\maketitle
+\begin{abstract}
+We separate observation history from training coverage in the linear challenging example. With partial observation, two-step history enables accurate one-step control when training includes exploratory histories and expert labels. Narrow demonstrations remain underidentified despite observability. These findings support the representational role of history and the stabilizing role of commitment, but do not establish that arbitrary learners improve monotonically with context.
+\end{abstract}
+
+\section{Experiment and results}
+We use $x_{t+1}=Ax_t+u_t$, expert $u_t^*=Kx_t$, and $\mu=1/8$ in the linear construction of \citet{simchowitz2025}:
+\[
+A=\begin{bmatrix}1+\mu&c\\-c&1-2\mu\end{bmatrix},\quad
+K=\begin{bmatrix}-(1+\mu)&-c\\c&0\end{bmatrix},\qquad c=3\mu/2.
+\]
+The plant and expert closed loop are stable. Four conditions cross full observation $y=x$ or partial observation $y=x_2$ with narrow or recovery training. Narrow demonstrations remain on $x_1=0$. Recovery training instead applies known exploratory actions $u=Kx+0.05\xi$, with independent standard Gaussian $\xi$, and labels each visited history with the expert continuation $KF^jx$, $F=A+K$. Histories retain the actions actually applied; expert labels do not replace them. This intervention changes coverage and extends the original restricted-data example.
+
+Linear ridge policies use $r$ observations and $r-1$ past actions, predict $H$ actions, and execute $\ell\le H$ before replanning. We sweep $r\in\{1,2,4,8,16\}$, $H\in\{1,4,16\}$ and $\ell\in\{1,2,4,8,16\}$, with three training seeds and matched target times: 540 learned configurations. Each is tested on the same 20 held-out initial-state pairs, with common $x_2\sim\mathrm{Unif}[-1,1]$ and either $x_1=0$ or a signed departure of magnitude $0.0005$--$0.0015$. The departure is injected after expert history initialization; there is no continuing noise. Test MSE averages full-state expert-tracking error over 200 post-action states and the 20 perturbed rollouts.
+
+\begin{center}\small
+\begin{tabular}{llrrr}\toprule
+Observation & Training & $r$ & Median test MSE & Max. per-step rate\\\midrule
+Full & Narrow & 2 & $6.18\times10^9$ & 1.10405\\
+Partial & Narrow & 2 & $6.18\times10^9$ & 1.10405\\
+Partial & Narrow & 16 & $6.49\times10^{-7}$ & 0.97110\\
+Full & Recovery & 1 & $1.22\times10^{-18}$ & 0.75000\\
+Partial & Recovery & 1 & $2.38\times10^{14}$ & 1.14636\\
+Partial & Recovery & 2 & $7.15\times10^{-9}$ & 0.75000\\\bottomrule
+\end{tabular}
+\end{center}
+All rows use $H=16,\ell=1$; rates are worst over seeds. Rates below one certify stability. Full and partial narrow fits agree numerically: removing an identically zero training feature does not change the learned action rule. Recovery data enable full-state one-step control at $r=1$, while partial observation requires $r=2$. Increasing partial recovery history beyond two does not further reduce loss, so the result is a threshold effect rather than monotone improvement.
+
+\section{Connection to Horton's history and chunk theory}
+\textbf{History supplies information.} For $C=[0,1]$, the observability matrix is
+\[
+\mathcal O_2=\begin{bmatrix}C\\CA\end{bmatrix}
+=\begin{bmatrix}0&1\\-c&1-2\mu\end{bmatrix},\qquad \det\mathcal O_2=c>0.
+\]
+Thus the observability index is two. With noiseless consistent histories and known applied inputs, the reconstruction argument gives $x_t=R_2z_t$ and the expert action is representable as $KR_2z_t$. More generally, exact action recovery requires only $\ker\mathcal O_r\subseteq\ker(KA^{r-1})$. The partial recovery result supports this representational threshold: its history-two feature matrix has rank four out of four, and one-step tracking nearly matches the known-model observer baseline ($7.15\times10^{-9}$ MSE).
+
+The initial hidden jump is an important qualification. At the first decision, both paired initial states give identical observations and action histories, so a deterministic partial learner cannot choose the full-state expert action on both. The jump affects $y$ one step later, after which noiseless reconstruction is valid again. The small nonzero observer loss reflects this initial information delay.
+
+\textbf{Commitment controls feedback sensitivity.} Horton's proposition assumes incremental output stability with constants $(C_0,\rho)$ and chunk sensitivities $\operatorname{Lip}(\pi_k)\le D\rho^k$. For history $r$, a sufficient condition is
+\[
+\ell\ge\max(1,r-1),\qquad
+C_r(1+D\ell/\rho)\rho^{\alpha\ell}\le1,\quad
+C_r=2rC_0\rho^{-(r-1)},\quad 0<\alpha<1.
+\]
+It explains how sufficiently long commitment can stabilize a predictor by exploiting decaying sensitivity and stable dynamics. Empirically, narrow-data history eight needs execution eight to satisfy stability and mean test MSE $\le10^{-5}$ for every seed, whereas history sixteen permits execution one. However, the proposition's condition becomes more conservative with history and cannot certify $(r,\ell)=(16,1)$; its policy-class assumptions were not verified for these fits. The observation is consistent with its mechanism, not a direct instance of its guarantee.
+
+\textbf{Coverage connects representation to learning.} The rank-one narrow data do not identify recovery behavior, even when $r\ge2$. Their history benefit comes from ridge's choice of feedback outside the demonstrations, rather than newly acquired training information. The separate small-gain calculation for this learner certifies one-step stability when $48\alpha_r+\beta_r<1$, where $\alpha_r,\beta_r$ are the observation and past-action coefficient sums; at $r=16$ the conservative zero-penalty value is $0.2021$. General learner claims still require deployment-error or sensitivity bounds that improve with history. These three-seed noiseless experiments support that research direction, not robustness to ongoing noise or a universal context--execution tradeoff.
+
+\begin{thebibliography}{1}
+\bibitem[Simchowitz et al.(2025)]{simchowitz2025}
+M. Simchowitz, D. Pfrommer, and A. Jadbabaie.
+The pitfalls of imitation learning when actions are continuous.
+\emph{arXiv:2503.09722}, 2025.
+\end{thebibliography}
+\end{document}
