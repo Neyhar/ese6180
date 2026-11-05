@@ -95,3 +95,9 @@ Historical outputs from before the 600-step configuration were compressed into `
 - `theory-notes/`: retained mathematical notes; not generated results.
 
 The obsolete original runner and its unused plot function have been removed. Core and oracle helpers remain for tests and mathematical comparison.
+
+## Hard-example context and chunking study
+
+See [pitfalls/README.md](pitfalls/README.md) for the focused experiment testing
+whether longer history improves recovery and reduces required multi-action
+execution. Run `python3 pitfalls/chunk_sweep.py`.

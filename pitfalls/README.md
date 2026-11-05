@@ -1,83 +1,79 @@
-# Challenging pair: paper example and history/chunk extension
+# Does observation history reduce the need for action chunking?
 
-Run from the repository root:
-
-```sh
-python3 pitfalls/pitfalls.py
-python3 pitfalls/analysis.py
-python3 -m unittest discover -s tests -p 'test_pitfalls.py' -v
-```
-
-The main command writes `pitfalls/results/aligned/`. It implements the **2D linear challenging pair in Definition 4.1 (printed page 15)** of [Simchowitz, Pfrommer and Jadbabaie](https://arxiv.org/html/2503.09722v4#S4). This is not a reproduction of the paper's Appendix J neural-network experiments, which use the higher-dimensional nonlinear construction.
-
-## 1. Reproduce the ambiguity on one fixed plant
-
-The default is mu=1/8. Both plants are stable; both matched expert closed loops equal diag(0, 1-2mu). On span(e2), both experts and their trajectories are indistinguishable.
-
-`hard_example.png` compares K1, K2, the exact-fit minimax gain, and minimum-norm BC on **plant A1**. One panel starts exactly on the demonstration support, where all agree. The other introduces x1=0.001 at initialization, with no continuing noise. The wrong controller and minimum-norm fit amplify this departure. No noise is required after the initial perturbation. Raw, unclipped values are in `hard_example.csv`.
-
-## 2. Apply the input-output history framework
-
-For each context r, fit a linear policy on [y_(t-r+1),...,y_t,u_(t-r+1),...,u_(t-1)] using the actual past actions. Hold the prediction horizon H=16 fixed and vary execution ell in {1,2,4,8,16}. The same fitted policy is used for all ell at a given r.
-
-- Full observation: C=I. Memory changes the controller dynamics; the current state is already observed.
-- Partial observation: C=[0,1]. Plant A1 is observable with two noiseless observations and known inputs. Process noise prevents exact finite-history reconstruction.
-- Narrow data: noiseless expert demonstrations on span(e2), reproducing the information restriction.
-- Initial excitation: vary the initial x1. This adds information (rank typically 2 rather than 1), including in history windows, but does not cover arbitrary off-expert histories.
-- Persistent excitation: add process disturbances of sd=0.05 throughout demonstrations, labeling visited states with K1. This changes coverage and is an extension of the narrow-data example. Future chunk targets include subsequent noisy expert responses; increasing execution length therefore also delays disturbance feedback.
-
-Five independently trained datasets use seeds 618--622. Each gets one independent evaluation noise sequence (sd=0.01), paired across every observation/data/context/execution setting. All policies receive the same seven-step noiseless expert warm-up. This is an evaluation convention, not a deployable initialization method. Deployment lasts 200 steps after warm-up.
-
-`framework_sweep.csv` reports every seed, feature rank/dimension, training MSE, full-state tracking RMS against a separately simulated expert receiving the **same disturbances**, action RMS against K1 at the learner's state, late state RMS, and peak |x1|. Values are not clipped. The heatmaps show median tracking RMS; an asterisk marks any seed with an unstable closed loop. Color limits are display limits only. Five seeds are descriptive evidence, not a significance claim.
-
-## 3. Distinguish finite rollout performance from stability
-
-`aligned.boundary_maps` constructs the exact boundary-to-boundary matrix for each (r, ell). Actions within each chunk remain frozen at their boundary predictions. The CSV reports both its spectral radius and the per-step equivalent radius^(1/ell). Compare the latter across execution lengths.
-
-For stable policies, a discrete Lyapunov equation gives stationary state RMS under iid noise, averaged across all chunk phases. It is left undefined for unstable policies. This is state regulation, not stationary expert tracking. Finite late-window RMS is not called a noise floor: a radius near one can take thousands of steps to settle. For example, the former mu=0.2, narrow r=6, ell=1 result has radius about 0.9996 and stationary state RMS about 0.93, far above its 200-step estimate. r=8 is closer to the zero-controller baseline. Small policy weight norm alone does not establish equivalent control behavior.
-
-`baselines.csv` evaluates the full-state expert, zero control, and an analytic memory witness with the same warm-up, initial state, and evaluation disturbances. The analytic witness uses model knowledge and is not learned from demonstrations.
-
-## Analytic one-step-memory witness
-
-Let a1=1+mu, a2=-(1-mu/4), c=3mu/2. Set
-
-    k0 = -(a1+a2)/2
-    k1 = -((a1-a2)/4)^2
-    u1_t = -c*x2_t + k0*x1_t + k1*x1_(t-1)
-    u2_t = 0
-
-This matches both experts on the demonstrated subspace. The x1 characteristic polynomial is lambda^2-(ai+k0)*lambda-k1; its roots are +(a1-a2)/4 on plant 1 and -(a1-a2)/4 on plant 2, each repeated. Include the remaining x2 eigenvalue 1-2mu when reporting full-system stability. At mu=1/8, the x1 radius is 0.5234375 and the **full radius is 0.75** on both plants.
-
-This witnesses representability, not identification from narrow data. Ordinary least squares and a model-informed stability objective need not choose the same off-subspace behavior. It does not prove a monotone context/execution tradeoff.
-
-## Additional exploratory scripts
-
-`controllers.py` retains the scalar and 2D non-simple-controller comparisons. Its metrics are explicitly **clipped** expectations E[min(1,|x1|)], not full-state tracking. The memory witness is now analytic and reports the full radius. Its Monte Carlo BGR scaling fit is exploratory: rare long-survival paths are poorly sampled at small epsilon; it is not an exponent estimate with established precision.
-
-`train.py` compares narrow BC, noisy single-plant/pooled demonstrations, and a model-informed spectral penalty. Its robust objective knows both candidate plants, and its rollout summaries clip |x1| at one. These results establish numerical feasibility and selection behavior, not a guarantee for unknown plants or all linear-learning procedures. The main aligned experiment remains the fixed-plant context/chunk study requested for this project.
-
-## Test the context-versus-execution hypothesis
-
-The main run now performs tolerance analysis automatically. Set the tracking RMS limit before running:
+The active experiment learns linear history controllers on the paper's narrow
+hard-example demonstrations, then tests recovery from small unseen departures.
+The hypothesis is that longer history improves control and can reduce the
+execution length needed for stable, accurate behavior. Results may support or
+reject this hypothesis; no fitting objective enforces the desired trend.
 
 ```sh
-python3 pitfalls/pitfalls.py --tracking-tolerance 0.05
+python3 pitfalls/chunk_sweep.py
+python3 -m unittest discover -s tests -p 'test_pitfalls*.py' -v
 ```
 
-The default 0.05 is an illustrative absolute error threshold, not a theoretically prescribed tolerance. A setting qualifies only if **every evaluated seed** has tracking RMS <= the threshold and boundary spectral radius < 1. This avoids accepting an unstable setting with small finite-horizon error, or hiding a failed seed behind a median. No confidence or population guarantee is implied.
-
-For each observation/data/context combination, select the shortest qualifying **tested** execution length. Missing feasible settings are recorded as `None` in the report/plot (blank in the CSV), never as zero. Generated files:
-
-- `shortest_execution.csv`: selected length, status, and worst seed tracking error.
-- `tolerance_candidates.csv`: all candidates with pass/fail reasons, median/worst tracking errors, and worst boundary radius.
-- `shortest_execution.png`: context-versus-selected-length panels; crosses in the None row indicate no tested feasible setting.
-- `tolerance_report.md` and `tolerance_config.json`: readable table and exact criterion/threshold/grid/seeds.
-
-Analyze an existing sweep without retraining (an exploratory threshold comparison):
+Default sweep: history r=1,2,4,8,16; predicted chunk H=1,2,4,8,16; executed prefix
+ell=1,2,4,8,16 with ell<=H; five independent training seeds. ell=1 means feedback
+every step, without executing an open-loop multi-action chunk. Observations
+are full state C=I; r includes the current observation and r-1 past actions.
 
 ```sh
-python3 pitfalls/tolerance.py --input pitfalls/results/aligned/framework_sweep.csv --tracking-tolerance 0.05
+python3 pitfalls/chunk_sweep.py --contexts 1 2 4 8 16 --steps 200 --long-steps 1000
 ```
 
-Use `--output /path/to/analysis` to keep multiple threshold analyses separately. Incomplete paired seed grids and duplicate records are rejected. A falling required execution length supports the proposed relationship within that setting; an already constant length of one leaves no room for reduction. Choose a scientifically meaningful threshold independently of the desired outcome, and confirm selected settings with fresh seeds before claiming generalization.
+Use `--output PATH` to retain a separate run. Other options include `--horizons`,
+`--executions`, `--seeds`, `--test-pairs`, `--test-seed`, and `--loss-tolerance`.
+The default MSE threshold 1e-5 is illustrative, not prescribed by the paper.
+Fix a meaningful threshold before a confirmatory run. Testing a trend on this
+set does not establish generalization; use fresh seeds for confirmation.
+
+## Evaluation
+
+Training uses 32 noiseless expert trajectories on x1=0. The held-out test set
+contains 20 pairs of initial states: x2 uniform on [-1,1], paired with x1=0 and
+x1 of random sign and magnitude 0.0005–0.0015. The same set is shared across all
+controllers and generated independently of training. No continuing noise is
+added. Expert history is supplied on x1=0, then the perturbation is applied at
+deployment so warm-up cannot erase it. This is an explicit initialization
+convention, not a learned initialization strategy.
+
+Main test loss averages squared full-state tracking error against K1 over 200
+post-action states and then the 20 perturbed states. Support-set loss and worst
+perturbed loss are saved separately. A 1000-step canonical rollout is a separate
+long-term diagnostic. Exact spectral stability is required when declaring a
+setting successful: low finite-horizon error alone is insufficient.
+
+Training target times are matched across both r and H. Static K1, K2, minimax,
+minimum-norm, zero-control and model-informed analytic-memory baselines use the same test set.
+The memory baseline shows representability, not learning from the demonstrations.
+
+## Outputs: `pitfalls/results/context_chunking/`
+
+- `context_hypothesis.png`: loss versus history, exact stability, and shortest passing execution. A selected length of 1 means no open-loop chunking is needed under the stated criterion; None means no tested setting passes.
+- `combined_test_loss.png`: history curves on one execution/loss plot at the largest H.
+- `test_loss.png`: separate panels by history, including all prediction horizons.
+- `sample_rollouts.png`: canonical [0.001,1] trajectories and baseline comparisons.
+- `metrics.csv`: per-trained-controller test means, worst loss, exact stability, rank and long-rollout diagnostic.
+- `test_rollouts.csv`, `test_states.csv`: individual losses and exact held-out initial states.
+- `execution_candidates.csv`, `context_summary.csv`: pass criteria and shortest feasible execution, requiring all training seeds to pass at the largest H.
+- `baselines.csv`, `sample_trajectories.csv`, `config.json`: references and reproduction details.
+
+Shading is the min–max range of seed means, not a confidence interval. All losses
+are raw; plot floors are display-only. The enormous wrong-K2 loss and exact-zero
+K1 loss remain in CSVs and sample trajectories, but are omitted from comparison
+loss plots for readability. Each configuration trains on narrow data; history
+can change its dynamics without resolving all information missing in that data.
+
+## Active code
+
+- `pitfalls.py`: paper matrices, static gains, narrow demonstrations, CSV helper; also forwards to the sweep when run directly.
+- `chunk_sweep.py`: configurable experiment orchestration.
+- `evaluation.py`: independent test states, paired rollouts, tracking loss and hypothesis criterion.
+- `stability.py`: exact augmented-history maps, spectral stability and analytic memory witness.
+- `plotting.py`: figures for the one research question.
+- `../model.py`: shared LinearSystem, HistoryPolicy, ridge fitting and rollout implementation.
+- `CHUNK_EXECUTION_THEORY.md`: assumptions and mathematical limits.
+
+Previous broad noisy/partial-observation sweeps, scalar examples, optimization
+studies, duplicate analysis scripts and old outputs were moved to
+`../archive/pitfalls-before-focus/`. This is a reference snapshot with an archival
+README; it is not part of the active workflow.

@@ -4,7 +4,7 @@ import unittest
 import numpy as np
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'pitfalls'))
 from pitfalls import challenging_pair
-from aligned import boundary_maps, stability, memory_policy, evaluate
+from stability import boundary_maps, stability, memory_policy
 from model import LinearSystem, HistoryPolicy, exact_policy, rollout
 
 class PitfallsTests(unittest.TestCase):
@@ -42,8 +42,12 @@ class PitfallsTests(unittest.TestCase):
             expected=np.array([np.linalg.matrix_power(A+K,t)@np.array([.2,1.]) for t in range(31)])
             np.testing.assert_allclose(tr['x'],expected,atol=1e-12)
         w=.01*np.random.default_rng(0).normal(size=(50,2))
-        metrics=evaluate(s,K,HistoryPolicy(K,1,1,2),1,50,7,w)
-        self.assertEqual(metrics['tracking_rms'],0)
+        from evaluation import deploy, tracking_loss
+        oracle = HistoryPolicy(K,1,1,2)
+        xs = deploy(s,K,oracle,1,[.001,1.],50,7)
+        expected = np.array([np.linalg.matrix_power(A+K,t) @ [.001,1.] for t in range(51)])
+        np.testing.assert_allclose(xs,expected,atol=1e-12)
+        self.assertLess(tracking_loss(xs,expected),1e-28)
 
     def test_memory_full_radius_and_stationary_covariance(self):
         A1,A2,K1,_=challenging_pair(.125)
