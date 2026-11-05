@@ -1,126 +1,134 @@
 \documentclass{l4dc2026}
-\usepackage{times}
-\usepackage{booktabs}
+\usepackage[T1]{fontenc}
+\usepackage{times,booktabs}
 \jmlrvolume{}
 \jmlrproceedings{ESE 6180}{ESE 6180 Midterm Report}
 \jmlrworkshop{Midterm Report}
-\title[History and Action Chunking]{History and Action Chunking in Partially Observed Linear Imitation Learning}
-\author{\Name{Nihar Ballamudi}\\\addr ESE 6180 --- Midterm Report}
-\newcommand{\R}{\mathbb R}
-\newcommand{\E}{\mathbb E}
-\newcommand{\norm}[1]{\left\|#1\right\|}
+\title[History and Action Chunking]{History and Action Chunking in Stable Linear Imitation Learning}
+\author{\Name{Nihar Ballamudi}\and\Name{Kyle Horton}\\
+\addr University of Pennsylvania}
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\newcommand{\spr}{\operatorname{spr}}
 \begin{document}
 \maketitle
 \begin{abstract}
-Action chunking changes how frequently a learned controller reacts to observations. This project studies its interaction with history length in partially observed linear imitation learning. A full-state expert supplies demonstrations; a linear learner predicts action chunks from observation--action histories. Matched training windows isolate execution from first-action fitting. Across 20 dimension--sensor configurations, one-step execution has the lowest mean tail tracking error in 19 cases when context equals the observability index. Shorter histories exhibit rollout failures despite nearly zero validation loss. An augmented-state analysis provides a route to explaining these outcomes through stability. Results are preliminary; asymptotic validation and nonlinear extensions remain future work.
+We study when history can replace action chunking in imitation of a stabilizing linear expert. We characterize exact action recovery from observation--action histories, establish noiseless equivalence of execution horizons under sufficient context, and derive an incremental stability bound for chunked policies. History resolves missing information; commitment can instead suppress unstable feedback from an imperfect predictor. Supporting simulations illustrate both mechanisms and the separate role of training coverage. The remaining objective is to connect context length to learned-policy error and the shortest reliable execution horizon.
 \end{abstract}
 \begin{keywords}
-Imitation learning, partial observability, action chunking, closed-loop stability.
+Imitation learning, observability, action chunking, incremental stability.
 \end{keywords}
 
-\section{Motivation and problem formulation}
-A policy trained on expert trajectories changes its own future inputs when deployed: actions affect the plant, which generates the next observation history. This feedback creates a distinction between supervised prediction accuracy and control performance. Distribution shift in imitation learning is well established \citep{ross2011}, and recent theory links the benefits of action chunking and exploratory demonstrations to control-theoretic stability \citep{zhang2025}. Here the question is narrower: \emph{how do history length and chunk execution length jointly affect a learned controller under partial observability?}
+\section{Question and mathematical setting}
+Restricted demonstrations can leave corrective behavior unidentified even when the plant and expert are stable \citep{simchowitz2025}. Action chunking can exploit stable open-loop dynamics to limit error amplification \citep{zhang2025}. We ask when additional history makes frequent replanning reliable, reducing the need for commitment.
 
-Consider the discrete-time plant and full-state expert
-\begin{equation}
- x_{t+1}=Ax_t+Bu_t+w_t,\qquad y_t=Cx_t,\qquad u_t^*=K^*x_t,
- \label{eq:plant}
-\end{equation}
-where $x_t\in\R^n$, $y_t\in\R^p$, and $u_t\in\R^m$. The learner sees
-\begin{equation}
- z_t^{(r)}=\operatorname{col}(y_{t-r+1},\ldots,y_t,u_{t-r+1},\ldots,u_{t-1})
- \in\R^{d_r},\qquad d_r=rp+(r-1)m.
-\end{equation}
-Context $r$ counts observations, prediction horizon $H$ counts predicted actions, and execution length $\ell\le H$ counts actions applied before replanning. At boundary $b$, the learner predicts $\widehat Wz_b^{(r)}$ and executes $u_{b+j}=\widehat W_jz_b^{(r)}$ for $0\le j<\ell$. Measurements continue during execution but do not revise the committed chunk. Thus the feedback loop is history $\to$ predicted actions $\to$ plant $\to$ new history, with plan updates every $\ell$ steps.
+Consider $x_{t+1}=Ax_t+Bu_t+w_t$, $y_t=Cx_t$, and expert $u_t^*=Kx_t$; write $F=A+BK$. Schur stability of $A$ concerns decay under common inputs, whereas stability of $F$ concerns expert feedback. The expert is Markovian in $x$; the learner observes
+\[
+z_t^{(r)}=\operatorname{col}(y_{t-r+1:t},u_{t-r+1:t-1}).
+\]
+Context $r$ counts observations, prediction horizon $H$ counts predicted actions, and execution length $\ell\le H$ counts committed actions. At $b=j\ell$, the learner predicts a chunk and applies $u_{b+k}=\pi_k(z_b)$ for $0\le k<\ell$. New measurements do not revise that chunk. Reconstruction statements assume $w=0$, known applied inputs, and a valid initial history. The following results are elementary control derivations for this project, not novelty claims about observability.
 
-The learned object is $\widehat W\in\R^{Hm\times d_r}$, not $K^*$: its objective is to reproduce expert actions using different information. Neither the plant matrices nor the expert gain are supplied to regression. The learning-for-control issue is whether statistical fitting produces reliable closed-loop behavior. The present scope is a structured linear family.
+\section{History and exact imitation}
+Let $\mathcal O_r=\operatorname{col}(C,CA,\ldots,CA^{r-1})$ and $h=\min\{r:\operatorname{rank}\mathcal O_r=n\}$ for an observable pair. With $s=t-r+1$, unrolling gives $Y=\mathcal O_rx_s+\mathcal T_rU$ and $x_t=A^{r-1}x_s+\mathcal R_rU$. Here $Y,U$ stack the observed outputs and applied inputs, $\mathcal R_r=[A^{r-2}B\ \cdots\ B]$, and $(\mathcal T_r)_{ij}=CA^{i-1-j}B$ for $j<i$, zero otherwise (zero-based blocks).
+
+\textbf{Lemma 1 (reconstruction).} If $r\ge h$, then $x_t=R_rz_t$, where
+\begin{equation}
+R_r=[A^{r-1}\mathcal O_r^\dagger\quad\mathcal R_r-A^{r-1}\mathcal O_r^\dagger\mathcal T_r].
+\label{eq:reconstruction}
+\end{equation}
+\emph{Proof.} Recover $x_s=\mathcal O_r^\dagger(Y-\mathcal T_rU)$ and propagate to $t$. $\square$ The input correction is essential; the identity holds under arbitrary learner actions.
+
+\textbf{Proposition 1 (action recovery).} A policy satisfying $\pi_r(z_t)=Kx_t$ for every noiseless history exists if and only if
+\begin{equation}\ker\mathcal O_r\subseteq\ker(KA^{r-1}).\label{eq:kernel}\end{equation}
+\emph{Proof.} Under identical inputs, indistinguishable histories have initial-state difference $d\in\ker\mathcal O_r$ and current-action difference $KA^{r-1}d$. Necessity follows. Conversely, kernel inclusion makes $\mathcal O_rx_s\mapsto KA^{r-1}x_s$ a well-defined linear map; add the known input contribution. $\square$
+
+Full observability is sufficient but not necessary: only action-relevant information must be recovered. If \eqref{eq:kernel} fails, indistinguishable histories require actions separated by some $\Delta\ne0$. Every deterministic predictor errs by at least $\norm{\Delta}/2$ on one history. The first action of any chunk obeys the same lower bound. Commitment cannot create missing information. In fact, exact prediction of an entire $\ell$-action expert chunk requires
+\[
+\ker\mathcal O_r\subseteq\bigcap_{k=0}^{\ell-1}\ker(KF^kA^{r-1}),
+\]
+since its $k$th action is $KF^kx_t$. Longer prediction can demand more information than the current action alone.
+
+\textbf{Proposition 2 (execution equivalence).} For $r\ge h$, the policy $\pi_k^*(z)=KF^kR_rz$ reproduces the noiseless expert trajectory for every $1\le\ell\le H$. Consequently, if $F$ is Schur stable, exact single-step imitation is stable.
+
+\emph{Proof.} Reconstruction gives the boundary state $x_b$. If $x_{b+k}=F^kx_b$, applying $KF^kx_b$ gives $x_{b+k+1}=F^{k+1}x_b$. Induct within each chunk and repeat at the next boundary. $\square$
+
+Thus sufficient context removes a representational need for chunking, but no horizon is strictly preferable in the exact noiseless case. Learning error and disturbances create the tradeoff. Under shared disturbances, single-step learner--expert tracking error satisfies $d_{t+1}=Fd_t+Be_t$, where $e_t=\hat\pi(z_t)-Kx_t$. If $\norm{F^k}\le M_F\beta^k$, $\beta<1$, and deployment error is bounded by $\varepsilon$, then $\limsup_t\norm{d_t}\le M_F\norm{B}\varepsilon/(1-\beta)$. More explicitly, unrolling gives
+\[
+\norm{d_t}\le M_F\beta^t\norm{d_0}
++M_F\norm{B}\sum_{i=0}^{t-1}\beta^{t-1-i}\norm{e_i}.
+\]
+Small training loss does not establish the required deployment bound. If only observations are noisy, reconstruction error is $A^{r-1}\mathcal O_r^\dagger V_t$, where $V_t$ stacks measurement errors. Full rank therefore does not ensure good conditioning or robustness.
+
+\paragraph{Representation versus identification.}
+Noiseless expert histories have the form $z_t=S_rx_{t-r+1}$, with $S_r$ stacking $CF^j$ for $0\le j<r$ and $KF^j$ for $0\le j<r-1$. Their feature rank is at most $n$. Any $\Delta W$ satisfying $\Delta WS_r=0$ is invisible on demonstrations but may change behavior on disturbed histories. More context can therefore enlarge the policy class without identifying its off-demonstration behavior. Process noise also invalidates exact deterministic reconstruction.
 
 \clearpage
-\section{Learning protocol and theoretical foundation}
-For each training window, let $a_i^*=\operatorname{col}(u_i^*,\ldots,u_{i+H-1}^*)$. The learner solves the parametric ridge problem
+\section{A stability guarantee for action chunks}
+Set $w=0$. Assume that all admissible trajectory pairs satisfy
 \begin{equation}
- \widehat W=\arg\min_W\sum_i\norm{Wz_i-a_i^*}^2+\lambda\norm{W}_F^2.
- \label{eq:ridge}
+\norm{\delta y_{t+k}}\le C_0\rho^k\norm{\delta z_t}_{\mathcal Z}
++C_0\sum_{i=0}^{k-1}\rho^{k-1-i}\norm{\delta u_{t+i}},
+\label{eq:ios}
 \end{equation}
-A genuine one-step-trained, one-step-executed policy is fitted separately using the same window indices and regularization. The chunk learner uses $H=16$ and is evaluated at several $\ell$. Overlapping windows are not treated as independent experimental replicates.
+where $C_0\ge1$, $0<\rho<1$, and $\norm{z}_{\mathcal Z}$ sums block Euclidean norms. For observable Schur-stable plants and $r\ge h$, this follows from Lemma 1 and $\norm{A^k}\le M_A\rho^k$, with $C_0$ enlarged to bound the output and input maps. Observability alone does not imply decay.
 
-\paragraph{Matched first actions.}
-The objective in \eqref{eq:ridge} separates across output rows. With identical features, first-action targets, and $\lambda>0$, its first block is exactly the separately fitted one-step map. This follows by minimizing each block's independent strictly convex objective. Consequently, executing a chunk policy with $\ell=1$ reproduces the baseline. The maximum observed first-action weight discrepancy is $1.33\times10^{-15}$. This equivalence depends on independent linear regression; it need not hold for neural policies with shared parameters.
-
-\paragraph{Representation and identification.}
-Write $F=A+BK^*$. Let $\mathcal O_r$ stack the matrices $CA^j$ for $0\le j<r$. The observability index is $h=\min\{r:\operatorname{rank}(\mathcal O_r)=n\}$. For noiseless dynamics, stacking the outputs and known inputs gives
+\textbf{Proposition 3 (history-based chunk stability).} Use the same policy and schedule on both trajectories, with $u_{j\ell+k}=\pi_k(z_{j\ell})+v_{j\ell+k}$ and $\operatorname{Lip}_{\mathcal Z}(\pi_k)\le D\rho^k$. For $0<\alpha<1$, define
 \[
- Y=\mathcal O_rx_{t-r+1}+\mathcal T_rU,\qquad
- x_t=A^{r-1}x_{t-r+1}+\mathcal R_rU.
+\bar\rho=\rho^{1-\alpha},\quad C_r=2rC_0\rho^{-(r-1)},\quad
+\bar C=C_0\left(1+\frac{D}{e\alpha\rho\log(1/\rho)}\right).
 \]
-If $r\ge h$, eliminating the earlier state yields $x_t=M_rz_t$, with
-\[
- M_r=[A^{r-1}\mathcal O_r^\dagger\quad
- \mathcal R_r-A^{r-1}\mathcal O_r^\dagger\mathcal T_r],\qquad
- W_r^*=\operatorname{col}(K^*,K^*F,\ldots,K^*F^{H-1})M_r.
-\]
-Starting from a consistent noiseless history, $W_r^*$ reproduces the expert for every execution length: induction gives $x_{b+j}=F^jx_b$. Thus observability alone does not make short execution strictly better. Process noise breaks exact reconstruction, and identifying $W_r^*$ from demonstrations is a separate issue.
-
-Indeed, expert histories satisfy $z_t=S_rx_{t-r+1}$, where $S_r$ stacks $CF^j$ for $0\le j<r$ and $K^*F^j$ for $0\le j<r-1$. Their feature rank is at most $n$. Any perturbation $\Delta W$ satisfying $\Delta WS_r=0$ is invisible on these histories, yet can change behavior off their span. Ridge selects a solution but supplies no additional coverage. Moreover, past expert actions can reveal information, so $h$ is not necessarily the minimum history required to imitate the expert on its own trajectories.
-
-\paragraph{A boundary map for stability.}
-Augment the plant with stored past observations and actions into $s_t$. Buffer shifts give matrices $D,E,J,P$ such that $s_{t+1}=Ds_t+Eu_t+Jw_t$ and $z_t=Ps_t$. Holding the boundary feature fixed during execution yields
+If $\ell\ge\max(1,r-1)$ and $C_r(1+D\ell/\rho)\rho^{\alpha\ell}\le1$, then
 \begin{equation}
- s_{b+\ell}=\mathcal M_{r,\ell}s_b+\mathcal N_{r,\ell}\omega_b,\qquad
- \mathcal M_{r,\ell}=D^\ell+\sum_{j=0}^{\ell-1}D^{\ell-1-j}E\widehat W_jP,
- \label{eq:boundary}
+\norm{\delta y_t}\le\bar C\bar\rho^t\norm{\delta z_0}_{\mathcal Z}
++\bar CC_r\sum_{i=0}^{t-1}\bar\rho^{t-1-i}\norm{\delta v_i}.
+\label{eq:chunkbound}
 \end{equation}
-where $\omega_b$ stacks the chunk's disturbances and $\mathcal N_{r,\ell}=[D^{\ell-1}J\ \cdots\ J]$. Iterating the one-step buffer update proves this identity. For arbitrary augmented initial conditions, exponential stability is equivalent to $\rho(\mathcal M_{r,\ell})<1$, since its powers govern boundary evolution. This is a standard linear stability criterion specialized to the learned controller; eigenvalue computations on the fitted policies are not yet completed.
+\emph{Proof.} Put $Z_j=\norm{\delta z_{j\ell}}_{\mathcal Z}$ and $V_i=\norm{\delta v_i}$. The policy gives $\norm{\delta u_{j\ell+k}}\le D\rho^kZ_j+V_{j\ell+k}$. Substituting in \eqref{eq:ios} yields, for $0\le k\le\ell$,
+\[
+\norm{\delta y_{j\ell+k}}\le C_0(1+Dk/\rho)\rho^kZ_j
++C_0\sum_{i=0}^{k-1}\rho^{k-1-i}V_{j\ell+i}.
+\]
+Since $\ell\ge r-1$, all blocks of the next history lie within the chunk, including its initial observation when equality holds. Summing their bounds gives
+\[
+Z_{j+1}\le C_r(1+D\ell/\rho)\rho^\ell Z_j
++C_r\sum_{i=0}^{\ell-1}\rho^{\ell-1-i}V_{j\ell+i}.
+\]
+The first coefficient is at most $\bar\rho^\ell$. Iterate, use $\rho\le\bar\rho$, and apply $k\rho^{\alpha k}\le1/[e\alpha\log(1/\rho)]$ to the within-chunk bound to obtain \eqref{eq:chunkbound}. $\square$
+
+Sufficiently long chunks satisfy the condition when $H$ permits them. However, decreasing chunk sensitivity is an assumption, and the bound becomes more conservative as $r$ grows. It does not by itself prove that context permits shorter execution.
+
+\paragraph{Exact linear test and example.}
+Augment the state with observation/action buffers: $s_{t+1}=\mathsf As_t+\mathsf Bu_t+\mathsf Jw_t$, $z_t=\mathsf Ps_t$. A fitted linear chunk policy has boundary map
+\begin{equation}
+M_{r,\ell}=\mathsf A^\ell+\sum_{k=0}^{\ell-1}\mathsf A^{\ell-1-k}\mathsf B\widehat W_k\mathsf P.
+\label{eq:lift}
+\end{equation}
+Unrolling gives the map. The augmented system is exponentially stable exactly when $\spr(M_{r,\ell})<1$. For $x_+=x/2+u$ and expert $K=0$, the imperfect predictor $\pi_k(x)=3\cdot2^{-k}x/4$ gives $M_\ell=2^{-\ell}(1+3\ell/2)$. At $\ell=1,2,3$, the multipliers are $1.25,1,0.6875$. Three-step commitment stabilizes this predictor family; the exact expert still needs no chunking.
 
 \clearpage
-\section{Implementation and preliminary results}
-The code implements reconstruction, matched ridge fits, batched rollouts, and reproducible sweeps. The plant family uses a cyclic permutation $P_n$, a seeded unit vector $b$, and
-\[
- A=0.995P_n,\qquad B=b,\qquad K^*=-0.05b^\top P_n.
-\]
-Both plant and expert are stable: $F=(0.995I-0.05bb^\top)P_n$ satisfies $\norm{F}_2\le0.995$. Actions are scalar. Sensors select coordinates $0,h,2h,\ldots<n$, giving index $h$; $A,B,K^*$ stay fixed within each dimension.
+\section{Supporting evidence and remaining objective}
+The main simulations use stable $A=0.995P_n$, $B=b$, $K=-0.05b^\top P_n$, where $P_n$ is a cyclic permutation and $b$ a unit vector. Ridge fits use 32 noiseless demonstrations, 24 matched windows each, penalty $10^{-6}$, and $H=16$. Three seeds each supply eight paired episodes with shared initial states and process noise of coordinate standard deviation $0.02$. After a common $n$-step expert warm-up, tail error averages $\norm{x_t-x_t^*}^2/n$ over the last 200 of 600 steps. Output-separable regression makes the first-action fit identical across prediction horizons, isolating the effect of execution.
 
-The run covers $n\in\{2,3,4,5,10,50,100\}$ and feasible distinct $h\in\{2,4,8,n\}$ (20 configurations), using distinct contexts in $\{1,\max(1,h-1),h,h+1\}$. Each of three seeds supplies 32 noiseless training trajectories, 24 matched windows per trajectory, and eight validation trajectories, initialized from standard normal states. Settings are $\lambda=10^{-6}$, $H=16$, and $\ell\in\{1,2,4,8,16\}$.
+\begin{center}\small
+\begin{tabular}{ccrr}\toprule
+Context $r$ & Execution $\ell$ & Mean tail MSE & Max. per-step rate\\\midrule
+3&1&$\infty$&1.3215\\
+3&2&$2.80\times10^{-4}$&0.9923\\
+4&1&$7.64\times10^{-6}$&0.9923\\
+4&16&$5.55\times10^{-5}$&0.9923\\\bottomrule
+\end{tabular}
+\end{center}
+For $n=10,h=4$, the table reports rates $\spr(M_{r,\ell})^{1/\ell}$. At $r=3$, validation MSE is $4.62\times10^{-14}$ despite failure in all 24 single-step rollouts. Two-step commitment stabilizes the fit; context four enables single-step execution with $37\times$ lower tracking error. Across 20 dimension/sensor configurations, single-step execution is best in mean tail error in 19 cases at $r=h$. These observations illustrate the mechanisms, not Proposition 3's policy-class assumptions.
 
-Evaluation uses eight independent trajectories per seed with exact observations and Gaussian disturbances of covariance $Q=0.02^2I$. Learner and expert share initial states and disturbances. After a common $n$-step expert warmup, 600 steps are scored. Tail error averages the last 200:
-\[
- \widehat J_{\mathrm{tail}}=\frac{1}{3\cdot8\cdot200\cdot n}
- \sum_{s=1}^{3}\sum_{e=1}^{8}\sum_{t=401}^{600}
- \norm{x_t^{(s,e)}-x_t^{*,(s,e)}}^2.
-\]
-Time is reset after warmup. Nonfinite states/actions or norms exceeding $10^6$ trigger failure, retained as infinite subsequent error.
+We also study the challenging pair of \citet{simchowitz2025}. No narrow-data setting meets the criterion of stability and tracking RMS at most $0.05$ for all five seeds, whereas persistent excitation with full observations permits one-step execution at every tested context. History alone does not resolve identification. The remaining theoretical task is to bound deployment error or feedback gain as context grows, then characterize the shortest reliable execution. Observer-based baselines, noise-conditioning analysis, and joint learner--expert covariance calculations will connect that theory to further simulations. The current finite-horizon results concern fixed plants and few seeds; they do not establish a universal context--execution tradeoff. Stability alone is also insufficient: zero control already stabilizes a Schur-stable plant, so imitation must be assessed through expert tracking.
 
-\begin{figure}[ht]
-\centering
-\includegraphics[width=0.95\linewidth]{figures/history_execution.pdf}
-\caption{Tail MSE per coordinate. Left: context $r=h$; shading spans three seed means (not confidence intervals). Right: $n=10,h=4$; $r=3$ fails at $\ell=1,4,8$ in all 24 episodes per setting. Crosses denote failure, not finite error. Context $r=4$ stays finite.}
-\label{fig:results}
-\end{figure}
-
-At $r=h$, $\ell=1$ has the lowest mean tail error in 19 of 20 configurations. The exception ($n=h=100$) improves only $0.12\%$ at $\ell=2$, inconsistently across seeds. For $n=10,h=r=4$, increasing $\ell$ from 1 to 16 raises error by $7.3\times$. This supports the value of disturbance feedback, not a universal ordering of execution lengths.
-
-\clearpage
-\section{Interpretation, challenges, and remaining work}
-\paragraph{Accurate imitation can coexist with rollout failure.}
-The case $n=10,h=4,r=3$ has first-action validation MSE $4.62\times10^{-14}$, but one-step execution fails in every evaluation episode. Chunk execution is nonmonotone: $\ell=2$ has tail error $2.80\times10^{-4}$, $\ell=4,8$ fail, and $\ell=16$ has higher finite error $3.61\times10^{-3}$ (Figure~\ref{fig:results}b). This is consistent with the identification limitation: expert-history prediction does not constrain all directions encountered under disturbed deployment. The boundary matrix in \eqref{eq:boundary} offers a testable mechanism, but the observed failures alone are not a spectral proof of instability.
-
-
-
-Increasing context to $r=4$ and executing one step yields approximately 37 times lower error than the finite $r=3,\ell=2$ controller. Chunking can mitigate a poor short-history policy, but additional history is more effective here. Finite error also does not certify good control: at $n=50,h=8,r=7$, $\ell=16$ avoids the cutoff while its tail MSE is approximately $1.15\times10^3$.
-
-\paragraph{Limitations of the current evidence.}
-Six hundred steps do not establish asymptotic behavior. Three seeds assess data and rollout variation for fixed plants, not a broad population of dynamics. Changing $h$ changes the sensors, so comparisons at fixed $(n,h)$ best isolate context effects. Dimension also changes the control geometry; per-coordinate error does not make different systems equivalent. The disturbance-free training and noisy evaluation deliberately expose distribution shift. Exact measurements and expert warmup simplify the setup and do not address practical initialization or sensor noise. Finally, the expert is a chosen stable feedback law, not claimed to be optimal for a control cost.
-
-\paragraph{Next linear deliverable.}
-Construct \eqref{eq:boundary} from fitted weights and verify it against simulator steps. Compare its spectral radius with failures, reporting $\rho(\mathcal M)^{1/\ell}$ for a per-step asymptotic rate. For stable policies, the boundary covariance satisfies
-\[
- S=\mathcal M S\mathcal M^\top+\mathcal N(I_\ell\otimes Q)\mathcal N^\top.
-\]
-To predict the experiment's tracking MSE, augment this system with the expert and retain their cross-covariance under shared noise; learner covariance alone is insufficient. Phase-averaged predictions will then be compared with longer rollouts. Exact reconstruction-based policies and exploratory training data will help separate representation, identification, and feedback effects.
-
-\paragraph{A bounded nonlinear extension.}
-The final phase will study $x_+=f(x,u)+w$, $y=g(x)$ with a smooth expert. The same buffers define a nonlinear replanning map $\Psi_{r,\ell}$. At a consistent equilibrium, $\rho(D\Psi_{r,\ell})<1$ gives local exponential stability under differentiability assumptions \citep{bof2018}; it gives no global guarantee. A controlled first example is $f(x,u)=Ax+Bu+\alpha\tanh(Vx)$, with small $\alpha$ chosen so $\norm{A+BK^*}+\alpha\norm{V}<1$. Local history invertibility and conditioning must be checked rather than inherited from the linear index. This extension is planned, not yet evaluated. The intended contribution is an experimentally validated explanation of how history and execution interact, rather than a new general observability or stability theorem.
-
-\clearpage
-\bibliography{references}
+\begin{thebibliography}{2}
+\bibitem[Simchowitz et al.(2025)]{simchowitz2025}
+M. Simchowitz, D. Pfrommer, and A. Jadbabaie.
+The pitfalls of imitation learning when actions are continuous.
+\emph{arXiv:2503.09722}, 2025.
+\bibitem[Zhang et al.(2025)]{zhang2025}
+T. T. Zhang, D. Pfrommer, C. Pan, N. Matni, and M. Simchowitz.
+Action chunking and exploratory data collection yield exponential improvements in behavior cloning for continuous control.
+\emph{arXiv:2507.09061}, 2025.
+\end{thebibliography}
 \end{document}
