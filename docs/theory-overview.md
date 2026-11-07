@@ -21,7 +21,7 @@ non-identifiability, boundary stability, covariance formulas and local nonlinear
 extensions. The latter analyses are not all implemented or experimentally checked.
 
 Read `observability/results/latest/RESULTS.md` for numerical claims generated
-from the saved sweep, and `pitfalls/results/context_chunking/context_summary.csv`
+from the saved sweep, and `archive/pitfalls-before-cleanup/pitfalls/results/context_chunking/context_summary.csv`
 for the current hard-example criterion. These protocols use different losses
 and disturbances. A per-chunk spectral radius and its per-step equivalent
 radius^(1/ell) are different quantities; only the latter is directly comparable

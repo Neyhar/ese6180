@@ -1,0 +1,60 @@
+{
+  "dimensions": [
+    2
+  ],
+  "family": "original",
+  "seeds": [
+    1118,
+    1119,
+    1120,
+    1121,
+    1122
+  ],
+  "executions": [
+    1,
+    2,
+    4,
+    8,
+    16
+  ],
+  "horizon": 16,
+  "test_seed": 20261110,
+  "test_pairs": 40,
+  "steps": 200,
+  "long_steps": 1000,
+  "trajectories": 128,
+  "training_steps": 100,
+  "ridge": 1e-06,
+  "probe_scale": 0.05,
+  "schema_version": 2,
+  "common_history_lengths": [
+    2,
+    4,
+    8,
+    16
+  ],
+  "training_labels": {
+    "narrow": "Noiseless training data",
+    "recovery": "Noisy training data"
+  },
+  "training_noise": "Known Gaussian action perturbations with std .05; exact expert labels",
+  "test_noise": "None after the initial hidden-state departure",
+  "construction": "original Simchowitz 2D pair at mu=1/8",
+  "warmup": 16,
+  "actual_training_steps": 100,
+  "contexts_by_dimension": {
+    "2": [
+      1,
+      2,
+      3,
+      4,
+      8,
+      16
+    ]
+  },
+  "creation_utc": "2026-11-07T14:10:21.301274+00:00",
+  "loss": "time-mean squared full-state distance, equal-weight farthest and distributed cases",
+  "uncertainty": "range of independent training-seed means; not a confidence interval",
+  "python": "3.13.1",
+  "numpy": "2.5.3"
+}

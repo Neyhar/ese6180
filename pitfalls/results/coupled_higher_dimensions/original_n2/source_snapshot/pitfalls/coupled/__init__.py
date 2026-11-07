@@ -1,0 +1,1 @@
+"""Coupled higher-dimensional experiment."""

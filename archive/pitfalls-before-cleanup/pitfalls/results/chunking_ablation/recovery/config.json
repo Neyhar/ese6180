@@ -1,0 +1,44 @@
+{
+  "observation": "partial",
+  "training": "recovery",
+  "probe_scale": 0.05,
+  "contexts": [
+    2,
+    8,
+    16
+  ],
+  "horizons": [
+    1,
+    16
+  ],
+  "executions": [
+    1,
+    4,
+    8,
+    16
+  ],
+  "seeds": [
+    718,
+    719,
+    720
+  ],
+  "steps": 200,
+  "long_steps": 1000,
+  "test_pairs": 20,
+  "test_seed": 20261106,
+  "loss_tolerance": 1e-05,
+  "output": "/Users/nball/ESE618/pitfalls/results/chunking_ablation/recovery",
+  "mu": 0.125,
+  "warmup": 15,
+  "sensor_matrix": [
+    [
+      0.0,
+      1.0
+    ]
+  ],
+  "observability_index": 2,
+  "training_description": "known-action exploration with expert counterfactual chunk labels",
+  "test": "paired support/perturbed initial states; no continuing noise",
+  "loss": "mean squared full-state tracking error; exclude initial state",
+  "long_sample": "single canonical initial state [0.001,1]; diagnostic, not test-set mean"
+}

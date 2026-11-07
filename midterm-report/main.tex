@@ -1,168 +1,396 @@
+\PassOptionsToPackage{table}{xcolor}
 \documentclass{l4dc2026}
+\renewcommand{\sectionmark}[1]{\markright{\thesection.\ #1}} 
+% Packages
+% {
+\usepackage{amsmath}
+\usepackage{amssymb}
+% \usepackage{amsthm}
+\usepackage{mathrsfs}
+\usepackage{mathtools}
+\usepackage{url}
+% jmlr (loaded by L4DC) supplies caption and subfigure support.
+\usepackage{hyperref}
+\usepackage{hhline}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdftitle={Overleaf Example},
+    pdfpagemode=FullScreen,
+    }
+\usepackage{graphicx,wrapfig}
+\usepackage{float}
+% \usepackage{titling}
+\usepackage{fancyhdr}
+\usepackage{booktabs}
+\usepackage{tikz}
+\usetikzlibrary{matrix,arrows.meta}
+\usepackage{tikzsymbols}
+\usetikzlibrary{automata, positioning, arrows.meta, bending}
+\usepackage{tikz-cd}
+%}
+% Basic notation
+% {
+\newcommand{\lp}{\left(}
+\newcommand{\rp}{\right)}
+\newcommand{\lb}{\left[}
+\newcommand{\rb}{\right]}
+\newcommand{\la}{\langle}
+\newcommand{\ra}{\rangle}
+\newcommand{\lc}{\left\{}
+\newcommand{\rc}{\right\}}
+\newcommand{\lv}{\left|}
+\newcommand{\rv}{\right|}
+\newcommand{\f}[2]{\frac{#1}{#2}}
+\newcommand{\lm}{\limits}
+\newcommand{\cd}{\cdot}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\bmx}[1]{\begin{bmatrix} #1 \end{bmatrix}}
+\newcommand{\pmx}[1]{\begin{pmatrix} #1 \end{pmatrix}}
+\renewcommand{\d}{\text{d}}
+\renewcommand{\u}[1]{\text{ #1}}
+\renewcommand{\t}[1]{\text{#1}}
+\newcommand{\abs}[1]{\left| #1 \right|}
+\newcommand{\inv}{^{-1}}
+\newcommand{\magn}[1]{\abs{\abs{ #1 }}}
+% }
+% Formatting
+% {
+% Align has no equation number. Specifying no means that there is no auto align at the beginning.
+\newcommand{\eqsp}[1]{\begin{equation}\begin{split}& #1 \end{split}\end{equation}}
+\newcommand{\eqspa}[1]{\[\begin{aligned}\begin{split}& #1 \end{split}\end{aligned}\]}
+\newcommand{\eqspno}[1]{\begin{equation}\begin{split} #1 \end{split}\end{equation}}
+\newcommand{\eqspnoa}[1]{\[\begin{aligned}\begin{split} #1 \end{split}\end{aligned}\]}
+\newcommand{\eqspan}[2]{\begin{align}\tag{#1}\begin{split}& #2 \end{split}\end{align}}
+\newcommand{\eqspnoan}[2]{\begin{align}\tag{#1}\begin{split} #2 \end{split}\end{align}}
+\newcommand{\qq}{\\ =\  &}
+\newcommand{\qqs}{=\ &}
+\newcommand{\imp}{\\ \implies\ &}
+\newcommand{\eqq}{\\ \iff\ &}
+\newcommand{\qqle}{\\ \le\  &}
+\newcommand{\qql}{\\ <\  &}
+\newcommand{\qqg}{\\ >\  &}
+\newcommand{\qqge}{\\ \ge\  &}
+\newcommand{\qqsle}{\le\ &}
+\newcommand{\qqsge}{\ge\ &}
+\newcommand{\qqsg}{>\ &}
+\newcommand{\qqsl}{<\ &}
+\newcommand{\qqsto}{\to\ &}
+\newcommand{\qqto}{\\ \to\  &}
+\newcommand{\qqsmapsto}{\mapsto\ &}
+\newcommand{\qqmapsto}{\\ \mapsto\  &}
+% }
+% Control theory
+% {
+\newcommand{\ctrbs}{\mathscr{C}}
+\newcommand{\ctrb}{\mathcal{C}}
+\newcommand{\obsv}{\mathcal{O}}
+\newcommand{\Zge}{\Z_{\ge 0}}
+\newcommand{\Zg}{\Z_{> 0}}
+\newcommand{\Rge}{\R_{\ge 0}}
+\newcommand{\Rg}{\R_{> 0}}
+\newcommand{\X}{\mathcal{X}}
+\newcommand{\U}{\mathcal{U}}
+\renewcommand{\H}{\mathcal{H}}
+\newcommand{\B}{\mathcal{B}}
+\newcommand{\Toep}{\mathscr{T}}
+\newcommand{\mge}{\succeq}
+\newcommand{\mle}{\preceq}
+\newcommand{\mg}{\succ}
+\newcommand{\ml}{\prec}
+% }
+% Algebra
+% {
+\newcommand{\zmz}[1]{\Z/ #1 \Z}
+\newcommand{\normsub}{\trianglelefteq}
+\newcommand{\lcm}{\text{lcm}}
+\newcommand{\im}{\text{im }}
+% }
+% Linear algebra
+% {
+\newcommand{\End}[1]{\text{End}\lp #1 \rp}
+\newcommand{\Hom}[1]{\text{Hom}\lp #1 \rp}
+\newcommand{\ab}[1]{\la #1 \ra}
+\newcommand{\tr}[1]{\text{tr}\lp #1 \rp}
+\newcommand{\diag}[1]{\text{diag}\lp #1 \rp}
+% }
+% Electric Machines
+% {
+\newcommand{\ohm}{\ \Omega}
+\newcommand{\Nm}{\u{Nm}}
+\newcommand{\rps}{\u{rad/s}}
+\newcommand{\rpm}{\u{rpm}}
+\newcommand{\W}{\u{W}}
+\newcommand{\V}{\u{V}}
+\newcommand{\A}{\u{A}}
+\newcommand{\Wbt}{\u{Wb}\cd\text{turns}}
+\newcommand{\Wb}{\u{Wb}}
+\newcommand{\slip}{s\ell}
+\newcommand{\kW}{\u{kW}}
+\newcommand{\pu}{\u{pu}}
+\newcommand{\ph}[1]{\widetilde{#1}}
+\newcommand{\rad}{\u{rad}}
+% }
+% Topology
+% {
+\newcommand{\T}{\mathcal{T}}
+\newcommand{\I}{\mathcal{I}}
+\newcommand{\Bc}{\mathscr{B}}
+\newcommand{\ol}[1]{\overline{#1}}
+\newcommand{\diam}[1]{\text{diam}\lp #1\rp}
+%}
+% Probability
+% {
+\newcommand{\Var}[1]{\text{Var}(#1)}
+\newcommand{\Ber}[1]{\text{Bernoulli}\lp #1 \rp}
+\newcommand{\case}[1]{\begin{cases} #1 \end{cases}}
+\newcommand{\cif}{\quad & \text{if }}
+\newcommand{\celse}{\quad & \text{else}}
+\newcommand{\E}[1]{\underset{\tiny{#1}}{E}}
+\newcommand{\F}{\mathcal{F}}
+%}
+% Optimization
+% {
+\newcommand{\minp}[3]{\min\lm_{#1} \quad & #2\\ \text{s.t.} \quad & #3}
+\newcommand{\minpuc}[2]{\min\lm_{#1} \quad & #2}
+\newcommand{\maxp}[3]{\max\lm_{#1} \quad & #2\\ \text{s.t.} \quad & #3}
+\newcommand{\oo}{\\ & }
+% }
+% Differential Geometry
+%{
+\newcommand{\CP}{\mathbb{CP}}
+\newcommand{\RP}{\mathbb{RP}}
+\DeclareMathOperator{\id}{id}
+\newcommand{\dd}[1]{\f{\text{d}}{\text{d}#1}}
+%}
+\newtheorem{prop}{Proposition}
+\newtheorem{corollary2}{Corollary}
+
 \usepackage{iftex,booktabs}
-\ifPDFTeX
-  \usepackage{times}
-\else
-  \usepackage{fontspec}
-  \setmainfont{Times New Roman}
-\fi
+\ifPDFTeX\usepackage{times}\else\usepackage{fontspec}\setmainfont{Times New Roman}\fi
 \jmlrvolume{}
-\jmlrproceedings{ESE 6180}{ESE 6180 Report}
-\jmlrworkshop{ESE 6180 Report}
-\title[History and Action Chunking]{When History Can Replace Action Chunking}
-\author{\Name{Nihar Ballamudi}\and\Name{Kyle Horton}\\
-\addr University of Pennsylvania}
-\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
-\newcommand{\spr}{\operatorname{spr}}
+\jmlrproceedings{ESE 6180}{ESE 6180 Midterm Report}
+\jmlrworkshop{ESE 6180 Midterm Report}
+\title[Context for Less Chunking]{Context Reduces Need for Action Chunking with Non-Markovian Policies}
+% \author{\Name{Nihar Ballamudi}\and\Name{Kyle Horton}\\\addr University of Pennsylvania}
+\author{%
+ \Name{Nihar Ballamudi} \Email{niharb@sas.upenn.edu}\\
+ \addr Department of Mathematics, University of Pennsylvania
+ \AND
+ \Name{Kyle Horton} \Email{kyhorton@engineering.upenn.edu}\\
+ \addr Department of Electrical and Systems Engineering, University of Pennsylvania%
+}
+\newcommand{\norm}[1]{\lVert#1\rVert}
+\newcommand{\col}{\operatorname{col}}
+\setlength{\emergencystretch}{1em}
 \begin{document}
 \maketitle
 \begin{abstract}
-We study when history replaces action chunking in stable linear imitation learning. Observability permits exact noiseless imitation, but restricted data need not identify it. We combine a history-based chunk-stability bound, a conditional certificate for general learners, and an explicit ridge stability certificate. Recovery experiments support shorter execution with longer history without establishing universal monotonicity.
+In the context of imitation learning, the benefits of action chunking, the practice of recalculating inputs to a dynamical system only every $\ell$ time steps, have been analyzed and shown to be beneficial for Markovian experts and learned policies via a stability-theoretic framework. We extend this framework to the case of non-Markovian experts and policies to provide theoretical guarantees validating the empirical observations of \cite{zeng2026revisitingopenloopexecutionrobotics} that longer context lengths paired with shorter action chunk lengths lead to increased performance in robotic systems. We do this by modeling the dynamical system as a partially observable one and analyzing the problem from this viewpoint. We perform robotic simulations to validate our theoretical results and provide finer insights.
+% Simchowitz et al. (2025) construct controllers that match expert demonstrations yet fail outside the demonstrated states. We combine this example with history-based reconstruction and chunk-stability results. Observable history makes exact expert actions representable; sufficient execution lengths can stabilize sensitive feedback. Neither ensures learning the right correction from restricted data. Our four-condition experiment shows that corrective examples and history two favor single-action feedback, while action sequences can still help a learner trained without corrective examples.
 \end{abstract}
 
-\section{History supplies information; learning selects feedback}
-Consider $x_{t+1}=Ax_t+Bu_t$, $y_t=Cx_t$, and expert $u_t^*=Kx_t$, with $F=A+BK$. Restricted demonstrations can conceal recovery behavior even for stable plants and experts \citep{simchowitz2025}; commitment can suppress destabilizing learned feedback \citep{zhang2025}. We ask whether history reduces the need for that commitment.
+\section{Introduction and Related Works}
+Learning behaviors from an expert demonstration is known as imitation learning (IL), and has been in use from the early days of autonomous robotic systems to the modern day [\cite{ALVINN}, \cite{zhao2023learningfinegrainedbimanualmanipulation}]. The development of imitation learning techniques has been accompanied by many algorithmic interventions that are, according to innumerable experiments, critical for good performance of learned policies [\cite{zhang2025actionchunkingexploratorydata}]. One such intervention, and the focus of this project, is action chunking, where a learned policy is only queried every $\ell$ time steps, and uses a nominal dynamics model to generate the system inputs for the next $\ell$ time steps. \cite{zhang2025actionchunkingexploratorydata} posit that the success of action chunking is not due to partial observability, as it still has benefits in fully-observable control, but rather is due to stability theoretic reasons. They further provide theoretical guarantees on how successful action chunking is assuming a Markovian expert, policy, and stable systems. Complementing this, \citet{block2023provable} show how stabilizing feedback controllers enable imitation of non-Markovian demonstrations. Our contribution will be to extend the framework of \cite{zhang2025actionchunkingexploratorydata} to one without full state observation to justify when longer observation histories allow a learned policy to execute shorter action chunks.
 
-The learner observes $z_t^{(r)}=\operatorname{col}(y_{t-r+1:t},u_{t-r+1:t-1})$. Context $r$ counts observations, prediction horizon $H$ counts predicted actions, and execution $\ell\le H$ counts actions committed before replanning. Let $h=\min\{r:\operatorname{rank}\mathcal O_r=n\}$, where $\mathcal O_r=\operatorname{col}(C,CA,\ldots,CA^{r-1})$. Reconstruction assumes noiseless measurements, known applied inputs, known dynamics, and a valid initial history.
+\section{Problem Formulation}
+We consider a discrete-time dynamical system with output \eqspnoan{DS}{x_+ = f(x, u), \quad y = \psi(x)\label{DS}}
+where $x_t \in \R^n, y_t \in \R^p, u_t \in \R^m$. Given trajectories $\{(x^{*, (i)}_t, y^{*, (i)}_t, u^{*, (i)}_t)\}$ generated by an expert policy $u^*_t = \pi^*(x^*_t)$, a learned policy $\hat{\pi}$ can be trained to imitate the expert. We investigate the setting where the learned policy $\hat\pi$ is a function of the inputs and outputs over the past $h$ time steps. More precisely, deployment of the learned policy gives a trajectory $(\hat y_t, \hat u_t)$ where $\hat u_t = \hat\pi(\hat y_t, ..., \hat y_{t - h + 1}, \hat u_{t-1}, ..., \hat u_{t - h + 1})$. To shorten notation, we denote $z_t = (y_t, ..., y_{t - h + 1}, u_{t-1}, ..., u_{t - h + 1})$ with the respective stars and hats as necessary. 
 
-\noindent\textbf{Proposition 1 (action recovery and execution equivalence).}
-An exact current-action policy exists on all noiseless histories iff
-\[
-\ker\mathcal O_r\subseteq\ker(KA^{r-1}).
-\]
-For $r\ge h$, state reconstruction is $x_t=R_rz_t$, with
-\[
-R_r=[A^{r-1}\mathcal O_r^\dagger\quad
-\mathcal R_r-A^{r-1}\mathcal O_r^\dagger\mathcal T_r],
-\]
-where $Y=\mathcal O_rx_{t-r+1}+\mathcal T_rU$ and
-$x_t=A^{r-1}x_{t-r+1}+\mathcal R_rU$ define the usual input maps.
-The chunk policy $\pi_k^*(z)=KF^kR_rz$ then reproduces the expert for every execution length $1\le\ell\le H$.
+In this project, we seek to theoretically ground the empirical observation and intuitive idea that increasing the context length $h$ decreases the minimum required chunk length $\ell$ for an action-chunked policy to ensure stability of the closed-loop system.
 
-\emph{Proof.} Identical histories with identical inputs differ initially by $d\in\ker\mathcal O_r$; their current expert actions differ by $KA^{r-1}d$. Kernel inclusion is necessary and sufficient for action recovery. When $r\ge h$, left inversion and propagation give $R_r$. Applying $KF^kx_b$ produces $x_{b+k}=F^kx_b$ by induction. $\square$
+\section{Current Progress}
+Our progress so far consists of a proposition and corollary in the style of \cite{zhang2025actionchunkingexploratorydata}, simulations further corroborating the observations of \cite{block2023provable}, and a clear direction of where we need to go from here. We will now set up and state our main theoretical results so far.
 
-Thus observability removes a representational need for chunking, not a statistical learning difficulty. Noiseless expert histories have rank at most $n$; narrow histories can have rank one. More context can enlarge the set of unidentified coefficients. Under shared process disturbances, one-step tracking obeys $d_{t+1}=Fd_t+Be_t$, where $e_t=\hat\pi(z_t)-Kx_t$. If $\norm{F^k}\le M\beta^k$ and deployment error is at most $\varepsilon$, then
-$\limsup_t\norm{d_t}\le M\norm{B}\varepsilon/(1-\beta)$.
-Training MSE alone does not supply this deployment bound.
+Consider (\ref{DS}) and two trajectories of it $(x^1, u^1, y^1)$, $(x^2, u^2, y^2)$. Define $\delta y_t = y^2_t - y^1_t$ and similarly define $\delta x, \delta u, \delta z$. Assume then that the system satisfies \eqspnoan{E$\delta$IOS}{||\delta y_{t+k}|| \le C\rho^k||\delta z_t||_\mathcal{Z} + C\sum\lm_{j < k}\rho^{k - 1 - j}||\delta u_{t + j}||}
+for all $t, j$ for some $C \ge 1$, $\rho \in (0, 1)$. (We are aware that this perhaps isn't exactly the natural definition of incremental input-to-output stability, but for the sake of not coming up with weird names, we call this exponential incremental input-to-output stability in this work.) This condition is analogous to the E$\delta$ISS condition used extensively in \cite{zhang2025actionchunkingexploratorydata}, except now considers stability in the output relative to the context. This condition is approximately as weak as E$\delta$ISS, which is to say, relatively weak for many systems of interest, such as robotic arms. In particular, E$\delta$IOS reduces exactly to E$\delta$ISS when $\psi = \text{id}$ and $h = 1$. For ease of computations later, the norm of context vectors will always, even when not explicitly notated, be the sum of the Euclidean norms of the block entries, that is, \[||z_t||_\mathcal{Z} = ||y_t|| + \cdots + ||y_{t - h + 1}|| + ||u_{t-1}|| + \cdots + ||u_{t-  h + 1}||\]
+Note that $||z_t||_2 \le ||z_t||_\mathcal{Z}$, where $||\cd||_2$ denotes the Euclidean norm. Thus, any $D$-Lipschitz (in the Euclidean norm) function that takes a context vector as input is also $D$-Lipschitz with respect to the $\mathcal{Z}$ norm.
 
-\section{Chunk stability and a conditional history tradeoff}
-\noindent\textbf{Proposition 2 (Horton's history-based chunk guarantee).}
-Let $\norm{z}_{\mathcal Z}$ sum the Euclidean norms of its observation/action blocks. Suppose all admissible trajectory pairs satisfy
-\[
-\norm{\delta y_{t+k}}\le C_0\rho^k\norm{\delta z_t}_{\mathcal Z}
-+C_0\sum_{i<k}\rho^{k-1-i}\norm{\delta u_{t+i}},
-\]
-with $C_0\ge1$ and $0<\rho<1$. Use the same policy and schedule on both trajectories, $u_{j\ell+k}=\pi_k(z_{j\ell})+v_{j\ell+k}$, with
-$\operatorname{Lip}_{\mathcal Z}(\pi_k)\le D\rho^k$. For $0<\alpha<1$, set
-\[
-\bar\rho=\rho^{1-\alpha},\quad C_r=2rC_0\rho^{-(r-1)},\quad
-\bar C=C_0\left(1+\frac{D}{e\alpha\rho\log(1/\rho)}\right).
-\]
-If $\ell\ge\max(1,r-1)$ and $C_r(1+D\ell/\rho)\rho^{\alpha\ell}\le1$, then
-\[
-\norm{\delta y_t}\le\bar C\bar\rho^t\norm{\delta z_0}_{\mathcal Z}
-+\bar CC_r\sum_{i<t}\bar\rho^{t-1-i}\norm{\delta v_i}.
-\]
-\emph{Proof sketch.} With $Z_j=\norm{\delta z_{j\ell}}_{\mathcal Z}$ and $V_i=\norm{\delta v_i}$, substitute
-$\norm{\delta u_{j\ell+k}}\le D\rho^kZ_j+V_{j\ell+k}$ into the assumed bound. Summing the blocks of the next history gives
-\[
-Z_{j+1}\le C_r(1+D\ell/\rho)\rho^\ell Z_j
-+C_r\sum_{i<\ell}\rho^{\ell-1-i}V_{j\ell+i}.
-\]
-The first coefficient is at most $\bar\rho^\ell$. Iterate and use
-$k\rho^{\alpha k}\le[e\alpha\log(1/\rho)]^{-1}$ within chunks. $\square$
+Take the class of chunked policies $[\pi] = (\pi_0, ..., \pi_{\ell - 1})$ with $\pi_k: \mathcal{Z} \to \R^m$, as \[\Pi_{\ell}(D, \rho) = \{[\pi] : \pi_k(z) = c_k + \rho^kg_k(z), \text{ where } g_k \text{ is $D$-Lipschitz}\}\]
+Then deploy the policy $\pi$ in the typical chunked policy fashion as $u_{t_j + k} = \pi_k(z_{t_j}) + v_{t_j + k}$ with $t_j = j\ell$. By construction, $\pi \in \Pi_\ell(D, \rho)$ has $||\pi_k(z') - \pi_k(z)|| \le D\rho^k||z' - z||_\mathcal{Z}$. 
 
-For observable Schur-stable linear plants with $r\ge h$, reconstruction yields the assumed output bound, with suitable constants. This makes Horton's argument complete, but it \emph{does not prove that context shortens execution}: $C_r$ grows with $r$, and $\ell\ge r-1$ cannot certify $r=16,\ell=1$.
+We stand on the shoulders of giants in proving the following proposition, whose proof we surreptitiously relegate to the appendix: 
+\begin{prop}\label{edeltaiosprop}
+    Fix some $\alpha \in (0, 1)$ and $D \ge 0$. Define $\bar\rho = \rho^{1 - \alpha}$, $C_h = 2hC\rho^{-(h-1)}$, $\bar C = C\lp1 + \f{D}{ea\rho\log(1/\rho)}\rp$, and $\tilde C = \bar CC_h$. If (E$\delta$IOS) holds, $\ell \ge h - 1$, and $C_h\lp1 + \f{D\ell}{\rho}\rp\rho^{a\ell} \le 1$, then for every $\pi \in \Pi_\ell(D, \rho)$, $f^\pi$ is such that \[||\delta y_t|| \le \bar{C} \bar\rho^t||\delta z_0||_\mathcal{Z} + \tilde{C}\sum\lm_{j < t}\bar\rho^{t-1-j}||\delta v_j||\]
+\end{prop}
+This proposition gives that the closed loop system under an appropriate chunked policy with long enough chunk length is also E$\delta$IOS. Given an expert trajectory $(y^*_t, u^*_t)$ of length $T$ where the context $z^*_t $ is defined as usual, and a learned policy $\hat\pi$ that generates a trajectory $(\hat{y}_t, \hat\pi(z_{t_j}))$, where the expert and learned policies are rolled out on systems with the same initial state.
+Define the rollout (trajectory) loss and training (demo) loss respectively as \[J_{\text{traj}}(\hat\pi) = \sum\lm_{t = 0}^{T-1}||\hat{y}_t - y^*_t||, \quad J_\text{demo} = \sum\lm_{t = 0}^{T-1}||\hat\pi(z_{t_j}) - u^*_t||\]
+Then the next result follows:
+\begin{corollary2}\label{boundcorollary}
+    If (E$\delta$IOS) holds, for $\hat\pi \in \Pi_\ell(D, \rho)$ and $\ell \ge \ell_{min}$, we have for every horizon $T$ that \[J_\text{traj}(\hat\pi) \le \f{\tilde{C}}{1 - \bar\rho}J_\text{demo}(\hat\pi)\]
+\end{corollary2}
 
-\medskip
-\noindent\textbf{Proposition 3 (conditional certificate for general learners).}
-Choose a norm with $\norm{F}\le a<1$. Suppose an arbitrary deterministic learner satisfies, on every admissible deployment history,
-\[
-\norm{\hat\pi_{r,j}(z_t)-KF^jx_t}\le\gamma_r q^j\norm{x_t},\qquad 0<q<1.
-\]
-A sufficient condition for exponential stability is
-\[
-G(r,\ell):=a^\ell+\gamma_r\sum_{j<\ell}\norm{A^{\ell-1-j}B}q^j<1.
-\]
-\emph{Proof.} Writing the prediction residual as $e_j$, unrolling gives
-$x_{t+\ell}=F^\ell x_t+\sum_{j<\ell}A^{\ell-1-j}Be_j$; hence
-$\norm{x_{t+\ell}}\le G(r,\ell)\norm{x_t}$. Finite within-chunk gains extend decay to all phases. $\square$
+\section{Future Work}
+Obviously we have not directly attacked our ultimate goal yet. Rather, we have begun setting theoretical foundations that will hopefully aid us in achieving it. It remains to be proven that the chunk length can be shortened with increasing context length. Indeed, \hyperref[edeltaiosprop]{Proposition 1} requires a chunk length that is greater than the context length, nearly the opposite of what we want to prove! We will need to establish an upper bound on chunk lengths that are sufficient to still ensure closed loop stability. It makes intuitive sense that such upper bounds should exist, as in physical examples you don't run an infinite-length chunk, but we have yet to establish such bounds. Once such a bound is established, we can utilize it in our attack on the chunk length by increasing the horizon length, which will hopefully be a sufficient tool to reduce the upper bound.
 
-If $\gamma_r$ decreases, certified feasible execution sets expand; their shortest tested length cannot increase. In particular $\gamma_r\norm{B}<1-a$ certifies $\ell=1$. If $A$ is also stable and the envelope extends to arbitrary $H$, $G(r,\ell)\to0$ as $\ell\to\infty$. The relative-error assumption is strong and is \emph{not established} for our raw-history ridge learner. Neither observability nor additional features guarantees decreasing deployment error. The certificate concerns stability, not monotone tracking loss.
+There are several other housekeeping matters for us to attend to. First, we will run more comprehensive and digestible simulations for our final report. Additionally, it remains to be proven that certain classes of systems are actually E$\delta$IOS, such as stable linear systems. Proving that classes of systems are indeed E$\delta$IOS will lend further credence to the value of our theoretical work.
 
-\section{A specific mechanism for the narrow-data ridge learner}
-For the challenging pair of \citet[Def.~4.1]{simchowitz2025} at $\mu=1/8$, with $B=I$, our experiment fixes
-\[
-A_1=\begin{bmatrix}1+\mu&c\\-c&1-2\mu\end{bmatrix},\quad
-K_1=\begin{bmatrix}-(1+\mu)&-c\\c&0\end{bmatrix},\quad c=3\mu/2.
-\]
-Both $A_1$ and $A_1+K_1$ are stable. On the demonstration support $x_1=0$,
-$x_{2,t+1}=qx_{2,t}$ and $u_{1,t}=-cx_{2,t}$, with $q=3/4$ and $c=3/16$.
-Every feature is $x_{2,t}v_r$: its observation coefficients are $q^{-k}$ in the $x_2$ slots, $0\le k<r$, and past-action coefficients are $-cq^{-k}$ in the $u_1$ slots, $1\le k<r$; all other slots are zero.
+% \section{The problem and theoretical results}
+% The hard example of \citet{simchowitz2025} pairs two systems, $A_1,A_2$, with stabilizing experts $K_1,K_2$. Both experts generate identical demonstrations when $x_1=0$, but need different corrections when $x_1\ne0$. Even perfect demonstration fit cannot distinguish their recovery rules. We fix $A_1$ and expert $K_1$: applying $K_2$ matches the demonstrations but destabilizes $A_1$ after a small departure. We ask whether past observations let a learner act accurately one step at a time instead of executing an action sequence before observing again.
 
-Let $S=\sum_i x_{2,t_i}^2>0$, $\delta=\lambda/S$, and
-\[
-D_r=\norm{v_r}_2^2=1+(1+c^2)\sum_{k=1}^{r-1}q^{-2k},\qquad
-b_H=\operatorname{col}((-cq^j,0))_{j=0}^{H-1}.
-\]
-Ridge regression minimizes $\norm{XW^\top-Y}_F^2+\lambda\norm{W}_F^2$.
-Since $X=s v_r^\top$ and $Y=s b_H^\top$, its normal equations give exactly
-\[
-\widehat W=\frac{b_Hv_r^\top}{D_r+\delta}.
-\]
-Thus one-step execution uses
-\[
-u_{1,t}=-\frac{c}{D_r+\delta}\sum_{k=0}^{r-1}q^{-k}x_{2,t-k}
-+\frac{c^2}{D_r+\delta}\sum_{k=1}^{r-1}q^{-k}u_{1,t-k},\qquad u_{2,t}=0.
-\]
-History changes the ridge-selected feedback outside the demonstrations; it does not increase their rank or identify the missing expert correction to $x_1$.
+% Consider $x_{t+1}=Ax_t+Bu_t$, $y_t=Cx_t$, and a deterministic expert $u_t^*=Kx_t$, with $F=A+BK$ Schur stable. The learner receives $z_t=\col(y_{t-r+1:t},u_{t-r+1:t-1})$, predicts $H$ actions, and executes $\ell\le H$ before replanning. Let $h$ be the smallest integer with $\mathcal O_h=\col(C,CA,\ldots,CA^{h-1})$ full column rank. Norm $\norm{z}_{\mathcal Z}$ sums Euclidean norms of history blocks. We separate representation, stability, and learning.
 
-\medskip
-\noindent\textbf{Proposition 4 (history can stabilize one-step ridge control).}
-Define
-\[
-\alpha_r=\frac{c\sum_{k=0}^{r-1}q^{-k}}{D_r+\delta},\qquad
-\beta_r=\frac{c^2\sum_{k=1}^{r-1}q^{-k}}{D_r+\delta}.
-\]
-The one-step controller is asymptotically stable on $A_1$ if
-\[
-48\alpha_r+\beta_r<1.
-\]
-\emph{Proof.} Write $A_1=aI+N$, $a=15/16$, where $N^2=0$ and $N_{21}=-c$.
-The absolute impulse-response gain from $u_1$ to $x_2$ is
-\[
-\sum_{k\ge0}|\mathbf e_2^\top A_1^k\mathbf e_1|
-=c\sum_{k\ge1}k a^{k-1}=\frac{c}{(1-a)^2}=48.
-\]
-The filter coefficient sums are $\alpha_r$ and $\beta_r$. The controller reads only $x_2$ and past $u_1$ ($u_2=0$), so all feedback passes through $u_1$ with strictly causal $\ell_\infty$ gain at most $48\alpha_r+\beta_r$; below one, the Neumann series gives a stable inverse, and every component (Schur $A_1$, shift buffers) is stable. $\square$
+% \paragraph{Proposition 1 (history can represent the expert).}
+% On noiseless, dynamically consistent histories, exact recovery of the current expert action is possible if and only if
+% \[
+% \ker\mathcal O_r\subseteq\ker(KA^{r-1}).
+% \]
+% In particular, $r\ge h$ permits a linear state reconstruction $x_t=R_rz_t$. The chunk policy $\pi_k^*(z)=KF^kR_rz$ reproduces the expert for every execution length $1\le\ell\le H$.
 
-Because $D_r=\Theta(q^{-2r})$, both gains are $O(q^r)$: sufficiently long history stabilizes one-step execution. At $\delta=0$, the certificate is $4.9066$, $1.8536$, and $0.2021$ for $r=4,8,16$. Hence $r=16$ has an analytic certificate; failing the sufficient test at $r=8$ proves nothing by itself. Predicted chunks satisfy $\hat u_{t+j\mid t}=q^j\hat u_{t\mid t}$; longer commitment can also stabilize this decaying predictor on the stable plant. Neither mechanism guarantees monotone tracking loss or identification of the expert.
+% \emph{Proof.} With $s=t-r+1$, stacked observations $Y$, and applied inputs $U$, write $Y=\mathcal O_rx_s+\mathcal T_rU$ and $x_t=A^{r-1}x_s+\mathcal R_rU$. Identical histories leave ambiguity $d\in\ker\mathcal O_r$, producing action ambiguity $KA^{r-1}d$. Kernel inclusion is therefore necessary and sufficient. For $r\ge h$, left inversion gives
+% \[
+% R_r=[A^{r-1}\mathcal O_r^\dagger\quad
+% \mathcal R_r-A^{r-1}\mathcal O_r^\dagger\mathcal T_r].
+% \]
+% Applying $KF^kx_t$ then yields $x_{t+k}=F^kx_t$ by induction. $\square$
 
-\section{Evidence, interpretation, and limits}
-The earlier noisy midterm experiment ($n=10,h=4$) found that context three required two-step commitment, with tail MSE $2.80\times10^{-4}$ ($\ell=4,8$ also diverged), while context four enabled one-step execution at $7.64\times10^{-6}$. These retained results were not rerun here.
+% Reconstruction uses known dynamics, actual inputs, and consistent noiseless histories. This existence result does not imply identification from demonstrations: expert histories can have low rank, and more coordinates need not add independent training information.
 
-The current full-observation sweep ($h=1$) evaluates 75 $(r,H,\ell)$ configurations over five training seeds (375 runs), using 32 narrow noiseless demonstrations per seed, $\lambda=10^{-6}$, and matched target times across $r,H$. All controllers share 20 held-out initial-state pairs: $x_2$ uniform on $[-1,1]$, with $x_1=0$ or a signed departure of magnitude $0.0005$--$0.0015$. After a common 15-step expert history, the departure is injected; there is no continuing noise. Test MSE averages full-state tracking error over 200 post-action states and the 20 perturbed rollouts. Separate 1000-step sample losses diagnose long-term growth.
+% \subsection{History-based chunk stability}
+% The next result allows nonlinear plants and general Lipschitz policies. Assume all admissible trajectory pairs satisfy the history-based exponential incremental input-to-output bound
+% \begin{equation}\label{eq:ios}
+% \norm{\delta y_{t+k}}\le C_0\rho^k\norm{\delta z_t}_{\mathcal Z}
+% +C_0\sum_{i=0}^{k-1}\rho^{k-1-i}\norm{\delta u_{t+i}},
+% \end{equation}
+% with $C_0\ge1$ and $0<\rho<1$. Observable Schur-stable linear plants satisfy this bound for $r\ge h$, using reconstruction and exponential bounds on $A^k$. A state-based incremental stability bound alone also needs reconstruction to imply \eqref{eq:ios}.
 
-At $H=16$, median test MSE falls from $2.260\times10^{-6}$ at $(r,\ell)=(8,8)$ to $6.487\times10^{-7}$ at $(16,1)$; worst per-step spectral rates are $0.99544$ and $0.97110$.
+% At chunk boundaries $t_j=j\ell$, apply
+% \[
+% u_{t_j+k}=\pi_k(z_{t_j})+v_{t_j+k},\qquad
+% \operatorname{Lip}_{\mathcal Z}(\pi_k)\le D\rho^k.
+% \]
+% The offsets of $\pi_k$ are unrestricted; the decay requirement concerns sensitivity to context. Both compared trajectories use the same policy and chunk schedule.
 
-\begin{figure}[htbp]
-\centering\includegraphics[width=\linewidth]{synthesis/figures/context_hypothesis.png}
-\caption{At $H=16$, history improves test loss and spectral stability. Shortest passing execution is 8 at $r=8$ and 1 at $r=16$; None means no tested setting passes. Passing requires stability and mean test MSE $\le10^{-5}$ for every seed.}
-\end{figure}
-\vspace{-6pt}
-\noindent\textbf{Conclusion.} History sixteen permits stable one-step execution, outperforming zero control (MSE $0.08217$), though the model-informed memory witness is better ($1.736\times10^{-8}$). At $r=16$, $\ell=16$ is still slightly better ($5.776\times10^{-7}$).Since $h=1$, this reflects feedback selection, not hidden-state recovery. Earlier negative results used continuing noise and $r\le8$. The threshold is illustrative; five seeds are descriptive. Generalization requires deployment-error guarantees, not training fit or observability alone.
+% \paragraph{Proposition 2 (sufficient chunk length for incremental stability).}
+% Fix $\alpha\in(0,1)$ and define
+% \[
+% \bar\rho=\rho^{1-\alpha},\quad C_r=2rC_0\rho^{-(r-1)},\quad
+% \bar C=C_0\left(1+\frac{D}{e\alpha\rho\log(1/\rho)}\right).
+% \]
+% If $\ell\ge\max(1,r-1)$ and
+% \begin{equation}\label{eq:criterion}
+% C_r(1+D\ell/\rho)\rho^{\alpha\ell}\le1,
+% \end{equation}
+% then, writing $\widetilde C=\bar CC_r$,
+% \begin{equation}\label{eq:closed}
+% \norm{\delta y_t}\le\bar C\bar\rho^t\norm{\delta z_0}_{\mathcal Z}
+% +\widetilde C\sum_{i=0}^{t-1}\bar\rho^{t-1-i}\norm{\delta v_i}.
+% \end{equation}
 
-\begingroup\small
-\begin{thebibliography}{2}
-\setlength{\itemsep}{0pt}
-\bibitem[Simchowitz et al.(2025)]{simchowitz2025}
-M. Simchowitz, D. Pfrommer, and A. Jadbabaie.
-The pitfalls of imitation learning when actions are continuous.
-\emph{arXiv:2503.09722}, 2025.
-\bibitem[Zhang et al.(2025)]{zhang2025}
-T. T. Zhang, D. Pfrommer, C. Pan, N. Matni, and M. Simchowitz.
-Action chunking and exploratory data collection yield exponential improvements in behavior cloning for continuous control.
-\emph{arXiv:2507.09061}, 2025.
-\end{thebibliography}
-\endgroup
+% \emph{Proof.} Let $Z_j=\norm{\delta z_{t_j}}_{\mathcal Z}$ and $V_i=\norm{\delta v_i}$. Within a chunk,
+% $\norm{\delta u_{t_j+k}}\le D\rho^kZ_j+V_{t_j+k}$. Substitution into \eqref{eq:ios} gives, for $0\le k\le\ell$,
+% \begin{equation}\label{eq:within}
+% \norm{\delta y_{t_j+k}}\le C_0\rho^k(1+Dk/\rho)Z_j
+% +C_0\sum_{i<k}\rho^{k-1-i}V_{t_j+i}.
+% \end{equation}
+% Since $\ell\ge r-1$, every block of $z_{t_{j+1}}$ lies in this chunk. Sum its $r$ observation bounds and $r-1$ action bounds. Their coefficients on $Z_j$ total at most
+% \[
+% r\rho^{\ell-r+1}\{C_0(1+D\ell/\rho)+D\}
+% \le C_r\rho^\ell(1+D\ell/\rho).
+% \]
+% Each disturbance coefficient is at most $(rC_0+1)\rho^{\ell-r-i}\le C_r\rho^{\ell-1-i}$, including inputs earlier than the retained history. Consequently,
+% \[
+% Z_{j+1}\le\bar\rho^\ell Z_j+
+% C_r\sum_{i=0}^{\ell-1}\rho^{\ell-1-i}V_{t_j+i},
+% \]
+% where \eqref{eq:criterion} bounds the first coefficient. Iteration and $\rho\le\bar\rho$ imply
+% \[
+% Z_j\le\bar\rho^{t_j}Z_0+
+% C_r\sum_{i<t_j}\bar\rho^{t_j-1-i}V_i.
+% \]
+% Finally $\sup_{k\ge0}k\rho^{\alpha k}\le[e\alpha\log(1/\rho)]^{-1}$ gives
+% $C_0\rho^k(1+Dk/\rho)\le\bar C\bar\rho^k$.
+% Insert the boundary estimate into \eqref{eq:within}, and absorb current-chunk disturbances using $C_0\le\widetilde C$. This yields \eqref{eq:closed}. $\square$
+
+% \subsection{From expert-context error to trajectory error}
+% \paragraph{Corollary 3 (finite-horizon squared-loss bound).}
+% Assume Proposition 2 and identical initial histories. On a reference expert rollout define the chunk residual
+% \[
+% e_{t_j+k}=u^*_{t_j+k}-\pi_k(z^*_{t_j}),\quad 0\le k<\ell.
+% \]
+% For $T$ actions let $J_{\rm demo}=T^{-1}\sum_{i<T}\norm{e_i}^2$ and let $J_{\rm traj}=T^{-1}\sum_{t=1}^T\norm{y_t-y_t^*}^2$. Then
+% \[
+% J_{\rm traj}\le
+% \left(\frac{\widetilde C}{1-\bar\rho}\right)^2J_{\rm demo}.
+% \]
+% \emph{Proof.} View the expert as the same chunked policy driven by $v_i=e_i$, and the learner as driven by $v_i=0$. The initial term in \eqref{eq:closed} vanishes. The convolution kernel $\widetilde C\bar\rho^k$ has sum $\widetilde C/(1-\bar\rho)$; the discrete $\ell_2$ convolution inequality gives the result after squaring and dividing by $T$. $\square$
+
+% This loss uses reference deployment histories, not empirical training data; substituting training loss requires a coverage/generalization argument. Averaging yields an expected bound. Under partial sensing, output error does not automatically control the full-state MSE below.
+
+% Proposition 2 does not prove shorter execution with more history: $C_r$ grows with $r$, and it cannot certify $(r,\ell)=(16,1)$. Its Lipschitz assumptions remain unverified for our learners. The simulations illustrate mechanisms rather than validate the bound.
+
+\section{Simulations: experiment, data, and results}
+\paragraph{The experiment.}
+We use \citet{simchowitz2025} `hard example' at $\mu=1/8$ as described in proposition 4.1. The expert sees $x_1,x_2$, while the learner sees only $y=x_2$. Two observations and the action between them suffice to reconstruct the state from the system equations ($h=2$). We compare action sequences and single actions, each with and without history. History lengths are $r=2,4,8,16$; no history meaning a markovian learner. A sequence predicts $H=16$ actions and executes $\ell=2,4,8,16$ before observing again. Single-action control uses $H=\ell=1$.
+
+\paragraph{The data and learner.}
+Narrow data contain expert trajectories that stay on $x_1=0$, so no correction of $x_1$ is demonstrated. Recovery data add small random changes to the expert's applied actions, $u=K_1x+0.05\xi$, $\xi\sim\mathcal N(0,I)$. At each visited state, the training data is the action sequence the expert would apply without further random changes, $K_1F^jx$. Inputs retain the observations and actions actually applied. This adapts noisy collection and expert correction \citep{laskey2017,ross2011}, motivated by \citet{zhang2025}.
+
+We use ridge regression to obtain a learned controller. It minimizes action-prediction error plus a coefficient penalty ($\lambda=10^{-6}$). Three seeds (818--820) each generate 32 trajectories of 80 steps per dataset type. Training target times match across history and prediction length. The 60 fitted models produce 150 four-condition evaluations and 30 checks with $H=16,\ell=1$. Every check matches the separately trained single-action learner. At fixed history, varying execution uses the same fitted predictor.
+
+For testing, we fill history with 15 expert steps, then introduce a signed change of magnitude 0.0005--0.0015 in hidden $x_1$. All learners share 20 new starting states with $x_2$ uniform on $[-1,1]$. Each controls for 200 steps. An expert rollout from the same state supplies the reference. It is then evaluated on MSE from the expert. We retain unstable losses and check stability separately from exact linear feedback dynamics. Matched states without the change and separate 1000-step examples are also saved.
+
+\begin{center}\small
+\begin{tabular}{lrrrrr}\toprule
+Training & History $r$ & Prediction horizon $H$ & Execution horizon $\ell$ & Test MSE & Stable?\\\midrule
+Narrow & 1 & 16 & 16 & $5.19\times10^{-3}$ & No\\
+Narrow & 8 & 1 & 1 & $7.58\times10^{-4}$ & No\\
+Narrow & 8 & 16 & 8 & $2.32\times10^{-6}$ & Yes\\
+Narrow & 16 & 1 & 1 & $6.65\times10^{-7}$ & Yes\\
+Recovery & 1 & 16 & 16 & $2.53\times10^{-1}$ & No\\
+Recovery & 2 & 1 & 1 & $7.33\times10^{-9}$ & Yes\\
+Recovery & 2 & 16 & 16 & $2.71\times10^{-7}$ & Yes\\\bottomrule
+\end{tabular}
+\end{center}
+\noindent Selected settings; all three seeds agree on stability in every tested setting.
+
+\paragraph{The results.}
+Without history, every fitted learner remains unstable under both datasets. Longer history reduce short-term error without fixing this: narrow-data execution sixteen has MSE $0.00519$
+
+With recovery data, history two and single-action feedback nearly match the expert (MSE $7.334\times10^{-9}$). Executing sixteen actions increases error about 37-fold: the learner waits longer to respond after the initially invisible departure affects a new observation. All $r\ge2$ settings are stable. Longer history is not always better; one-step MSE rises to $3.04\times10^{-8}$ at $r=16$.
+
+With narrow data, history two is observable but all executions fail stability. History eight is stable only at execution eight or sixteen; execution eight improves MSE 327-fold over single actions. History sixteen is already stable without sequences, and execution sixteen improves error only 11\%. Extra history changes the ridge-selected feedback, without supplying missing corrective examples. Thus Proposition 1's representation result does not imply successful learning.
+
+History plus corrective examples makes single-action control effective here; observability alone does not remove the benefit of sequences. These findings concern one stable system, three seeds, small departures, expert initialization, and noiseless testing. Training and test amplitudes also differ. Neither these data nor the theory establishes universal improvement with history or execution length.
+
+
+
+\newpage
+\section{Appendix}
+\subsection{Proof of \hyperref[edeltaiosprop]{Proposition 1}}
+\begin{proof}
+    Consider the $j$-th chunk, which begins at time $t_j$ and let $t = t_j + k$. We have by definition of $\Pi_\ell(D, \rho)$ that \[||\delta u_t|| \le D\rho^k||\delta z_{t_j}|| + ||\delta v_t|| \]
+
+    By E$\delta$IOS, for $0 \le k \le \ell$ \eqspnoan{$*$}{||\delta y_t|| \qqsle C\rho^k||\delta z_{t_j}|| + C\sum\lm_{i < k}\rho^{k - 1 - i}(D \rho^i||z_{t_j}|| + ||\delta v_{t_j + i}||) \qq (C\rho^k + CDk\rho^{k - 1})||\delta z_{t_j}|| + C\sum\lm_{i < k}\rho^{k - 1 - i}||\delta v_{t_j + i}||}
+
+    By supposition, $\ell \ge h - 1$, all samples in $z_{t_{j + 1}}$ like within the $j$-th chunk. Note that \[||\delta z_t|| = \sum\lm_{i = 0}^{h-1} ||\delta y_{t - i}|| + \sum\lm_{i = 1}^{h-1}||\delta u_{t - i}||\]
+    So then \[||\delta z_{t_{j + 1}}|| = \sum\lm_{k = \ell - h + 1}^\ell ||\delta y_{t_j + k}|| + \sum\lm_{k = \ell - h + 1}^{\ell - 1}||\delta u_{t_j + k}||\]
+    Inserting then the inequalities we derived above, \eqspnoa{||\delta z_{t_{j + 1}}|| \qqsle \sum\lm_{k = \ell - h + 1}^\ell \lp (C\rho^k + CDk\rho^{k - 1})||\delta z_{t_j}|| + C\sum\lm_{i < k}\rho^{k - 1 - i}||\delta v_{t_j + i}|| \rp + \sum\lm_{k = \ell - h + 1}^{\ell - 1}\lp D\rho^k||\delta z_{t_j}|| + ||\delta v_{t_j + k}||\rp \qq \lp \sum\lm_{k = \ell - h + 1}^\ell (C\rho^k + CDk\rho^{k-1}) + \sum\lm_{k = \ell - h + 1}^{\ell - 1}D\rho^k\rp||\delta z_{t_j}||\\ & + \lp C\sum\lm_{k = \ell - h + 1}^\ell\sum\lm_{i < k}\rho^{k - 1 - i}||\delta v_{t_j + i}|| + \sum\lm_{k = \ell - h + 1}^{\ell - 1}||\delta v_{t_j + k}|| \rp}
+    When $k \ge \ell - h + 1$, we have $\rho^k \le \rho^{\ell - h + 1}$ so $(C\rho^k + CDk\rho^{k - 1}) \le C\rho^{\ell - h + 1}(1 + D\ell/\rho)$ because $k \le \ell$.
+    Thus, the first big term in parentheses in the last line above, which we will call $\Theta_\ell$, has \eqspnoa{\Theta_\ell \qqsle h\rho^{\ell - h + 1}\lp C(1 + D\ell\rho) + D \rp \qqle 2hC\rho^{-(h-1)}\rho^\ell(1 + D\ell/\rho) \qq C_h\rho^\ell\lp 1 + \f{D\ell}{\rho} \rp}
+    where the second inequality follows from the fact that $D \le D\ell/\rho$ and $C \ge 1$, so $D \le C(1 + D\ell/\rho)$. Then by the assumption in the proposition, $\Theta_\ell \le \rho^{\ell - \alpha\ell} = \bar\rho^\ell$.
+
+    For the second big term in parentheses, which we call $B_j$, we first examine the double summation. Note that each $\rho^{k - 1 - i} \le \rho^{\ell - h - i}$, and there are no more than $h$ terms of the outer sum, so the coefficient of each $||\delta v_{t_j + i}||$ is no more than $hC\rho^{\ell - h - i}$. For the single summation, the coefficient of $||\delta z_{t_j + k}||$ is $1$ for $\ell - h + 1 \le k \le \ell$. Rearranging, we have for such $k$ that $\ell - h - k \le -1$, so $1 \le \rho^{-(h-1)}\rho^{\ell - 1 - k}$, so the coefficients in the single sum are certainly less than or equal to that. Thus, \eqspnoa{B_j \qqsle \sum\lm_{k = \ell - h + 1}^{\ell-1}\lp hC\rho^{\ell - h - k} +  \rho^{-(h-1)}\rho^{\ell - 1 - k}\rp||\delta v_{t_j + k}|| \qqle \sum\lm_{k = \ell - h + 1}^{\ell-1}\lp 2hC\rho^{-(h-1)}\rho^{\ell - 1 - k}\rp||\delta v_{t_j + k}|| \qq C_h \sum\lm_{k = \ell - h + 1}^{\ell - 1}\rho^{\ell - 1 - k}||\delta v_{t_j + k}||}
+    Combining the bounds on $\Theta_\ell$ and $B_j$, we get that \eqspnoa{||\delta z_{t_{j+1}}|| \qqsle \bar\rho^{-\ell}||\delta_{t_j}|| + C_h\sum\lm_{k = \ell - h + 1}^{\ell - 1}\rho^{\ell - 1 - k}||\delta v_{t_j + k}|| \qqle \bar\rho^{-\ell}||\delta_{t_j}|| + C_h\sum\lm_{k = t_{j+1} - h }^{t_{j+1} - 1}\rho^{t_{j+1} - k - 1}||\delta v_{k}|| \qqle \bar\rho^{-\ell}||\delta_{t_j}|| + C_h\sum\lm_{k = t_{j}}^{t_{j+1} - 1}\rho^{t_{j+1} - k - 1}||\delta v_{k}||}
+
+    Unrolling this recursively, we get \eqspnoan{$**$}{||\delta z_{t_j}|| \qqsle \bar\rho^{t_j}||\delta z_0|| + C_h \sum\lm_{k = 0}^{t_j - 1} \bar\rho^{t_j - 1 - k}||\delta v_{k}||}
+    Now we consider \[\rho^{\alpha k}\lp 1 + \f{Dk}{\rho}\rp = \rho^{\alpha k} + \f{D}{\rho} k\rho^{\alpha k} \le 1 + \f{D}{\rho}ke^{-\alpha k\log({1/\rho})} \le 1 + \sup\lm_{q \ge 0}\f{D}{\rho}qe^{-\alpha q\log(1/\rho)} = 1 + \f{D}{e\alpha \rho\log(1/\rho)}\]
+    Hence, \[C\rho^k + CDk\rho^{k - 1} = C\rho^k\lp 1 + \f{Dk}{\rho} \rp \le C\rho^{\alpha k} \lp 1 + \f{Dk}{\rho} \rp\le \bar C\bar\rho^k\]
+    Inserting this bound and $(**)$ into $(*)$ gives \eqspnoa{||\delta y_t|| \qqsle \bar C\bar\rho^k\lp \bar\rho^{t_j}||\delta z_0|| + C_h \sum\lm_{q = 0}^{t_j - 1} \bar\rho^{t_j - 1 - q}||\delta v_{q}|| \rp + C\sum\lm_{i < k}\rho^{k - 1 - i}||\delta v_{t_j + i}|| \qqle \bar C\bar\rho^{-t}||\delta z_0|| + \bar CC_h\sum\lm_{q = 0}^{t_j - 1}\bar\rho^{t_j + k - 1 - q}||\delta v_q|| + CC_h\sum\lm_{i = 0}^{k - 1}\bar\rho^{k - 1 - i}|| \delta v_{t_j + i}|| \qqle \bar C\bar\rho^{-t}||\delta z_0|| + \tilde{C}\sum\lm_{q = 0}^t\bar\rho^{t - 1 - q}||\delta v_{q}||}
+    where the second line follows because $C_h \ge 1$ and $\rho \le \bar\rho$. 
+
+\end{proof}
+
+\subsection{Proof of \hyperref[boundcorollary]{Corollary 1}}
+\begin{proof}
+    Assume $\hat{z}_0 = z^*_0$. Then the previous proposition gives that \[||\hat{y}_t - y^*_t|| \le \tilde{C}\sum\lm_{q = 0}^t\bar\rho^{t - 1 - q}||\hat{\pi}(\hat{z}_q) - u^*_q||\]
+    Summing over $t = 1, ..., T$ gives \[\sum\lm_{t = 1}^T||\hat{y}_t - y^*_t|| \le \tilde{C}\sum\lm_{t = 1}^T\sum\lm_{q = 0}^{t-1}\bar\rho^{t - 1 - q}||\hat{\pi}(z^*_{t_j}) - u^*_t|| \le \f{\tilde{C}}{1 - \bar\rho}\sum\lm_{t = 0}^{T-1}||\hat\pi(z^*_{t_j}) - u^*_t||\]
+\end{proof}
+
+
 \end{document}

@@ -1,0 +1,2 @@
+dimension,demonstration_subspace_dimension,sensors,observability_index,action_recovery_index,action_agreement_residual,trajectory_agreement_residual,support_invariance_residual,A1_radius,A2_radius,expert_K1_radius,expert_K2_radius,wrong_K2_radius,wrong_K1_on_A2_radius,exact_schur_minimum_margin,observability_condition
+2,1,1,2,2,0.0,0.0,0.0,0.9375000034248626,0.96875,0.75,0.75,2.09375,2.09375,0.002079002079002079,8.401811380239753

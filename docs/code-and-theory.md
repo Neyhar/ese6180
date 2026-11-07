@@ -8,8 +8,9 @@
 | Paired noisy batched deployment | `observability/experiment.py` | Comparison against scalar rollout, including partial final chunks |
 | Sensor changes at fixed plant/expert | `model.coupled_system`, `observability/run.py` | Exact requested-index and fixed-matrix tests |
 | Exact observability-study boundary map | `observability/experiment.py` | Map compared with directly simulated committed actions |
-| Hard-example construction and recovery tests | `pitfalls/pitfalls.py`, `pitfalls/evaluation.py` | Indistinguishability, paired-state and initialization tests |
-| Hard-example boundary maps and analytic memory | `pitfalls/stability.py` | Direct maps, full radius and covariance checks |
+| Hard-example construction and recovery tests | `pitfalls/original/system.py`, `pitfalls/original/evaluation.py` | Indistinguishability, paired-state and initialization tests |
+| Hard-example boundary maps and analytic memory | `pitfalls/shared/stability.py` | Direct maps, full radius and covariance checks |
+| Coupled hard pairs and focused comparisons | `pitfalls/coupled/` and `pitfalls/shared/audit.py` | Exact Schur certificate, growing observability, paired raw-loss audit |
 | General history/chunk propositions | `midterm-report/main.tex` | Mathematical arguments; not universal learned-policy guarantees |
 
 ## Important conventions

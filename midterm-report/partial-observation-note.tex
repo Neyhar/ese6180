@@ -9,58 +9,60 @@
 \jmlrvolume{}
 \jmlrproceedings{ESE 6180}{ESE 6180 Results Note}
 \jmlrworkshop{ESE 6180 Results Note}
-\title[History, Coverage, and Partial Observation]{History, Coverage, and Partial Observation\\in the Linear Hard Example}
+\title[History, Coverage, and Chunking]{History and Chunking from Two to Sixteen States}
 \author{\Name{Nihar Ballamudi}\and\Name{Kyle Horton}\\\addr University of Pennsylvania}
-\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
 \begin{document}
 \maketitle
 \begin{abstract}
-We separate observation history from training coverage in the linear challenging example. With partial observation, two-step history enables accurate one-step control when training includes exploratory histories and expert labels. Narrow demonstrations remain underidentified despite observability. These findings support the representational role of history and the stabilizing role of commitment, but do not establish that arbitrary learners improve monotonically with context.
+We compare the original Simchowitz two-state example with coupled systems of 2, 4, 8, and 16 states. Noisy training actions provide corrective examples; with enough history, single-action control nearly matches a known-model observer. All testing is noiseless.
 \end{abstract}
 
-\section{Experiment and results}
-We use $x_{t+1}=Ax_t+u_t$, expert $u_t^*=Kx_t$, and $\mu=1/8$ in the linear construction of \citet{simchowitz2025}:
+\section{The experiment}
+\citet{simchowitz2025} give two systems with experts $K_1,K_2$ that agree on every demonstrated state but respond differently outside those states. Each expert stabilizes its own system; the wrong expert can destabilize the other. This shows why matching demonstrated actions does not guarantee a good controller.
+
+We retain the paper's original $n=2$ pair at $\mu=1/8$ and add a separate coupled family for $n=2,4,8,16$. The new family is not made of repeated two-state blocks. Each system has one feedback loop through all its coordinates:
 \[
-A=\begin{bmatrix}1+\mu&c\\-c&1-2\mu\end{bmatrix},\quad
-K=\begin{bmatrix}-(1+\mu)&-c\\c&0\end{bmatrix},\qquad c=3\mu/2.
+x_1^+=1.02x_1+0.04x_n+u_1,\quad
+x_2^+=-x_1+u_2,\quad x_j^+=x_{j-1}+u_j\ (j\ge3).
 \]
-The plant and expert closed loop are stable. Four conditions cross full observation $y=x$ or partial observation $y=x_2$ with narrow or recovery training. Narrow demonstrations remain on $x_1=0$. Recovery training instead applies known exploratory actions $u=Kx+0.05\xi$, with independent standard Gaussian $\xi$, and labels each visited history with the expert continuation $KF^jx$, $F=A+K$. Histories retain the actions actually applied; expert labels do not replace them. This intervention changes coverage and extends the original restricted-data example.
+Only $x_n$ is observed. Its second system replaces the first column of the state matrix by $-0.995e_1$. Set $K_i=F-A_i$, with $F=\operatorname{diag}(0,\ldots,0,0.75)$. Both experts produce identical demonstrations when only $x_n$ is nonzero, but cross-applying them gives an unstable eigenvalue $+2.015$ or $-2.015$. Exact reconstruction requires $n$ observations. The original-paper $n=2$ and coupled-family $n=2$ are different systems and are labeled separately.
 
-Linear ridge policies use $r$ observations and $r-1$ past actions, predict $H$ actions, and execute $\ell\le H$ before replanning. We sweep $r\in\{1,2,4,8,16\}$, $H\in\{1,4,16\}$ and $\ell\in\{1,2,4,8,16\}$, with three training seeds and matched target times: 540 learned configurations. Each is tested on the same 20 held-out initial-state pairs, with common $x_2\sim\mathrm{Unif}[-1,1]$ and either $x_1=0$ or a signed departure of magnitude $0.0005$--$0.0015$. The departure is injected after expert history initialization; there is no continuing noise. Test MSE averages full-state expert-tracking error over 200 post-action states and the 20 perturbed rollouts.
+We compare single actions and 16-action predictions, each with and without history. History $r$ contains the current and past observations plus the intervening applied actions. Without history, $r=1$. Single-action control uses prediction horizon $H=1$ and execution horizon $\ell=1$. A 16-action predictor executes $\ell=1,2,4,8,16$ actions before observing and predicting again. Histories cover 1 through $n+1$, plus shared lengths 2, 4, 8, and 16.
 
+\section{The training and test data}
+Noiseless training data follow the expert and never leave the demonstrated line. Noisy training data add independent Gaussian changes of standard deviation 0.05 to the applied actions. At each resulting state, the training answer is the exact action sequence the expert would take without further changes. Thus noise changes the states visited; it does not corrupt the expert answers. Inputs retain the actions actually applied.
+
+Ridge regression fits a linear action rule with coefficient penalty $10^{-6}$. Five seeds each generate 128 trajectories of 100 steps per system and dataset. Target times and 16-step expert initialization match across dimensions. Executions share the same predictor; applying only its first action matches a separately trained single-action rule.
+
+Testing uses 40 shared visible starting amplitudes in $[-1,1]$. After filling history, we introduce a hidden-state change with total magnitude 0.0005--0.0015, either in $x_1$ or spread across hidden coordinates. These are the same hidden axis at $n=2$, not independent spatial directions. The learner then acts independently for 200 steps, with no further noise or expert queries. Error averages squared full-state distance from a separate expert rollout over time, both change types, and training seeds. We separately check eventual growth or decay and selected 1000-step examples.
+
+\section{The results}
 \begin{center}\small
-\begin{tabular}{llrrr}\toprule
-Observation & Training & $r$ & Median test MSE & Max. per-step rate\\\midrule
-Full & Narrow & 2 & $6.18\times10^9$ & 1.10405\\
-Partial & Narrow & 2 & $6.18\times10^9$ & 1.10405\\
-Partial & Narrow & 16 & $6.49\times10^{-7}$ & 0.97110\\
-Full & Recovery & 1 & $1.22\times10^{-18}$ & 0.75000\\
-Partial & Recovery & 1 & $2.38\times10^{14}$ & 1.14636\\
-Partial & Recovery & 2 & $7.15\times10^{-9}$ & 0.75000\\\bottomrule
-\end{tabular}
+\begin{tabular}{ll lrrrrr}\toprule
+System & $n$ & Training data & \shortstack{History\\$r$} & \shortstack{Prediction\\horizon $H$} & \shortstack{Execution\\horizon $\ell$} & Mean test MSE & Stable seeds\\\midrule
+Original & 2 & Noiseless & 2 & 1 & 1 & $6.09\times10^{9}$ & 0/5\\
+Original & 2 & Noisy & 2 & 1 & 1 & $7.07\times10^{-9}$ & 5/5\\
+Coupled & 2 & Noiseless & 2 & 1 & 1 & $5.04\times10^{-6}$ & 5/5\\
+Coupled & 2 & Noisy & 2 & 1 & 1 & $1.75\times10^{-8}$ & 5/5\\
+Coupled & 2 & Noisy & 2 & 16 & 16 & $1.36\times10^{-7}$ & 5/5\\
+Coupled & 4 & Noisy & 4 & 1 & 1 & $4.51\times10^{-8}$ & 5/5\\
+Coupled & 4 & Noisy & 4 & 16 & 16 & $2.05\times10^{-7}$ & 5/5\\
+Coupled & 8 & Noisy & 8 & 1 & 1 & $1.49\times10^{-7}$ & 5/5\\
+Coupled & 8 & Noisy & 8 & 16 & 16 & $3.90\times10^{-7}$ & 5/5\\
+Coupled & 16 & Noisy & 16 & 1 & 1 & $5.47\times10^{-7}$ & 5/5\\
+Coupled & 16 & Noisy & 16 & 16 & 16 & $5.54\times10^{-7}$ & 5/5\\
+\bottomrule\end{tabular}
 \end{center}
-All rows use $H=16,\ell=1$; rates are worst over seeds. Rates below one certify stability. Full and partial narrow fits agree numerically: removing an identically zero training feature does not change the learned action rule. Recovery data enable full-state one-step control at $r=1$, while partial observation requires $r=2$. Increasing partial recovery history beyond two does not further reduce loss, so the result is a threshold effect rather than monotone improvement.
 
-\section{Connection to Horton's history and chunk theory}
-\textbf{History supplies information.} For $C=[0,1]$, the observability matrix is
-\[
-\mathcal O_2=\begin{bmatrix}C\\CA\end{bmatrix}
-=\begin{bmatrix}0&1\\-c&1-2\mu\end{bmatrix},\qquad \det\mathcal O_2=c>0.
-\]
-Thus the observability index is two. With noiseless consistent histories and known applied inputs, the reconstruction argument gives $x_t=R_2z_t$ and the expert action is representable as $KR_2z_t$. More generally, exact action recovery requires only $\ker\mathcal O_r\subseteq\ker(KA^{r-1})$. The partial recovery result supports this representational threshold: its history-two feature matrix has rank four out of four, and one-step tracking nearly matches the known-model observer baseline ($7.15\times10^{-9}$ MSE).
+All systems share seeds, sample counts, and timing; both $n=2$ systems also share test states. Dimension-scaling plots use coupled $n=2$; a separate graph compares it with the original pair.
 
-The initial hidden jump is an important qualification. At the first decision, both paired initial states give identical observations and action histories, so a deterministic partial learner cannot choose the full-state expert action on both. The jump affects $y$ one step later, after which noiseless reconstruction is valid again. The small nonzero observer loss reflects this initial information delay.
+With noisy training data, single-action control at history $r=n$ is stable for every seed and nearly matches the known-model observer. Coupled-family errors are $1.75\times10^{-8}$, $4.51\times10^{-8}$, $1.49\times10^{-7}$, and $5.47\times10^{-7}$. At $r=n-1$, all five single-action fits are unstable at every dimension. More state variables therefore increase the history needed to learn accurate corrections in these runs.
 
-\textbf{Commitment controls feedback sensitivity.} Horton's proposition assumes incremental output stability with constants $(C_0,\rho)$ and chunk sensitivities $\operatorname{Lip}(\pi_k)\le D\rho^k$. For history $r$, a sufficient condition is
-\[
-\ell\ge\max(1,r-1),\qquad
-C_r(1+D\ell/\rho)\rho^{\alpha\ell}\le1,\quad
-C_r=2rC_0\rho^{-(r-1)},\quad 0<\alpha<1.
-\]
-It explains how sufficiently long commitment can stabilize a predictor by exploiting decaying sensitivity and stable dynamics. Empirically, narrow-data history eight needs execution eight to satisfy stability and mean test MSE $\le10^{-5}$ for every seed, whereas history sixteen permits execution one. However, the proposition's condition becomes more conservative with history and cannot certify $(r,\ell)=(16,1)$; its policy-class assumptions were not verified for these fits. The observation is consistent with its mechanism, not a direct instance of its guarantee.
+Executing sixteen actions at $r=n$ increases mean error by factors 7.82, 4.56, 2.63, and 1.01 across the four dimensions. It delays useful corrections rather than improving the learned rule. With noiseless data, history can instead stabilize a controller without teaching the missing corrections: the coupled $n=2$ fit at history two is stable but has about 289 times the noisy-data error. The original pair's noiseless fit remains unstable at history two. These differences are why the two $n=2$ systems must not be pooled.
 
-\textbf{Coverage connects representation to learning.} The rank-one narrow data do not identify recovery behavior, even when $r\ge2$. Their history benefit comes from ridge's choice of feedback outside the demonstrations, rather than newly acquired training information. The separate small-gain calculation for this learner certifies one-step stability when $48\alpha_r+\beta_r<1$, where $\alpha_r,\beta_r$ are the observation and past-action coefficient sums; at $r=16$ the conservative zero-penalty value is $0.2021$. General learner claims still require deployment-error or sensitivity bounds that improve with history. These three-seed noiseless experiments support that research direction, not robustness to ongoing noise or a universal context--execution tradeoff.
+The findings concern known action perturbations during training, one initial test departure, and no continuing test noise. Stability and tracking accuracy are separate: a small finite-rollout error is not proof of eventual decay.
 
+\footnotesize
 \begin{thebibliography}{1}
 \bibitem[Simchowitz et al.(2025)]{simchowitz2025}
 M. Simchowitz, D. Pfrommer, and A. Jadbabaie.

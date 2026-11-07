@@ -1,0 +1,22 @@
+{
+  "pitfalls/high_dimensional.py": "0bcdecfb6c2e635c271ebcc5c108ba18b327bcccb5f55175fa1a62ce423bcf4f",
+  "pitfalls/__init__.py": "04a0d22d219b0768c52218571d3863453e88a662e21fc3d09578eccd831c91ca",
+  "pitfalls/__main__.py": "c41dd158f5435062fce6fa8857505415c195c57091a6a0e638cc323cc8b7c5d2",
+  "pitfalls/coupled/__init__.py": "03f7a4dbf41b2e0e445791e56706e3c2b01836aaad6649d3ae34d6b9ec71ca47",
+  "pitfalls/coupled/diagnostics.py": "9a8f2d75d2a0e3dfc4e14c939f709868ab50b73b29e061ed18f086b726e39933",
+  "pitfalls/coupled/experiment.py": "356644ebc8ba727fee43ae700b98280a59e85829110d6446d93339d456b26bb4",
+  "pitfalls/coupled/plots.py": "238659b7c75f0cb0b41f1f7d1cc32d53fed9dabd4575124e21c5f629688da2bb",
+  "pitfalls/coupled/system.py": "67e5984d7c7611aa314697e44377c84b2d9b1d3a23cebfc08623fc639973abae",
+  "pitfalls/original/__init__.py": "d738b8963c21949baa77da807babda4a0772b91aa6bf1c194ed782f583ebccc4",
+  "pitfalls/original/data.py": "8dab013ddee90e567fce2f3e74a4c722b2e88924814255b0143f9f95580b03d5",
+  "pitfalls/original/evaluation.py": "1755b5589fb3012a3e779234ac4a8680c200ae3b8b85c083e70d56a6afa05bf8",
+  "pitfalls/original/system.py": "e81c714da39942da37eb2c5ad4b6bc1794d11689d072c8eb1b1a470f4de7bbf1",
+  "pitfalls/shared/__init__.py": "3b91ce0cf9afeaa655d64e07061c604f62ab2d35d98b96f298ff377db706bcff",
+  "pitfalls/shared/audit.py": "58a7c7dc3030cd61d8ecb9f0d451542c29018fa878212f457a259b7631c8a30b",
+  "pitfalls/shared/plotting.py": "b36ab0e5ef1af3b216d5f996895c74c0d66724943682a9e8ed437628cbf48232",
+  "pitfalls/shared/results.py": "503a277ce9ad5d4617566dbe74b66648741ff00cc07e854654266437daacac38",
+  "pitfalls/shared/stability.py": "68c38477cd93fccece39d866e1ad6a135de70c8f541fe9451bc91b8fac2b8600",
+  "model.py": "3f4ffcf00cd2f45f2086b1eac8c6847572032ee004253e338720c6d0d50c68d7",
+  "observability/__init__.py": "dc35525296f6e3b69b64d54059c73f5271335092fd654b27eb3d2305d88c91e5",
+  "observability/experiment.py": "f3f64b751a2d15f8a7a918ab59bb1cbae22da15ce3140ea7c5fa03c04d757afc"
+}

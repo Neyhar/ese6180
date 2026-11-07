@@ -1,0 +1,13 @@
+{
+  "learned_deployments": 360,
+  "reference_deployments": 6,
+  "raw_episode_records": 43920,
+  "perturbed_cases_per_deployment": 80,
+  "independent_training_seeds": 5,
+  "prefix_checks": 60,
+  "temporal_profile_checks": 108,
+  "maximum_relative_aggregation_gap": 3.610877944346843e-16,
+  "matched_initial_states": true,
+  "complete_grid": true,
+  "matched_horizon_checks": 30
+}

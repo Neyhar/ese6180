@@ -93,3 +93,58 @@ applied actions. At context two the partial feature vector has rank four in
 these runs, enabling the learned rule to approximate the model observer.
 These noiseless results do not extend directly to continuing process noise,
 measurement noise, or unknown-model reconstruction.
+
+
+## Historical independent-copy extension (superseded)
+
+`high_dimensional.py` extends the exact K1/K2 ambiguity by direct sums.
+For even dimension n=2b, define
+
+\[
+ A_i^{(n)}=I_b\otimes A_i,\qquad K_i^{(n)}=I_b\otimes K_i,
+ \qquad B^{(n)}=I_n,\qquad C^{(n)}=I_b\otimes[0\ \ 1].
+\]
+
+Let S map b visible coordinates into the odd-indexed state coordinates (Python
+indexing), with every hidden coordinate zero. The original pair obeys
+
+\[
+ (K_1^{(n)}-K_2^{(n)})S=0,\qquad
+ (A_i^{(n)}+K_i^{(n)})S=qS,\qquad q=1-2\mu.
+\]
+
+Consequently, starting from the same state in im(S), both expert/plant pairs
+produce exactly the same states, observations, and actions at every time.
+This is equality on the entire demonstration subspace, not just a finite sample.
+Both correct closed loops have eigenvalues 0 and q, repeated b times.
+
+In contrast, applying K2 to A1 gives independent blocks
+
+\[
+ A_1+K_2=\begin{bmatrix}2+3\mu/4&0\\-3\mu/2&1-2\mu\end{bmatrix}.
+\]
+
+Any nonzero hidden departure therefore has a component growing by
+2+3mu/4 per step: 2.09375 at mu=1/8. The pair remains indistinguishable from
+narrow demonstrations while the wrong expert is unstable on A1. This preserves
+the original construction; it is not a new coupled-system lower bound.
+
+Each block's two-row observability matrix is full rank, so the observability
+index is still two for every n. Sensor and action counts grow with dimension.
+The experiment separates dimension from necessary history, rather than making
+state reconstruction require longer history. The learner can nevertheless
+cross-couple blocks because its ridge weight matrix is unrestricted.
+
+For cross-dimensional comparisons, hidden test departures have fixed total
+Euclidean magnitude, and total tracking MSE is the primary score. Per-coordinate
+MSE is retained but divides the same total error by n. Training trajectories
+increase with the number of blocks; these runs do not measure fixed-data sample
+complexity. Three seeds and noiseless deployment do not establish generalization.
+
+
+## Current coupled higher-dimensional construction
+
+See [coupled-hard-example.md](coupled-hard-example.md) for the implemented
+single-loop pairs. Their scalar-observation indices grow as 4, 8, and 16; both
+wrong experts destabilize the other plant. The earlier direct sums above remain
+only as a preserved control and are no longer the active implementation.

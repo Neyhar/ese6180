@@ -1,0 +1,4 @@
+context,horizon,shortest_execution,no_chunking_passes,loss_tolerance
+2,16,,False,1e-05
+8,16,8,False,1e-05
+16,16,1,True,1e-05

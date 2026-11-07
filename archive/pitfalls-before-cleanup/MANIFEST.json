@@ -1,0 +1,931 @@
+[
+  {
+    "path": "README.md",
+    "bytes": 807,
+    "sha256": "dcdd91276ca167369e8eafa4a9df0b171fac887c7c4dfa4ad579df3fb886012e"
+  },
+  {
+    "path": "archive/pitfalls-before-focus",
+    "symlink": "../../pitfalls-before-focus"
+  },
+  {
+    "path": "model.py",
+    "bytes": 7820,
+    "sha256": "3f4ffcf00cd2f45f2086b1eac8c6847572032ee004253e338720c6d0d50c68d7"
+  },
+  {
+    "path": "observability/__init__.py",
+    "bytes": 61,
+    "sha256": "dc35525296f6e3b69b64d54059c73f5271335092fd654b27eb3d2305d88c91e5"
+  },
+  {
+    "path": "observability/experiment.py",
+    "bytes": 7018,
+    "sha256": "f3f64b751a2d15f8a7a918ab59bb1cbae22da15ce3140ea7c5fa03c04d757afc"
+  },
+  {
+    "path": "pitfalls/CHUNK_EXECUTION_THEORY.md",
+    "bytes": 7854,
+    "sha256": "25217771fd8d693fd002ba5aae83437361f67a9d5a60b218286ce9cfbd0c2049"
+  },
+  {
+    "path": "pitfalls/COUPLED_HARD_EXAMPLE.md",
+    "bytes": 5677,
+    "sha256": "398324ca575c3ab08783e53dfe87dce6e0b4f56a4297a22c5c63b2a08034e5dd"
+  },
+  {
+    "path": "pitfalls/README.md",
+    "bytes": 8079,
+    "sha256": "afdf3fd5546c5feee519ee5cbe6a3d335f5c1358195ec1578ab8efc79b9f618b"
+  },
+  {
+    "path": "pitfalls/analysis/README.md",
+    "bytes": 2273,
+    "sha256": "de6bd04d3c32851a71777ac2ced46958009161eafeeff68072570397b2c1467a"
+  },
+  {
+    "path": "pitfalls/analysis/analysis_stats.json",
+    "bytes": 96410,
+    "sha256": "3af960cebccef6ad333f976053e24b73e1ea11651fa46ceb635b131b42c17ecd"
+  },
+  {
+    "path": "pitfalls/analysis/analyze_outputs.py",
+    "bytes": 11457,
+    "sha256": "fbf51c41596fd66126d66c8f0a812230c4354a93f90548736e5b88edd9b69919"
+  },
+  {
+    "path": "pitfalls/analysis/figures/coverage_sensing.png",
+    "bytes": 143603,
+    "sha256": "880d0abf027cdb6d532003cf33ad9449a43ae28226490444186dd53847cd2e89"
+  },
+  {
+    "path": "pitfalls/analysis/figures/history_execution.png",
+    "bytes": 198178,
+    "sha256": "2672c8cf38c0ca3fc92206608d9e8318e5eecd2a6a9e44a874ae134a86459f74"
+  },
+  {
+    "path": "pitfalls/analysis/figures/learner_early.png",
+    "bytes": 144729,
+    "sha256": "1886d335bede2c133779f3a6fe8a88bd81b5a70f4123c2490117319133ff012f"
+  },
+  {
+    "path": "pitfalls/analysis/l4dc2026.cls",
+    "bytes": 1254,
+    "sha256": "aaa73d86e40e5be512e2fe6a0006982390001d15054c05ae076fdb30915ff235"
+  },
+  {
+    "path": "pitfalls/analysis/pitfalls-analysis.pdf",
+    "bytes": 625853,
+    "sha256": "1ed924d9bb13cc7df15ef4cfad3638f4f9de602bef34db9d092082be77c90165"
+  },
+  {
+    "path": "pitfalls/analysis/pitfalls-analysis.tex",
+    "bytes": 29965,
+    "sha256": "a978a367e6c87f9165f1515ef4c966d62267707177d98dbd0d79380a6c70c7f9"
+  },
+  {
+    "path": "pitfalls/analysis/source_manifest.json",
+    "bytes": 17920,
+    "sha256": "f832970fb822c1b34d81a1579cd46f0f3574f7adfbcbc84022b66c68d871bf0c"
+  },
+  {
+    "path": "pitfalls/chunk_sweep.py",
+    "bytes": 8546,
+    "sha256": "24de9af921849b3b282273e194adefd4906d7277b9cae602a94ef25f301db771"
+  },
+  {
+    "path": "pitfalls/compare_chunking.py",
+    "bytes": 7972,
+    "sha256": "10dc895e0b2ef94fbdaa805c97a4f2a83989b8ad97ea01a269c1c81d46f036ea"
+  },
+  {
+    "path": "pitfalls/compare_partial.py",
+    "bytes": 6447,
+    "sha256": "1648594b7addbb98b57c43c16cdf2a2eea6fb5b57658081e3335941ed773331a"
+  },
+  {
+    "path": "pitfalls/coupled_analysis.py",
+    "bytes": 45837,
+    "sha256": "f47691a84686a7957be0dffd5bdba1bcb4be721821b555a8b4c79162031eb87d"
+  },
+  {
+    "path": "pitfalls/coupled_experiment.py",
+    "bytes": 17687,
+    "sha256": "322240d1e3a3785b4287f4e9ccfb40331a39b73bdf8d7d3ed9b7d459ae2f336c"
+  },
+  {
+    "path": "pitfalls/coupled_pair.py",
+    "bytes": 6026,
+    "sha256": "67e5984d7c7611aa314697e44377c84b2d9b1d3a23cebfc08623fc639973abae"
+  },
+  {
+    "path": "pitfalls/evaluation.py",
+    "bytes": 3796,
+    "sha256": "1755b5589fb3012a3e779234ac4a8680c200ae3b8b85c083e70d56a6afa05bf8"
+  },
+  {
+    "path": "pitfalls/experiment_io.py",
+    "bytes": 2655,
+    "sha256": "503a277ce9ad5d4617566dbe74b66648741ff00cc07e854654266437daacac38"
+  },
+  {
+    "path": "pitfalls/focused_analysis.py",
+    "bytes": 9362,
+    "sha256": "9d95e57502c537bc57e93498fea7eff6e06ff116f733b30b0c88d5729242b298"
+  },
+  {
+    "path": "pitfalls/high_dimensional.py",
+    "bytes": 813,
+    "sha256": "b5fa79f9447b19cf6db5029a0f964173374b677b59f02cffde2b5a03cbd4a4a6"
+  },
+  {
+    "path": "pitfalls/partial_view.py",
+    "bytes": 3309,
+    "sha256": "7725d8e589556083d9825219dadb730c38d741eb0bc1d9101cb7de6d09a77ffb"
+  },
+  {
+    "path": "pitfalls/pitfalls.py",
+    "bytes": 1515,
+    "sha256": "f3733c7d0ac8d430cf01079c4130ba6494c3c76310b9562da3e2964d46391aef"
+  },
+  {
+    "path": "pitfalls/plotting.py",
+    "bytes": 6110,
+    "sha256": "62768a41b8e008ea294594294e08e8e46133906273846fd55c30c4899f99125e"
+  },
+  {
+    "path": "pitfalls/recovery_data.py",
+    "bytes": 1728,
+    "sha256": "8dab013ddee90e567fce2f3e74a4c722b2e88924814255b0143f9f95580b03d5"
+  },
+  {
+    "path": "pitfalls/results/README.md",
+    "bytes": 1896,
+    "sha256": "ba30f941d7ebad52913fc99a6df954ffd4a86ce1fc62f42083798725c799770e"
+  },
+  {
+    "path": "pitfalls/results/chunking_ablation/README.md",
+    "bytes": 3069,
+    "sha256": "717e18b09daaf1d2c5d60b7bd5e84c068268e1135da1d34093b7452ee69ad2bb"
+  },
+  {
+    "path": "pitfalls/results/chunking_ablation/chunking_comparison.png",
+    "bytes": 230531,
+    "sha256": "3858c72f875129474255a51b44009eff6ac53d5e1129a5b12477d2507ea5f29c"
+  },
+  {
+    "path": "pitfalls/results/chunking_ablation/narrow/baselines.csv",
+    "bytes": 785,
+    "sha256": "3ab22005856b4e141453e69e2086c631de0b9cb8ff5f042cc87931595dc05937"
+  },
+  {
+    "path": "pitfalls/results/chunking_ablation/narrow/combined_test_loss.png",
+    "bytes": 135841,
+    "sha256": "eaa7af40ae6778c02811648350fe624249384b9f7025d34a724a407dfae68e33"
+  },
+  {
+    "path": "pitfalls/results/chunking_ablation/narrow/config.json",
+    "bytes": 848,
+    "sha256": "b7467bbbb372c2e6f463dbb97fe257630271808f1368be61a352d12be0d762cd"
+  },
+  {
+    "path": "pitfalls/results/chunking_ablation/narrow/context_hypothesis.png",
+    "bytes": 220562,
+    "sha256": "bea8f0e53fe02588dfd152ec9abf90822df1a261dec52869ea768102c54e7459"
+  },
+  {
+    "path": "pitfalls/results/chunking_ablation/narrow/context_summary.csv",
+    "bytes": 129,
+    "sha256": "70c2a32f17225ff1a7634d741a2a9b0989bae490bf427ae7c6a45a627601ed18"
+  },
+  {
+    "path": "pitfalls/results/chunking_ablation/narrow/execution_candidates.csv",
+    "bytes": 725,
+    "sha256": "d423313f1306731c535cce2212face6c88ff538ba0d1c0a685682457166a7a9b"
+  },
+  {
+    "path": "pitfalls/results/chunking_ablation/narrow/learner_inputs.csv",
+    "bytes": 561476,
+    "sha256": "bc42d342e0f170921b612d93b1a684103da8292c9de451cec71958315f1e6ae2"
+  },
+  {
+    "path": "pitfalls/results/chunking_ablation/narrow/learner_view.csv",
+    "bytes": 105419,
+    "sha256": "ed8978030fc342f92f059675cea4312f25cc31d241f2c679a78a6bf97d64d556"
+  },
+  {
+    "path": "pitfalls/results/chunking_ablation/narrow/learner_view.png",
+    "bytes": 259653,
+    "sha256": "d341ea2f226e3d95ebd389e624f1ad2828d6498e984a804cfdcfc16815300054"
+  },
+  {
+    "path": "pitfalls/results/chunking_ablation/narrow/metrics.csv",
+    "bytes": 8913,
+    "sha256": "8b2ecc8e8632a4ea4c6e2aca31d0e6180f13912f07688330b5f56bd69a419c93"
+  },
+  {
+    "path": "pitfalls/results/chunking_ablation/narrow/sample_rollouts.png",
+    "bytes": 127049,
+    "sha256": "a926b7c2e7cbfc49480f021fc64c9e5499304f0119fe2562b6e38c10a3c8bc14"
+  },
+  {
+    "path": "pitfalls/results/chunking_ablation/narrow/sample_trajectories.csv",
+    "bytes": 150152,
+    "sha256": "7cb37aafd11c7d6ee0bca9cc69fe6b7739193c098454a5c205e37f5101b1442a"
+  },
+  {
+    "path": "pitfalls/results/chunking_ablation/narrow/test_loss.png",
+    "bytes": 162736,
+    "sha256": "b636572cb5bb848c8e70ba11c5a4287422623e25e340cc5cfd0215e92eb5322c"
+  },
+  {
+    "path": "pitfalls/results/chunking_ablation/narrow/test_rollouts.csv",
+    "bytes": 210288,
+    "sha256": "22fef34c4a31800ad17ed760e3323c18c1c3d563420ff752005c9cb97daa8359"
+  },
+  {
+    "path": "pitfalls/results/chunking_ablation/narrow/test_states.csv",
+    "bytes": 1832,
+    "sha256": "616fbb9b7a12359a97684aa7f1893331833340e1458deeb17d90bf30045136ed"
+  },
+  {
+    "path": "pitfalls/results/chunking_ablation/paired_comparison.csv",
+    "bytes": 1914,
+    "sha256": "e7a54c2b9789a1e379b2eead1a1ed2067fcea13d22823e348e5ec2dedceae174"
+  },
+  {
+    "path": "pitfalls/results/chunking_ablation/recovery/baselines.csv",
+    "bytes": 785,
+    "sha256": "3ab22005856b4e141453e69e2086c631de0b9cb8ff5f042cc87931595dc05937"
+  },
+  {
+    "path": "pitfalls/results/chunking_ablation/recovery/combined_test_loss.png",
+    "bytes": 113617,
+    "sha256": "81119046aa2c70d7f7f518255ae6b160382368eddd5f1c3636116f8908d81a96"
+  },
+  {
+    "path": "pitfalls/results/chunking_ablation/recovery/config.json",
+    "bytes": 893,
+    "sha256": "a83d3cd536a6777b3718b5a8f4b85e195397d10fcc7360bc1aa3144b3dffc854"
+  },
+  {
+    "path": "pitfalls/results/chunking_ablation/recovery/context_hypothesis.png",
+    "bytes": 125760,
+    "sha256": "163854b915439c34318d8f986affd2fb8c3a4ebc5a1e2c86ff46451ff394fd17"
+  },
+  {
+    "path": "pitfalls/results/chunking_ablation/recovery/context_summary.csv",
+    "bytes": 128,
+    "sha256": "2aae42176f8712dcacb443b6dda0d1b9afb17d2401f4327281498dcb2349b9cb"
+  },
+  {
+    "path": "pitfalls/results/chunking_ablation/recovery/execution_candidates.csv",
+    "bytes": 739,
+    "sha256": "fb0e19dc6f5f10df09b25b5c2027a1e8d4e8687688dfc1fe59858012b913c98f"
+  },
+  {
+    "path": "pitfalls/results/chunking_ablation/recovery/learner_inputs.csv",
+    "bytes": 730836,
+    "sha256": "c0d2d1c94c157ec98e4d5e18dcb4d3d521cc968b6b7b51faa51c6d238d48640a"
+  },
+  {
+    "path": "pitfalls/results/chunking_ablation/recovery/learner_view.csv",
+    "bytes": 120869,
+    "sha256": "d211c8d145f0f2d07342a3e17e9dfab38293c3d53903617b4d41b3b68edcf5f5"
+  },
+  {
+    "path": "pitfalls/results/chunking_ablation/recovery/learner_view.png",
+    "bytes": 276304,
+    "sha256": "b3bbbad345c385d0ba8136c92ae0c2370a6a1ad579a47e5c69881d80d701f057"
+  },
+  {
+    "path": "pitfalls/results/chunking_ablation/recovery/metrics.csv",
+    "bytes": 9959,
+    "sha256": "6e9ee1b5c175689ec57836827d3996c556612bc2eec5cf7bbc7444f9eebabf2f"
+  },
+  {
+    "path": "pitfalls/results/chunking_ablation/recovery/sample_rollouts.png",
+    "bytes": 134393,
+    "sha256": "fd9bba48ba82dd2b49d157adc6043c34895b0414ffb7f89f83347b324a57fe32"
+  },
+  {
+    "path": "pitfalls/results/chunking_ablation/recovery/sample_trajectories.csv",
+    "bytes": 150581,
+    "sha256": "86c3c4c6a6dbdb749142182551a384b365ce7e109090e32a23f4af6f1d3c697c"
+  },
+  {
+    "path": "pitfalls/results/chunking_ablation/recovery/test_loss.png",
+    "bytes": 150908,
+    "sha256": "7acc5b6cbb7870b41d4e7979d5d6fc32c6c0b9097b365af7c574e629b32fc345"
+  },
+  {
+    "path": "pitfalls/results/chunking_ablation/recovery/test_rollouts.csv",
+    "bytes": 215724,
+    "sha256": "40e54afcd4c1c7e9fe184d45bfae5e322549cf86ff14cec426008636c4d54213"
+  },
+  {
+    "path": "pitfalls/results/chunking_ablation/recovery/test_states.csv",
+    "bytes": 1832,
+    "sha256": "616fbb9b7a12359a97684aa7f1893331833340e1458deeb17d90bf30045136ed"
+  },
+  {
+    "path": "pitfalls/results/chunking_ablation/summary.csv",
+    "bytes": 2568,
+    "sha256": "cef6631c569f92ae81cdb9162fb70d09fdfdb08fb321623294f5b7d8824a9e75"
+  },
+  {
+    "path": "pitfalls/results/context_chunking/baselines.csv",
+    "bytes": 638,
+    "sha256": "5c078167f22e2cecd656554b79cfcd6553dfb198644806057745a332fdc88616"
+  },
+  {
+    "path": "pitfalls/results/context_chunking/combined_test_loss.png",
+    "bytes": 184649,
+    "sha256": "5e62b68b52dd6c885a4264c2f1e081b9001de76bab47e869f1fd4ddb18918d0b"
+  },
+  {
+    "path": "pitfalls/results/context_chunking/config.json",
+    "bytes": 813,
+    "sha256": "05244260f21eae797fc552308390c049d920836b115534b11a5bc770fac5680a"
+  },
+  {
+    "path": "pitfalls/results/context_chunking/context_hypothesis.png",
+    "bytes": 250604,
+    "sha256": "77524299f07666657abbc2c37aee30a624770376bca7241ccf38602fc9fbe3bb"
+  },
+  {
+    "path": "pitfalls/results/context_chunking/context_summary.csv",
+    "bytes": 167,
+    "sha256": "e1ba834fb576344a0e0509c438f5a0246983db01b39038990bca94d4260bf1e1"
+  },
+  {
+    "path": "pitfalls/results/context_chunking/execution_candidates.csv",
+    "bytes": 1408,
+    "sha256": "1ea5cf93d0e5b3c62d4a64129538af106d7645f32088d7365fa825ed088d602c"
+  },
+  {
+    "path": "pitfalls/results/context_chunking/metrics.csv",
+    "bytes": 65478,
+    "sha256": "1598fa765f18484d159f350cf7c78d55131cfb659300730dfcde87b960db8d82"
+  },
+  {
+    "path": "pitfalls/results/context_chunking/sample_rollouts.png",
+    "bytes": 131494,
+    "sha256": "0f90f357ffe4a1f4f998a703993799d654b20961c3164cff170f2c4e12dfaead"
+  },
+  {
+    "path": "pitfalls/results/context_chunking/sample_trajectories.csv",
+    "bytes": 145548,
+    "sha256": "e3ca61b532054d7402aad6ec5aeccd14132f67d1ef9e9e727d25240066a3bcf7"
+  },
+  {
+    "path": "pitfalls/results/context_chunking/test_loss.png",
+    "bytes": 252956,
+    "sha256": "050822391710a573133c9cf21853dadb63a0e998051f1b2647f56c639804abcb"
+  },
+  {
+    "path": "pitfalls/results/context_chunking/test_rollouts.csv",
+    "bytes": 1283915,
+    "sha256": "62b0d013092575fffe973ada82f196c64740e359a7021881548d4d404bf6c01c"
+  },
+  {
+    "path": "pitfalls/results/context_chunking/test_states.csv",
+    "bytes": 1832,
+    "sha256": "9dde21e3e71ea197b9c8b5d13d6fcfe26b385d0f876e5c609c447f18a2d86972"
+  },
+  {
+    "path": "pitfalls/results/four_conditions/README.md",
+    "bytes": 6533,
+    "sha256": "ceca46957e6aafc0268e4ba3a6c51e21aaf137f0fe4078f1413a65cd5c900019"
+  },
+  {
+    "path": "pitfalls/results/four_conditions/condition_metrics.csv",
+    "bytes": 33321,
+    "sha256": "5a499c37fc4ab4d2a3879ab5fd73e466d96f106753fb61ee0de79d753aa09b30"
+  },
+  {
+    "path": "pitfalls/results/four_conditions/narrow/baselines.csv",
+    "bytes": 781,
+    "sha256": "28d266a656569b48d74a69a9311e232f431b09be7e24ae9b4584df9f329ea614"
+  },
+  {
+    "path": "pitfalls/results/four_conditions/narrow/combined_test_loss.png",
+    "bytes": 183616,
+    "sha256": "353edf5174f9637a01d7008ccfa28afce06f1bbb61f5c7b27ceed1950da9aee9"
+  },
+  {
+    "path": "pitfalls/results/four_conditions/narrow/config.json",
+    "bytes": 867,
+    "sha256": "0fe030ecb9c306904a07d6efcf2c1bdad136f4d6bb561db16f786543fc68b63a"
+  },
+  {
+    "path": "pitfalls/results/four_conditions/narrow/context_hypothesis.png",
+    "bytes": 250211,
+    "sha256": "423a2113ab572e5630789f171079944f34e74509eed29af8ac0ce1b2c0d6b8dd"
+  },
+  {
+    "path": "pitfalls/results/four_conditions/narrow/context_summary.csv",
+    "bytes": 167,
+    "sha256": "e1ba834fb576344a0e0509c438f5a0246983db01b39038990bca94d4260bf1e1"
+  },
+  {
+    "path": "pitfalls/results/four_conditions/narrow/execution_candidates.csv",
+    "bytes": 1411,
+    "sha256": "81efa842914adb2e1bda009747be4173f0f3046ea34aa7c475b48de0d860831e"
+  },
+  {
+    "path": "pitfalls/results/four_conditions/narrow/learner_inputs.csv",
+    "bytes": 645960,
+    "sha256": "db0d7f50f9f592be6f6f71856fbd2eedcd588275d788d2841c017d3f1d239a47"
+  },
+  {
+    "path": "pitfalls/results/four_conditions/narrow/learner_view.csv",
+    "bytes": 152558,
+    "sha256": "83851b14ea4c9f5b874f8222ec7ea9c7c3582fe8aab10d2be9fe51b5734150f0"
+  },
+  {
+    "path": "pitfalls/results/four_conditions/narrow/learner_view.png",
+    "bytes": 341770,
+    "sha256": "1db09b50b83c66ec98397f7d3384f8c13f570c22b8201ff1997155a465656898"
+  },
+  {
+    "path": "pitfalls/results/four_conditions/narrow/metrics.csv",
+    "bytes": 17377,
+    "sha256": "63aa1858573c469828e2071f66df193640b407f2975e42173b55f52d0ae22698"
+  },
+  {
+    "path": "pitfalls/results/four_conditions/narrow/sample_rollouts.png",
+    "bytes": 139587,
+    "sha256": "c052e79110bcfbc244b93db491f44d6221f3e020ae61cf8a0d5d044352acc22a"
+  },
+  {
+    "path": "pitfalls/results/four_conditions/narrow/sample_trajectories.csv",
+    "bytes": 161585,
+    "sha256": "e227bc034874af9f5ffd7e433513523075297f93b6e7a8632f0affa3ee9dccbd"
+  },
+  {
+    "path": "pitfalls/results/four_conditions/narrow/test_loss.png",
+    "bytes": 240752,
+    "sha256": "ca41d9dbc7ef53d101f0b8c401d0f9ed08dec23fa8ed5bda6d21ec562aa99fda"
+  },
+  {
+    "path": "pitfalls/results/four_conditions/narrow/test_rollouts.csv",
+    "bytes": 389557,
+    "sha256": "dbde641e1ee5654beedf25b727733f7a6450c723ba4894c0d883aa5489513082"
+  },
+  {
+    "path": "pitfalls/results/four_conditions/narrow/test_states.csv",
+    "bytes": 1838,
+    "sha256": "267c5d9ec5e14514dc6a128418b05e2d3bb9f55cc435b36b0d44c67ad6e2c815"
+  },
+  {
+    "path": "pitfalls/results/four_conditions/narrow_four_conditions.png",
+    "bytes": 231206,
+    "sha256": "4a8e72b6d07ebae0f6fb0e15bf9682fa21d4c71d44aac581c5d1b523a6f53163"
+  },
+  {
+    "path": "pitfalls/results/four_conditions/recovery/baselines.csv",
+    "bytes": 781,
+    "sha256": "28d266a656569b48d74a69a9311e232f431b09be7e24ae9b4584df9f329ea614"
+  },
+  {
+    "path": "pitfalls/results/four_conditions/recovery/combined_test_loss.png",
+    "bytes": 171476,
+    "sha256": "827a4af0f701a46798dbcd37fb516df38e0f4e13d927833d484c93a5faa41114"
+  },
+  {
+    "path": "pitfalls/results/four_conditions/recovery/config.json",
+    "bytes": 912,
+    "sha256": "367eb4b18e4c5d117295e84e897ba73bd774767d66b9d473b9ddae1590843a26"
+  },
+  {
+    "path": "pitfalls/results/four_conditions/recovery/context_hypothesis.png",
+    "bytes": 163960,
+    "sha256": "8217d570cbe174c62723743ccdd6f1662b55a5cb8f7a6ef308b7cdc4bf646147"
+  },
+  {
+    "path": "pitfalls/results/four_conditions/recovery/context_summary.csv",
+    "bytes": 166,
+    "sha256": "9e91fc54ceb14b2b3124ee3f0a0b8ebbe4912579e1540d110a13ea6652c48f9f"
+  },
+  {
+    "path": "pitfalls/results/four_conditions/recovery/execution_candidates.csv",
+    "bytes": 1441,
+    "sha256": "c85cc7634b122456398f336ed7c88a73f24be93853bc6c6d12d3d80ca14efaf8"
+  },
+  {
+    "path": "pitfalls/results/four_conditions/recovery/learner_inputs.csv",
+    "bytes": 847132,
+    "sha256": "582b053c88a01ca1fd9dc1ad0607887e42405deb3d4112e7436fa88b33708b7f"
+  },
+  {
+    "path": "pitfalls/results/four_conditions/recovery/learner_view.csv",
+    "bytes": 179125,
+    "sha256": "78e8d5cf06ee28030b680ba7207c113582dc3d09eff5098725ae6a116145291a"
+  },
+  {
+    "path": "pitfalls/results/four_conditions/recovery/learner_view.png",
+    "bytes": 354056,
+    "sha256": "78effeb6622a871f069ae2a4c7be9d8d7f69c2c5c726c26e704e01d0eaf46c0d"
+  },
+  {
+    "path": "pitfalls/results/four_conditions/recovery/metrics.csv",
+    "bytes": 19558,
+    "sha256": "f324aec9683243c3f10a64c6a2917d6cbbcc64a47f84f5384e558042c5899d07"
+  },
+  {
+    "path": "pitfalls/results/four_conditions/recovery/sample_rollouts.png",
+    "bytes": 138581,
+    "sha256": "eb5704e8cf1fa2d4566bdf1adb66a5659de96e9a22a9f64df7d620b813bf5f4d"
+  },
+  {
+    "path": "pitfalls/results/four_conditions/recovery/sample_trajectories.csv",
+    "bytes": 166581,
+    "sha256": "51d0865263897528909a93df72ad6359b73f0587ae631b54c78136e0c75855e2"
+  },
+  {
+    "path": "pitfalls/results/four_conditions/recovery/test_loss.png",
+    "bytes": 222558,
+    "sha256": "cb33dbc465c0a5f2fd99e115e048e2380dba92d4a2228d1f3c2e8d7c8f83329c"
+  },
+  {
+    "path": "pitfalls/results/four_conditions/recovery/test_rollouts.csv",
+    "bytes": 400582,
+    "sha256": "374913b1bfbad48d4f1d58297a09e31b9ef77b8c5bcde444b7de7b66b1f75b86"
+  },
+  {
+    "path": "pitfalls/results/four_conditions/recovery/test_states.csv",
+    "bytes": 1838,
+    "sha256": "267c5d9ec5e14514dc6a128418b05e2d3bb9f55cc435b36b0d44c67ad6e2c815"
+  },
+  {
+    "path": "pitfalls/results/four_conditions/recovery_four_conditions.png",
+    "bytes": 237148,
+    "sha256": "f05ae95b245d6d50528c4dcf1985d5dec7798f68301a26d25fa172ff3a0f2f81"
+  },
+  {
+    "path": "pitfalls/results/four_conditions/summary.csv",
+    "bytes": 5971,
+    "sha256": "684cb2f0eefef03e77727109b7fe48898f33efee237b2331ac658edfcf19adf3"
+  },
+  {
+    "path": "pitfalls/results/higher_dimensions/README.md",
+    "bytes": 5009,
+    "sha256": "cd2ef4f9285145032e471b4eee23fd95e570178fb1be87180ae320a85951355d"
+  },
+  {
+    "path": "pitfalls/results/higher_dimensions/baselines.csv",
+    "bytes": 2170,
+    "sha256": "8d6b61bb59667a28ef9b0d7a9fdd3e31152bb5ab044ffda326d52dccd31c6537"
+  },
+  {
+    "path": "pitfalls/results/higher_dimensions/config.json",
+    "bytes": 762,
+    "sha256": "078335e6055a667e27ac18d0c3417e2d8aa96c818e02ac56a9725f6da7dbd34f"
+  },
+  {
+    "path": "pitfalls/results/higher_dimensions/metrics.csv",
+    "bytes": 80826,
+    "sha256": "95676b8c810c7f804a6dc30c5f1c8ecee598b313885b081f35d545697092dcbb"
+  },
+  {
+    "path": "pitfalls/results/higher_dimensions/narrow_comparison.png",
+    "bytes": 179874,
+    "sha256": "8045b36fdd31e0cfa3ef38c841d74f22e1b41fc8e2b91e9facfaab257d8da9c9"
+  },
+  {
+    "path": "pitfalls/results/higher_dimensions/pair_checks.csv",
+    "bytes": 434,
+    "sha256": "b322bc3e521b5a4444fb4e5d745bca8222d68eebe7e9f060721538ee97975748"
+  },
+  {
+    "path": "pitfalls/results/higher_dimensions/pair_n16.npz",
+    "bytes": 12698,
+    "sha256": "1878ecc6385af5a122bb3dca5ba6c119df0a7109e1ef745fdde6614563a8d57f"
+  },
+  {
+    "path": "pitfalls/results/higher_dimensions/pair_n4.npz",
+    "bytes": 2138,
+    "sha256": "5af809d27f6fda3e03b3e5af5e0b3c57fdffa32b7924b2a197a44be43755db4d"
+  },
+  {
+    "path": "pitfalls/results/higher_dimensions/pair_n8.npz",
+    "bytes": 4250,
+    "sha256": "0755b928f1e0868ddc05ca3e19ab5ce2e43e07c88c4f6429d6a074af170ca7fd"
+  },
+  {
+    "path": "pitfalls/results/higher_dimensions/recovery_comparison.png",
+    "bytes": 152270,
+    "sha256": "a9e8c987785913dc093a5d727f993af7d45c053580b7f406112e4b03de7c6880"
+  },
+  {
+    "path": "pitfalls/results/higher_dimensions/summary.csv",
+    "bytes": 15032,
+    "sha256": "7b1596ec40d5701827cc71ac05d17f40a4945d2fa2eae0cd72707feafe241c03"
+  },
+  {
+    "path": "pitfalls/results/higher_dimensions/test_rollouts.csv",
+    "bytes": 1984748,
+    "sha256": "7c07ff6d3890d58ceff5ce5985d52d6a76cc71c80c8ac27c6caa5428f2ac21b6"
+  },
+  {
+    "path": "pitfalls/results/higher_dimensions/test_states.csv",
+    "bytes": 35006,
+    "sha256": "4808cf16f19a42c6656367afc0ba3fbf99b5ac26648c1890e59db4e5caead7a3"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/README.md",
+    "bytes": 3769,
+    "sha256": "ecbd89f62d4bdac0e6c01b6df9e5ac3ff9da472b709fbea03c35cc405ab3ef70"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/comparison.csv",
+    "bytes": 1390,
+    "sha256": "ae25a10dc605ecb43bf101edb6f6a42a88e7716d2eee57e5e2eca0f2076355dd"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/full_narrow/baselines.csv",
+    "bytes": 638,
+    "sha256": "5c078167f22e2cecd656554b79cfcd6553dfb198644806057745a332fdc88616"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/full_narrow/combined_test_loss.png",
+    "bytes": 184800,
+    "sha256": "e60984f93cffb2bdeb6b5952081fc91b7cff2ea28d071d2626bc2c57b962cdde"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/full_narrow/config.json",
+    "bytes": 894,
+    "sha256": "ef575c1b43cedcf86234d4537ae114a19fc5e031f18846706979c5b4253a32bf"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/full_narrow/context_hypothesis.png",
+    "bytes": 250704,
+    "sha256": "134bfc8eb8a6e49f7a251d4c83fbcff46d1976219e135234146eb50b4351ecf6"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/full_narrow/context_summary.csv",
+    "bytes": 167,
+    "sha256": "e1ba834fb576344a0e0509c438f5a0246983db01b39038990bca94d4260bf1e1"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/full_narrow/execution_candidates.csv",
+    "bytes": 1407,
+    "sha256": "bf502decd2a344f8e553a176adc35f5032677d61604e11a95c92c1cbcefb2f42"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/full_narrow/metrics.csv",
+    "bytes": 25417,
+    "sha256": "dce86f65115382c6ad0207f63abc9adf24f788d559a76697604cbc9f357870e6"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/full_narrow/sample_rollouts.png",
+    "bytes": 134793,
+    "sha256": "6476eed29430de8457f1e853f82d415be7d683196ea36f2a18a32c1f2f1fe6a0"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/full_narrow/sample_trajectories.csv",
+    "bytes": 145548,
+    "sha256": "e3ca61b532054d7402aad6ec5aeccd14132f67d1ef9e9e727d25240066a3bcf7"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/full_narrow/test_loss.png",
+    "bytes": 249115,
+    "sha256": "dcac3f41487e2a69cfa76c3e6dcbb36834576a3ff280d7c3d4f9048a8a2f7698"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/full_narrow/test_rollouts.csv",
+    "bytes": 545219,
+    "sha256": "d64ce53ef180c4dfb0d4df65741b1794bd99c37c46109248a2f1a628e5d3c778"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/full_narrow/test_states.csv",
+    "bytes": 1832,
+    "sha256": "9dde21e3e71ea197b9c8b5d13d6fcfe26b385d0f876e5c609c447f18a2d86972"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/full_recovery/baselines.csv",
+    "bytes": 638,
+    "sha256": "5c078167f22e2cecd656554b79cfcd6553dfb198644806057745a332fdc88616"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/full_recovery/combined_test_loss.png",
+    "bytes": 129465,
+    "sha256": "1ab81511ea12cc5f3aaa6e845c8625f692e1a367e28f0691adbdc26438d95a80"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/full_recovery/config.json",
+    "bytes": 939,
+    "sha256": "cc71d139557ab810be823d2f3ca50e5576d8ad1b9a1def4e010e22db78b0e607"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/full_recovery/context_hypothesis.png",
+    "bytes": 140142,
+    "sha256": "cf41f6cc4effed25769be01c6a32fadf2836047ca1f813c231193068acc56cd3"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/full_recovery/context_summary.csv",
+    "bytes": 166,
+    "sha256": "b5bacdbf1842beb0a599ef37b9b8209a5f799fd1e2db63b0070fc20fa3f75be6"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/full_recovery/execution_candidates.csv",
+    "bytes": 1445,
+    "sha256": "5644519b2ba2802f286baa924af8d73e1c47cb54ba015ea5681fa628652041f6"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/full_recovery/metrics.csv",
+    "bytes": 29060,
+    "sha256": "cc72715f4b9e97b8e71d9433d9d033c37bb1df3484f9da83aabfbbc896a08a18"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/full_recovery/sample_rollouts.png",
+    "bytes": 136060,
+    "sha256": "7c842cd1a5f7b163b3ff41ede8b5da5cc643141b2e2eb215b1970d2d239e463f"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/full_recovery/sample_trajectories.csv",
+    "bytes": 149775,
+    "sha256": "f698a64109d72baf916b5cb9ce132d532626cc34b429611d993619c0d79e9266"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/full_recovery/test_loss.png",
+    "bytes": 218085,
+    "sha256": "0a17fb0ba82664dc0b12dbdbcea796a60c73fb0274014ed95141c00a3d7b546d"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/full_recovery/test_rollouts.csv",
+    "bytes": 566431,
+    "sha256": "b9c14f6a13dc0c3366157e62136b49e4793022ff25923b29eddfe58bd6c033f0"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/full_recovery/test_states.csv",
+    "bytes": 1832,
+    "sha256": "9dde21e3e71ea197b9c8b5d13d6fcfe26b385d0f876e5c609c447f18a2d86972"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/observation_coverage_comparison.png",
+    "bytes": 179312,
+    "sha256": "8821ebd3588b36f88baa049e816fa35949c9e832227cc7a018f55d076f67630c"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/partial_narrow/baselines.csv",
+    "bytes": 785,
+    "sha256": "6ab0fce6c7d20d6ebe9602a71fa0079eb1d407d7afc3ca3bc516cb760b25d0a7"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/partial_narrow/combined_test_loss.png",
+    "bytes": 184838,
+    "sha256": "2ee0295e5fed271fefc27109e3091742d8b1a6e14d4ceed9c45b2789a3dfb6cc"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/partial_narrow/config.json",
+    "bytes": 866,
+    "sha256": "23895ec6e93d95a9b0b3789ce59f5a2f718c2408cab029a2e1a69f92f0e7ab9b"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/partial_narrow/context_hypothesis.png",
+    "bytes": 250704,
+    "sha256": "134bfc8eb8a6e49f7a251d4c83fbcff46d1976219e135234146eb50b4351ecf6"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/partial_narrow/context_summary.csv",
+    "bytes": 167,
+    "sha256": "e1ba834fb576344a0e0509c438f5a0246983db01b39038990bca94d4260bf1e1"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/partial_narrow/execution_candidates.csv",
+    "bytes": 1409,
+    "sha256": "fe5bcefc95ab9c66f978559cf8634c3980804f48840d7586bdf110e1d282f368"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/partial_narrow/learner_inputs.csv",
+    "bytes": 645110,
+    "sha256": "81ee99d874c3f085e17ff49344b797d98723fc44a76bc98dc719506a825e18c2"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/partial_narrow/learner_view.csv",
+    "bytes": 152434,
+    "sha256": "bc8c332c324ccc0e2bbd3b6fe5fdd471757ecccf08de6c678b3524ea7adc9323"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/partial_narrow/learner_view.png",
+    "bytes": 334070,
+    "sha256": "819a4428f301899d6aab618f484927cd70cb9b878396d59c8fe3cbfb74ba18bc"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/partial_narrow/metrics.csv",
+    "bytes": 25838,
+    "sha256": "0e0d7b9e82d78cbe1001af46880dc85ab93d74de42d5d01a30aae3558846b51f"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/partial_narrow/sample_rollouts.png",
+    "bytes": 139731,
+    "sha256": "4ac68ec58a588fec7daccd11a60d8024d64cd23d7ea5465c58e09b70f61896bb"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/partial_narrow/sample_trajectories.csv",
+    "bytes": 161550,
+    "sha256": "82d0195fa2829138619155613cff043c66b8a3fcf9c8d4c2a29673b6bd7f96af"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/partial_narrow/test_loss.png",
+    "bytes": 248984,
+    "sha256": "8908c71f0b6eaac60f5920dd08286390bb3ef7137410373cb0e562e5d946792d"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/partial_narrow/test_rollouts.csv",
+    "bytes": 566337,
+    "sha256": "5e58ea0adab8472d60965010c9b7d69dcc1d8a256ff83aa2510f44d2eaf5bd0e"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/partial_narrow/test_states.csv",
+    "bytes": 1832,
+    "sha256": "9dde21e3e71ea197b9c8b5d13d6fcfe26b385d0f876e5c609c447f18a2d86972"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/partial_recovery/baselines.csv",
+    "bytes": 785,
+    "sha256": "6ab0fce6c7d20d6ebe9602a71fa0079eb1d407d7afc3ca3bc516cb760b25d0a7"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/partial_recovery/combined_test_loss.png",
+    "bytes": 171483,
+    "sha256": "d550f2c07392ffa78769b5c8e44f32f8bc4be80fb4a6f2044bf19e5b9a9a1e95"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/partial_recovery/config.json",
+    "bytes": 911,
+    "sha256": "7c9024739c4adbbfb243903edb0480ad75dafab60339a301fb643d698b98a6ba"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/partial_recovery/context_hypothesis.png",
+    "bytes": 163862,
+    "sha256": "9adefd62d8137cf077ccac29e46cefac6413930b0b17b157c909ef4be9b65a73"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/partial_recovery/context_summary.csv",
+    "bytes": 166,
+    "sha256": "9e91fc54ceb14b2b3124ee3f0a0b8ebbe4912579e1540d110a13ea6652c48f9f"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/partial_recovery/execution_candidates.csv",
+    "bytes": 1434,
+    "sha256": "6ac4c1efd1fa099d9da7856b606636af590fda7f5d35c965f2c635faa3b7d220"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/partial_recovery/learner_inputs.csv",
+    "bytes": 848360,
+    "sha256": "324f3e2196a7f82160c24aec897da8e66a8936e06e3af41d3a54f40a6040d176"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/partial_recovery/learner_view.csv",
+    "bytes": 178244,
+    "sha256": "c5b7bd3367ffb6fda6cfa811a1d3ccb1d416d4cdb37141d7440256c1deae0937"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/partial_recovery/learner_view.png",
+    "bytes": 339641,
+    "sha256": "c616893e0b3f0cb57698901f4ad8097b562182d21d31b5d4abf567ba2c2530db"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/partial_recovery/metrics.csv",
+    "bytes": 28972,
+    "sha256": "0ed2327ab23de0d60aa9df9baf93c608bd7ab9ee1365835f9d36549489a6d019"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/partial_recovery/sample_rollouts.png",
+    "bytes": 138839,
+    "sha256": "965b80060792a2b236acff0bd99ee5bf340d9c002a276646c591cba98677dab6"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/partial_recovery/sample_trajectories.csv",
+    "bytes": 165614,
+    "sha256": "fe8942b763f3bb11b4f36e7bae0e4bde12304bc9073de4422f3f4140ab286913"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/partial_recovery/test_loss.png",
+    "bytes": 230276,
+    "sha256": "392ef05960b40c84e95efa5a88deac7ac3a2510bf9863afbb65ecb3b8f911c3f"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/partial_recovery/test_rollouts.csv",
+    "bytes": 583937,
+    "sha256": "460baf71f1579b3361854327e8aca64ce678f034a1c155778d076d7532aa2424"
+  },
+  {
+    "path": "pitfalls/results/partial_observation/partial_recovery/test_states.csv",
+    "bytes": 1832,
+    "sha256": "9dde21e3e71ea197b9c8b5d13d6fcfe26b385d0f876e5c609c447f18a2d86972"
+  },
+  {
+    "path": "pitfalls/run_four_conditions.py",
+    "bytes": 8212,
+    "sha256": "67292c370b5d56d8f7892ae4b7743a8138d3e488be4ea24f55895c431bdf126e"
+  },
+  {
+    "path": "pitfalls/stability.py",
+    "bytes": 2626,
+    "sha256": "68c38477cd93fccece39d866e1ad6a135de70c8f541fe9451bc91b8fac2b8600"
+  }
+]

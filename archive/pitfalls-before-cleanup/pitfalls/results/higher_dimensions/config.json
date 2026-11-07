@@ -1,0 +1,38 @@
+{
+  "dimensions": [
+    4,
+    8,
+    16
+  ],
+  "contexts": [
+    1,
+    2,
+    8,
+    16
+  ],
+  "executions": [
+    1,
+    4,
+    8,
+    16
+  ],
+  "horizon": 16,
+  "seeds": [
+    918,
+    919,
+    920
+  ],
+  "test_seed": 20261108,
+  "test_pairs": 20,
+  "steps": 200,
+  "trajectories_per_block": 32,
+  "output": "/Users/nball/ESE618/pitfalls/results/higher_dimensions",
+  "warmup": 15,
+  "training_steps": 80,
+  "mu": 0.125,
+  "probe_scale": 0.05,
+  "ridge": 1e-06,
+  "construction": "direct sum of original challenging pairs; h=2 at every dimension",
+  "perturbation": "fixed total hidden-state Euclidean norm .0005-.0015; single and distributed directions",
+  "loss": "full-state squared distance, time and episode mean; per-coordinate version also retained"
+}

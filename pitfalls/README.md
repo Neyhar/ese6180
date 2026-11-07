@@ -1,106 +1,71 @@
-# Does observation history reduce the need for action chunking?
+# Pitfalls: history versus action chunking
 
-The active experiment learns linear history controllers on the paper's narrow
-hard-example demonstrations, then tests recovery from small unseen departures.
-The hypothesis is that longer history improves control and can reduce the
-execution length needed for stable, accurate behavior. Results may support or
-reject this hypothesis; no fitting objective enforces the desired trend.
+One question: **does remembering observations let the learner act one step at a
+time instead of executing an action sequence before checking again?**
 
-```sh
-python3 pitfalls/chunk_sweep.py
-python3 -m unittest discover -s tests -p 'test_pitfalls*.py' -v
-```
+## Start here
 
-Default sweep: history r=1,2,4,8,16; predicted chunk H=1,2,4,8,16; executed prefix
-ell=1,2,4,8,16 with ell<=H; five independent training seeds. ell=1 means feedback
-every step, without executing an open-loop multi-action chunk. Observations
-are full state C=I; r includes the current observation and r-1 past actions.
+1. [Does history improve one-action control?](results/coupled_higher_dimensions/figures/overview_history.png)
+2. [With enough history, does executing more actions help?](results/coupled_higher_dimensions/figures/overview_execution.png)
+3. [Experiment, data, and results](results/coupled_higher_dimensions/README.md)
 
-```sh
-python3 pitfalls/chunk_sweep.py --contexts 1 2 4 8 16 --steps 200 --long-steps 1000
-```
+The main analysis uses one coupled system at each dimension: 2, 4, 8, and 16.
+The learner observes only the last state. We change x1 once at deployment and
+measure its recovery. Plot lines are mean errors across five training seeds,
+without shading. Red crosses indicate at least one unstable fit.
 
-Use `--output PATH` to retain a separate run. Other options include `--horizons`,
-`--executions`, `--seeds`, `--test-pairs`, `--test-seed`, and `--loss-tolerance`.
-The default MSE threshold 1e-5 is illustrative, not prescribed by the paper.
-Fix a meaningful threshold before a confirmatory run. Testing a trend on this
-set does not establish generalization; use fresh seeds for confirmation.
+Noiseless training stays on the demonstrated line. Noisy training adds known
+action perturbations and supplies exact expert answers at the resulting states.
+Every test is noiseless after the initial x1 change.
 
-## Evaluation
-
-Training uses 32 noiseless expert trajectories on x1=0. The held-out test set
-contains 20 pairs of initial states: x2 uniform on [-1,1], paired with x1=0 and
-x1 of random sign and magnitude 0.0005–0.0015. The same set is shared across all
-controllers and generated independently of training. No continuing noise is
-added. Expert history is supplied on x1=0, then the perturbation is applied at
-deployment so warm-up cannot erase it. This is an explicit initialization
-convention, not a learned initialization strategy.
-
-Main test loss averages squared full-state tracking error against K1 over 200
-post-action states and then the 20 perturbed states. Support-set loss and worst
-perturbed loss are saved separately. A 1000-step canonical rollout is a separate
-long-term diagnostic. Exact spectral stability is required when declaring a
-setting successful: low finite-horizon error alone is insufficient.
-
-Training target times are matched across both r and H. Static K1, K2, minimax,
-minimum-norm, zero-control and model-informed analytic-memory baselines use the same test set.
-The memory baseline shows representability, not learning from the demonstrations.
-
-## Outputs: `pitfalls/results/context_chunking/`
-
-- `context_hypothesis.png`: loss versus history, exact stability, and shortest passing execution. A selected length of 1 means no open-loop chunking is needed under the stated criterion; None means no tested setting passes.
-- `combined_test_loss.png`: history curves on one execution/loss plot at the largest H.
-- `test_loss.png`: separate panels by history, including all prediction horizons.
-- `sample_rollouts.png`: canonical [0.001,1] trajectories and baseline comparisons.
-- `metrics.csv`: per-trained-controller test means, worst loss, exact stability, rank and long-rollout diagnostic.
-- `test_rollouts.csv`, `test_states.csv`: individual losses and exact held-out initial states.
-- `execution_candidates.csv`, `context_summary.csv`: pass criteria and shortest feasible execution, requiring all training seeds to pass at the largest H.
-- `baselines.csv`, `sample_trajectories.csv`, `config.json`: references and reproduction details.
-
-Shading is the min–max range of seed means, not a confidence interval. All losses
-are raw; plot floors are display-only. The enormous wrong-K2 loss and exact-zero
-K1 loss remain in CSVs and sample trajectories, but are omitted from comparison
-loss plots for readability. Each configuration trains on narrow data; history
-can change its dynamics without resolving all information missing in that data.
-
-## Active code
-
-- `pitfalls.py`: paper matrices, static gains, narrow demonstrations, CSV helper; also forwards to the sweep when run directly.
-- `chunk_sweep.py`: configurable experiment orchestration.
-- `evaluation.py`: independent test states, paired rollouts, tracking loss and hypothesis criterion.
-- `stability.py`: exact augmented-history maps, spectral stability and analytic memory witness.
-- `plotting.py`: figures for the one research question.
-- `../model.py`: shared LinearSystem, HistoryPolicy, ridge fitting and rollout implementation.
-- `CHUNK_EXECUTION_THEORY.md`: assumptions and mathematical limits.
-
-Previous broad noisy/partial-observation sweeps, scalar examples, optimization
-studies, duplicate analysis scripts and old outputs were moved to
-`../archive/pitfalls-before-focus/`. This is a reference snapshot with an archival
-README; it is not part of the active workflow.
-
-## Partial-observation extension
-
-Use `--observation partial` to give the learner only y=x2; the expert still
-uses full state to supply labels. The plant's observability index is two.
-`--training narrow` retains x1=0 demonstrations. `--training recovery` collects
-known exploratory actions and labels visited histories with nominal expert
-chunks, keeping the actual actions in the history features. This is a coverage
-intervention, not an exact reproduction of the paper's restricted data.
+## Commands
 
 ```sh
-python3 pitfalls/chunk_sweep.py --observation partial --training narrow --horizons 1 4 16 --seeds 618 619 620 --output pitfalls/results/partial_observation/partial_narrow
-python3 pitfalls/chunk_sweep.py --observation partial --training recovery --horizons 1 4 16 --seeds 618 619 620 --output pitfalls/results/partial_observation/partial_recovery
+# Audit existing data and rebuild only the two main plots:
+python3 -m pitfalls --plot-only
+
+# Run the current experiment into a new directory:
+python3 -m pitfalls --output /tmp/pitfalls-new-run
+
+# Run the paper's original 2D pair with the same engine:
+python3 -m pitfalls --family original --dimensions 2 --output /tmp/pitfalls-original
+
+# Optional: rebuild the full exploratory diagnostics and original comparison:
+python3 -m pitfalls --plot-only --exploratory --original-reference
+
+python3 -m unittest discover -s tests -v
 ```
 
-For paired full-observation controls, repeat with `--observation full` and
-outputs `full_narrow`/`full_recovery` under the same parent. Then run
-`python3 pitfalls/compare_partial.py` to summarize all four saved suites.
-See [the comparison and explanation](results/partial_observation/README.md),
-[comparison graph](results/partial_observation/observation_coverage_comparison.png),
-and [learner-view figure](results/partial_observation/partial_recovery/learner_view.png).
+`python3 pitfalls/high_dimensional.py` is retained as an equivalent entry point.
+A saved run is overwritten only with an explicit `--overwrite` flag.
 
-`partial_view.py` records actual observation/action features and shows the
-hidden perturbation, visible output change, model-reconstruction error and
-executed action error. `recovery_data.py` reuses matched ridge fitting from the
-observability study. Both extensions use the original shared plant/policy and
-rollout classes. The original full-observation outputs remain unchanged.
+## Code map
+
+| Location | Responsibility |
+|---|---|
+| `coupled/system.py` | Coupled matrices, indistinguishable experts, stability and observability checks |
+| `coupled/experiment.py` | Settings, training, deployment, and raw results; supports both system families |
+| `coupled/plots.py` | The two main mean-error plots and their x1-only summary |
+| `coupled/diagnostics.py` | Optional exploratory plots and comparisons |
+| `original/system.py` | The original Simchowitz two-state construction |
+| `original/data.py`, `original/evaluation.py` | Original-example data and mathematical verification helpers |
+| `shared/audit.py`, `shared/results.py` | Complete-grid, seed, episode, and timing checks; CSV handling |
+| `shared/stability.py`, `shared/plotting.py` | Exact feedback dynamics and common figure export |
+| `../model.py`, `../observability/experiment.py` | Shared plant, policy, ridge fitting, and rollout primitives |
+
+[Coupled construction and proof](docs/coupled-hard-example.md) ·
+[Theory and assumptions](docs/theory.md)
+
+## Results and history
+
+`results/coupled_higher_dimensions/` is the only active result collection. It
+retains raw episodes, settings, matrix checks, source snapshots, and optional
+diagnostics. The primary scores use only x1-change cases; additional saved
+perturbation types are exploratory. The paper's original n=2 system is a
+separate reference under `original_n2/`, not a pooled dimension-scaling point.
+
+Earlier runners, superseded result sets, and the frozen comprehensive analysis
+are preserved in [the pre-cleanup archive](../archive/pitfalls-before-cleanup/README.md).
+They are outside the active workflow. No saved measurements were discarded.
+
+Report sources remain in [midterm-report/](../midterm-report/README.md).

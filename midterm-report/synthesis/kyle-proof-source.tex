@@ -1,0 +1,281 @@
+% \documentclass{l4dc2026}
+% If your paper is accepted, please use the "final" option
+% for the camera-ready version
+\documentclass[final]{l4dc2026}
+
+% \renewcommand{\sectionmark}[1]{\markright{\thesection.\ #1}} 
+% Packages
+% {
+% \usepackage{amsmath}
+% \usepackage{amssymb}
+% \usepackage{amsthm}
+% \usepackage{mathrsfs}
+% \usepackage{mathtools}
+% \usepackage{url}
+% \usepackage{caption}
+% \usepackage{subcaption}
+% \usepackage{hyperref}
+% \usepackage{hhline}
+% \hypersetup{
+%     colorlinks=true,
+%     linkcolor=blue,
+%     filecolor=magenta,      
+%     urlcolor=cyan,
+%     pdftitle={Overleaf Example},
+%     pdfpagemode=FullScreen,
+%     }
+% \usepackage{graphicx,wrapfig}
+% \usepackage{float}
+% \usepackage{titling}
+% \usepackage[table]{xcolor}
+% \usepackage{fancyhdr}
+% \usepackage{booktabs}
+% \usepackage{tikz}
+% \usetikzlibrary{matrix,arrows.meta}
+% \usepackage{tikzsymbols}
+% \usetikzlibrary{automata, positioning, arrows.meta, bending}
+% \usepackage{minted}
+% \usepackage{tikz-cd}
+%}
+% Basic notation
+% {
+\newcommand{\lp}{\left(}
+\newcommand{\rp}{\right)}
+\newcommand{\lb}{\left[}
+\newcommand{\rb}{\right]}
+\newcommand{\la}{\langle}
+\newcommand{\ra}{\rangle}
+\newcommand{\lc}{\left\{}
+\newcommand{\rc}{\right\}}
+\newcommand{\lv}{\left|}
+\newcommand{\rv}{\right|}
+\newcommand{\f}[2]{\frac{#1}{#2}}
+\newcommand{\lm}{\limits}
+\newcommand{\cd}{\cdot}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\bmx}[1]{\begin{bmatrix} #1 \end{bmatrix}}
+\newcommand{\pmx}[1]{\begin{pmatrix} #1 \end{pmatrix}}
+\renewcommand{\d}{\text{d}}
+\renewcommand{\u}[1]{\text{ #1}}
+\renewcommand{\t}[1]{\text{#1}}
+\newcommand{\abs}[1]{\left| #1 \right|}
+\newcommand{\inv}{^{-1}}
+% }
+% Formatting
+% {
+% Align has no equation number. Specifying no means that there is no auto align at the beginning.
+\newcommand{\eqsp}[1]{\begin{equation}\begin{split}& #1 \end{split}\end{equation}}
+\newcommand{\eqspa}[1]{\[\begin{aligned}\begin{split}& #1 \end{split}\end{aligned}\]}
+\newcommand{\eqspno}[1]{\begin{equation}\begin{split} #1 \end{split}\end{equation}}
+\newcommand{\eqspnoa}[1]{\[\begin{aligned}\begin{split} #1 \end{split}\end{aligned}\]}
+\newcommand{\eqspan}[2]{\begin{align}\tag{#1}\begin{split}& #2 \end{split}\end{align}}
+\newcommand{\eqspnoan}[2]{\begin{align}\tag{#1}\begin{split} #2 \end{split}\end{align}}
+\newcommand{\qq}{\\ =\  &}
+\newcommand{\qqs}{=\ &}
+\newcommand{\imp}{\\ \implies\ &}
+\newcommand{\eqq}{\\ \iff\ &}
+\newcommand{\qqle}{\\ \le\  &}
+\newcommand{\qql}{\\ <\  &}
+\newcommand{\qqg}{\\ >\  &}
+\newcommand{\qqge}{\\ \ge\  &}
+\newcommand{\qqsle}{\le\ &}
+\newcommand{\qqsge}{\ge\ &}
+\newcommand{\qqsg}{>\ &}
+\newcommand{\qqsl}{<\ &}
+\newcommand{\qqsto}{\to\ &}
+\newcommand{\qqto}{\\ \to\  &}
+\newcommand{\qqsmapsto}{\mapsto\ &}
+\newcommand{\qqmapsto}{\\ \mapsto\  &}
+% }
+% Control theory
+% {
+\newcommand{\ctrbs}{\mathscr{C}}
+\newcommand{\ctrb}{\mathcal{C}}
+\newcommand{\obsv}{\mathcal{O}}
+\newcommand{\Zge}{\Z_{\ge 0}}
+\newcommand{\Zg}{\Z_{> 0}}
+\newcommand{\Rge}{\R_{\ge 0}}
+\newcommand{\Rg}{\R_{> 0}}
+\newcommand{\X}{\mathcal{X}}
+\newcommand{\U}{\mathcal{U}}
+\renewcommand{\H}{\mathcal{H}}
+\newcommand{\B}{\mathcal{B}}
+\newcommand{\Toep}{\mathscr{T}}
+\newcommand{\mge}{\succeq}
+\newcommand{\mle}{\preceq}
+\newcommand{\mg}{\succ}
+\newcommand{\ml}{\prec}
+% }
+% Algebra
+% {
+\newcommand{\zmz}[1]{\Z/ #1 \Z}
+\newcommand{\normsub}{\trianglelefteq}
+\newcommand{\lcm}{\text{lcm}}
+\newcommand{\im}{\text{im }}
+% }
+% Linear algebra
+% {
+\newcommand{\End}[1]{\text{End}\lp #1 \rp}
+\newcommand{\Hom}[1]{\text{Hom}\lp #1 \rp}
+\newcommand{\ab}[1]{\la #1 \ra}
+\newcommand{\tr}[1]{\text{tr}\lp #1 \rp}
+\newcommand{\diag}[1]{\text{diag}\lp #1 \rp}
+% }
+% Electric Machines
+% {
+\newcommand{\ohm}{\ \Omega}
+\newcommand{\Nm}{\u{Nm}}
+\newcommand{\rps}{\u{rad/s}}
+\newcommand{\rpm}{\u{rpm}}
+\newcommand{\W}{\u{W}}
+\newcommand{\V}{\u{V}}
+\newcommand{\A}{\u{A}}
+\newcommand{\Wbt}{\u{Wb}\cd\text{turns}}
+\newcommand{\Wb}{\u{Wb}}
+\newcommand{\slip}{s\ell}
+\newcommand{\kW}{\u{kW}}
+\newcommand{\pu}{\u{pu}}
+\newcommand{\ph}[1]{\widetilde{#1}}
+\newcommand{\rad}{\u{rad}}
+% }
+% Topology
+% {
+\newcommand{\T}{\mathcal{T}}
+\newcommand{\I}{\mathcal{I}}
+\newcommand{\Bc}{\mathscr{B}}
+\newcommand{\ol}[1]{\overline{#1}}
+\newcommand{\diam}[1]{\text{diam}\lp #1\rp}
+%}
+% Probability
+% {
+\newcommand{\Var}[1]{\text{Var}(#1)}
+\newcommand{\Ber}[1]{\text{Bernoulli}\lp #1 \rp}
+\newcommand{\case}[1]{\begin{cases} #1 \end{cases}}
+\newcommand{\cif}{\quad & \text{if }}
+\newcommand{\celse}{\quad & \text{else}}
+\newcommand{\E}[1]{\underset{\tiny{#1}}{E}}
+\newcommand{\F}{\mathcal{F}}
+%}
+% Optimization
+% {
+\newcommand{\minp}[3]{\min\lm_{#1} \quad & #2\\ \text{s.t.} \quad & #3}
+\newcommand{\minpuc}[2]{\min\lm_{#1} \quad & #2}
+\newcommand{\maxp}[3]{\max\lm_{#1} \quad & #2\\ \text{s.t.} \quad & #3}
+\newcommand{\oo}{\\ & }
+% }
+% Differential Geometry
+%{
+\newcommand{\CP}{\mathbb{CP}}
+\newcommand{\RP}{\mathbb{RP}}
+\DeclareMathOperator{\id}{id}
+\newcommand{\dd}[1]{\f{\text{d}}{\text{d}#1}}
+%}
+
+\newtheorem{prop}{Proposition}
+\newtheorem{corollary}{Corollary}
+
+% The following packages will be automatically loaded:
+% amsmath, amssymb, natbib, graphicx, url, algorithm2e
+
+\title[Short Title]{Context Reduces Need for Action Chunking with Non-Markovian Policies}
+\usepackage{times}
+% Use \Name{Author Name} to specify the name.
+% If the surname contains spaces, enclose the surname
+% in braces, e.g. \Name{John {Smith Jones}} similarly
+% if the name has a "von" part, e.g \Name{Jane {de Winter}}.
+% If the first letter in the forenames is a diacritic
+% enclose the diacritic in braces, e.g. \Name{{\'E}louise Smith}
+
+% Two authors with the same address
+% \coltauthor{\Name{Author Name1} \Email{abc@sample.com}\and
+%  \Name{Author Name2} \Email{xyz@sample.com}\\
+%  \addr Address}
+
+% Three or more authors with the same address:
+% \coltauthor{\Name{Author Name1} \Email{an1@sample.com}\\
+%  \Name{Author Name2} \Email{an2@sample.com}\\
+%  \Name{Author Name3} \Email{an3@sample.com}\\
+%  \addr Address}
+
+% Authors with different addresses:
+\author{%
+ \Name{Nihar Ballamudi} \Email{niharb@sas.upenn.edu}\\
+ \addr Department of Mathematics, University of Pennsylvania
+ \AND
+ \Name{Kyle Horton} \Email{kyhorton@engineering.upenn.edu}\\
+ \addr Department of Electrical and Systems Engineering, University of Pennsylvania%
+}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}%
+ABSTRACT
+\end{abstract}
+
+\begin{keywords}%
+  Action Chunking, Imitation Learning
+\end{keywords}
+
+\section{Ideas}
+Consider the system \begin{equation}\tag*{$(*)$}x_+ = Ax + Bu,\quad y = Cx\label{ds}\end{equation} with $A \in \R^{n\times n}$, $B \in \R^{n \times m}$, $C \in \R^{p \times n}$, and let $h$ be the observability index of \ref{ds}. That is, $h$ is the least integer such that \[\mathcal{O}_h = \bmx{C\\ CA\\ \vdots\\ CA^{h-1}}\] is full rank.
+
+% where $A$ and $C$ take the forms \[A = \bmx{0 & A_1 & 0 & \cdots & 0\\ 0 & 0 & A_2 & \ddots & 0\\ \vdots & \ddots & \ddots & \ddots & \vdots \\ 0 & 0 & \cdots & 0 & A_{h-1}\\ 0 & 0 & \cdots & 0 & 0},\quad C = \bmx{C_1 & 0 & \cdots & 0}\] where $C_1 \in p \times n$ and $A_i \in \R^{n \times n}$. So $x \in \R^{hn}$.
+
+$\mathcal{O}_h$ is left invertible. Sends $x_0 \mapsto [y_0 \cdots y_{h-1}]^\top$, so inverse takes $h$ outputs and reconstructs original state. 
+Let $K^* \in \R^{m \times n}$ be the expert policy (for now, assuming it is Markovian). 
+If our context length is $h$, then it seems plausible that we can learn $\hat K$ such that $\hat K = K^*A^h\obsv_h$ or somethign like that?
+
+
+% \acks{We thank a bunch of people.}
+
+\section{Thing}
+Consider $x_+ = f(x, u)$ and $y = \psi(x)$ with $x \in \R^n$, $u \in \R^m$, $y \in \R^p$. Define the context $z_t = (y_t, ..., y_{t - h+1}, u_{t-1}, ..., u_{t - h + 1}) \in \mathcal{Z} = \R^{ph} \times \R^{m(h-1)}$. Use the norm $||\cd||_\mathcal{Z}$ to be the sum of the Euclidean norms of each block entry of $z$. This means that $||z||_2 \le ||z||_\mathcal{Z}$ so so a policy being $D$-Lipschitz in the Euclidean norms means it is also $D$-Lipschitz in the $\mathcal{Z}$ norm. 
+
+Take the class of chunked policies $[\pi] = (\pi_0, ..., \pi_{\ell - 1})$ with $\pi_k: \mathcal{Z} \to \R^m$, as \[\Pi_{\ell}(D, \rho) = \{[\pi] : \pi_k(z) = c_k + \rho^kg_k(z), \text{ where } g_k \text{ is $D$-Lipschitz}\}\]
+Deploy the policy $\pi$ as $u_{j + k} = \pi_k(z_{t_j}) + v_{t_j + k}$ with $t_j = j\ell$. By construction, $\pi \in \Pi_\ell(D, \rho)$ has $||\pi_k(z') - \pi_k(z)|| \le D\rho^k||z' - z||_\mathcal{Z}$. 
+
+Given two trajectories $(x^1, u^1, y^1)$, $(x^2, u^2, y^2)$, define $\delta y_t = y^2_t - y^1_t$ and similarly for $\delta x, \delta u, \delta z$. Assume then that the system satisfies \eqspnoan{E$\delta$IOS}{||\delta y_{t+k}|| \le C\rho^k||\delta z_t||_\mathcal{Z} + C\sum\lm_{j < k}\rho^{k - 1 - j}||\delta u_{t + j}||}
+for all $t, j$ for some $C \ge 1$, $\rho \in (0, 1)$.
+
+\begin{prop}
+    Fix some $\alpha \in (0, 1)$ and $D \ge 0$. Define $\bar\rho = \rho^{1 - \alpha}$, $C_h = 2hC\rho^{-(h-1)}$, $\bar C = C\lp1 + \f{D}{ea\rho\log(1/\rho)}\rp$, and $\tilde C = \bar CC_h$. If (E$\delta$IOS) holds, $\ell \ge h - 1$, and $C_h\lp1 + \f{D\ell}{\rho}\rp\rho^{a\ell} \le 1$, then for every $\pi \in \Pi_\ell(D, \rho)$, $f^\pi$ is such that \[||\delta y_t|| \le \bar{C} \bar\rho^t||\delta z_0||_\mathcal{Z} + \tilde{C}\sum\lm_{j < t}\bar\rho^{t-1-j}||\delta v_j||\]
+\end{prop}
+\begin{proof}
+    Consider the $j$-th chunk, which begins at time $t_j$ and let $t = t_j + k$. We have by definition of $\Pi_\ell(D, \rho)$ that \[||\delta u_t|| \le D\rho^k||\delta z_{t_j}|| + ||\delta v_t|| \]
+
+    By E$\delta$IOS, for $0 \le k \le \ell$ \eqspnoan{$*$}{||\delta y_t|| \qqsle C\rho^k||\delta z_{t_j}|| + C\sum\lm_{i < k}\rho^{k - 1 - i}(D \rho^i||z_{t_j}|| + ||\delta v_{t_j + i}||) \qq (C\rho^k + CDk\rho^{k - 1})||\delta z_{t_j}|| + C\sum\lm_{i < k}\rho^{k - 1 - i}||\delta v_{t_j + i}||}
+
+    By supposition, $\ell \ge h - 1$, all samples in $z_{t_{j + 1}}$ like within the $j$-th chunk. Note that \[||\delta z_t|| = \sum\lm_{i = 0}^{h-1} ||\delta y_{t - i}|| + \sum\lm_{i = 1}^{h-1}||\delta u_{t - i}||\]
+    So then \[||\delta z_{t_{j + 1}}|| = \sum\lm_{k = \ell - h + 1}^\ell ||\delta y_{t_j + k}|| + \sum\lm_{k = \ell - h + 1}^{\ell - 1}||\delta u_{t_j + k}||\]
+    Inserting then the inequalities we derived above, \eqspnoa{||\delta z_{t_{j + 1}}|| \qqsle \sum\lm_{k = \ell - h + 1}^\ell \lp (C\rho^k + CDk\rho^{k - 1})||\delta z_{t_j}|| + C\sum\lm_{i < k}\rho^{k - 1 - i}||\delta v_{t_j + i}|| \rp + \sum\lm_{k = \ell - h + 1}^{\ell - 1}\lp D\rho^k||\delta z_{t_j}|| + ||\delta v_{t_j + k}||\rp \qq \lp \sum\lm_{k = \ell - h + 1}^\ell (C\rho^k + CDk\rho^{k-1}) + \sum\lm_{k = \ell - h + 1}^{\ell - 1}D\rho^k\rp||\delta z_{t_j}||\\ & + \lp C\sum\lm_{k = \ell - h + 1}^\ell\sum\lm_{i < k}\rho^{k - 1 - i}||\delta v_{t_j + i}|| + \sum\lm_{k = \ell - h + 1}^{\ell - 1}||\delta v_{t_j + k}|| \rp}
+    When $k \ge \ell - h + 1$, we have $\rho^k \le \rho^{\ell - h + 1}$ so $(C\rho^k + CDk\rho^{k - 1}) \le C\rho^{\ell - h + 1}(1 + D\ell/\rho)$ because $k \le \ell$.
+    Thus, the first big term in parentheses in the last line above, which we will call $\Theta_\ell$, has \eqspnoa{\Theta_\ell \qqsle h\rho^{\ell - h + 1}\lp C(1 + D\ell\rho) + D \rp \qqle 2hC\rho^{-(h-1)}\rho^\ell(1 + D\ell/\rho) \qq C_h\rho^\ell\lp 1 + \f{D\ell}{\rho} \rp}
+    where the second inequality follows from the fact that $D \le D\ell/\rho$ and $C \ge 1$, so $D \le C(1 + D\ell/\rho)$. Then by the assumption in the proposition, $\Theta_\ell \le \rho^{\ell - \alpha\ell} = \bar\rho^\ell$.
+
+    For the second big term in parentheses, which we call $B_j$, we first examine the double summation. Note that each $\rho^{k - 1 - i} \le \rho^{\ell - h - i}$, and there are no more than $h$ terms of the outer sum, so the coefficient of each $||\delta v_{t_j + i}||$ is no more than $hC\rho^{\ell - h - i}$. For the single summation, the coefficient of $||\delta z_{t_j + k}||$ is $1$ for $\ell - h + 1 \le k \le \ell$. Rearranging, we have for such $k$ that $\ell - h - k \le -1$, so $1 \le \rho^{-(h-1)}\rho^{\ell - 1 - k}$, so the coefficients in the single sum are certainly less than or equal to that. Thus, \eqspnoa{B_j \qqsle \sum\lm_{k = \ell - h + 1}^{\ell-1}\lp hC\rho^{\ell - h - k} +  \rho^{-(h-1)}\rho^{\ell - 1 - k}\rp||\delta v_{t_j + k}|| \qqle \sum\lm_{k = \ell - h + 1}^{\ell-1}\lp 2hC\rho^{-(h-1)}\rho^{\ell - 1 - k}\rp||\delta v_{t_j + k}|| \qq C_h \sum\lm_{k = \ell - h + 1}^{\ell - 1}\rho^{\ell - 1 - k}||\delta v_{t_j + k}||}
+    Combining the bounds on $\Theta_\ell$ and $B_j$, we get that \eqspnoa{||\delta z_{t_{j+1}}|| \qqsle \bar\rho^{-\ell}||\delta_{t_j}|| + C_h\sum\lm_{k = \ell - h + 1}^{\ell - 1}\rho^{\ell - 1 - k}||\delta v_{t_j + k}|| \qqle \bar\rho^{-\ell}||\delta_{t_j}|| + C_h\sum\lm_{k = t_{j+1} - h }^{t_{j+1} - 1}\rho^{t_{j+1} - k - 1}||\delta v_{k}|| \qqle \bar\rho^{-\ell}||\delta_{t_j}|| + C_h\sum\lm_{k = t_{j}}^{t_{j+1} - 1}\rho^{t_{j+1} - k - 1}||\delta v_{k}||}
+
+    Unrolling this recursively, we get \eqspnoan{$**$}{||\delta z_{t_j}|| \qqsle \bar\rho^{t_j}||\delta z_0|| + C_h \sum\lm_{k = 0}^{t_j - 1} \bar\rho^{t_j - 1 - k}||\delta v_{k}||}
+    Now we consider \[\rho^{\alpha k}\lp 1 + \f{Dk}{\rho}\rp = \rho^{\alpha k} + \f{D}{\rho} k\rho^{\alpha k} \le 1 + \f{D}{\rho}ke^{-\alpha k\log({1/\rho})} \le 1 + \sup\lm_{q \ge 0}\f{D}{\rho}qe^{-\alpha q\log(1/\rho)} = 1 + \f{D}{e\alpha \rho\log(1/\rho)}\]
+    Hence, \[C\rho^k + CDk\rho^{k - 1} = C\rho^k\lp 1 + \f{Dk}{\rho} \rp \le C\rho^{\alpha k} \lp 1 + \f{Dk}{\rho} \rp\le \bar C\bar\rho^k\]
+    Inserting this bound and $(**)$ into $(*)$ gives \eqspnoa{||\delta y_t|| \qqsle \bar C\bar\rho^k\lp \bar\rho^{t_j}||\delta z_0|| + C_h \sum\lm_{q = 0}^{t_j - 1} \bar\rho^{t_j - 1 - q}||\delta v_{q}|| \rp + C\sum\lm_{i < k}\rho^{k - 1 - i}||\delta v_{t_j + i}|| \qqle \bar C\bar\rho^{-t}||\delta z_0|| + \bar CC_h\sum\lm_{q = 0}^{t_j - 1}\bar\rho^{t_j + k - 1 - q}||\delta v_q|| + CC_h\sum\lm_{i = 0}^{k - 1}\bar\rho^{k - 1 - i}|| \delta v_{t_j + i}|| \qqle \bar C\bar\rho^{-t}||\delta z_0|| + \tilde{C}\sum\lm_{q = 0}^t\bar\rho^{t - 1 - q}||\delta v_{q}||}
+    where the second line follows because $C_h \ge 1$ and $\rho \le \bar\rho$. 
+
+\end{proof}
+
+Moreover, we then have a corollary similar to \cite{zhang2025chunking}.
+\begin{corollary}
+    If (E$\delta$IOS) holds, for $\hat\pi \in \Pi_\ell(D, \rho)$ and $\ell \ge \ell_{min}$, we have for every horizon $T$ that \[J_{traj}(\hat\pi) \le \f{\tilde{C}}{1 - \bar\rho}J_{demo}(\hat\pi)\]
+\end{corollary}
+\begin{proof}
+    
+\end{proof}
+
+\bibliography{Propsal_Bib}
+
+\end{document}

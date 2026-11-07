@@ -80,15 +80,16 @@ def main():
     sample_policies = []
     for seed in seeds:
         train_steps = max(80,max(contexts)+max(hs)+16)
-        data = train_set(system,K,32,train_steps,0,np.random.default_rng(seed))
-        if args.training=='recovery':
+        if args.training=='narrow':
+            data = train_set(system,K,32,train_steps,0,np.random.default_rng(seed))
+        else:
             recovery,ids,targets = recovery_windows(system,K,seed,max(contexts),max(hs),args.probe_scale)
         for r in contexts:
             for H in hs:
                 # Same original target times across both context and prediction lengths.
-                trimmed = [{key: value[max(contexts)-r:len(tr['u'])-max(hs)+H+(key!='u')]
-                            for key,value in tr.items()} for tr in data]
                 if args.training=='narrow':
+                    trimmed = [{key: value[max(contexts)-r:len(tr['u'])-max(hs)+H+(key!='u')]
+                                for key,value in tr.items()} for tr in data]
                     policy, diagnostics = fit_policy(trimmed,r,H)
                 else:
                     policy, diagnostics = fit_recovery(recovery,ids,targets,r,H,2)

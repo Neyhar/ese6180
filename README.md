@@ -5,17 +5,21 @@ There are **two complementary experiments**, sharing `model.py`:
 | Study | What changes? | What it tells us | Start here |
 |---|---|---|---|
 | [Observability](observability/README.md) | Partial sensors, state dimension, history, execution | History can supply missing state information; once sufficient, frequent feedback usually helps under noise | [Saved results](observability/results/latest/RESULTS.md) |
-| [Pitfalls](pitfalls/README.md) | History and execution on a 2D narrow-data hard example | History changes the ridge-selected feedback even with full observation | [Current graph](pitfalls/results/context_chunking/context_hypothesis.png) |
+| [Pitfalls](pitfalls/README.md) | History, execution, and training coverage on a 2D hard example | Context and corrective coverage can enable one-step feedback | [Focused results](pitfalls/results/coupled_higher_dimensions/README.md) |
 
 These are distinct mechanisms. Their raw losses use different normalizations,
 evaluation windows and disturbance protocols, so do not compare their magnitudes.
-The active [four-page report](midterm-report/main.tex) connects both to the theory.
+The active [four-page report](midterm-report/main.tex) focuses on the hard example and its connection to the theory.
 
 ## Start with existing results
 
 - **Observability:** [one representative graph](observability/results/latest/figures/start_here.png) and [result summary](observability/results/latest/RESULTS.md).
-- **Pitfalls:** [hypothesis graph](pitfalls/results/context_chunking/context_hypothesis.png), [partial-observation extension](pitfalls/results/partial_observation/README.md), and [experiment/theory guide](pitfalls/README.md).
+- **Pitfalls:** [two main comparisons](pitfalls/results/coupled_higher_dimensions/README.md) and [experiment/code guide](pitfalls/README.md).
 - **Report:** [main.pdf](midterm-report/main.pdf), built from `midterm-report/main.tex` with the L4DC template.
+
+The [coupled higher-dimensional hard pairs](pitfalls/results/coupled_higher_dimensions/README.md)
+now extend the Pitfalls experiment to n=2,4,8,16 with one sensor and growing
+observation delay. Their plot index includes cross-dimension and stability analysis.
 
 ## Run
 
@@ -23,7 +27,7 @@ The active [four-page report](midterm-report/main.tex) connects both to the theo
 python3 -m pip install -r requirements.txt
 python3 -m unittest discover -s tests -v
 python3 -m observability.run --output observability/results/focused
-python3 pitfalls/chunk_sweep.py
+python3 -m pitfalls --plot-only
 ```
 
 The observability command now defaults to one representative n=10,h=4 case;
@@ -36,7 +40,7 @@ write result figures unless `ESE618_TEST_PLOTS` is explicitly set.
 
 - `model.py`: shared linear systems, expert demonstrations, history policies, ridge fitting and reconstruction.
 - `observability/`: partial-observation experiment and its results.
-- `pitfalls/`: full-observation hard-example experiment and its results.
+- `pitfalls/`: full/partial-observation hard-example experiments and results.
 - `midterm-report/`: active report and retained synthesis drafts.
 - `theory-notes/main.tex`: longer mathematical derivations, including work not yet simulated.
 - `docs/theory-overview.md`: concise theory map; numerical claims live in generated result summaries.

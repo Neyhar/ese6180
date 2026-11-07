@@ -1,0 +1,47 @@
+{
+  "observation": "partial",
+  "training": "narrow",
+  "probe_scale": 0.05,
+  "contexts": [
+    1,
+    2,
+    4,
+    8,
+    16
+  ],
+  "horizons": [
+    1,
+    16
+  ],
+  "executions": [
+    1,
+    2,
+    4,
+    8,
+    16
+  ],
+  "seeds": [
+    818,
+    819,
+    820
+  ],
+  "steps": 200,
+  "long_steps": 1000,
+  "test_pairs": 20,
+  "test_seed": 20261107,
+  "loss_tolerance": 1e-05,
+  "output": "/Users/nball/ESE618/pitfalls/results/four_conditions/narrow",
+  "mu": 0.125,
+  "warmup": 15,
+  "sensor_matrix": [
+    [
+      0.0,
+      1.0
+    ]
+  ],
+  "observability_index": 2,
+  "training_description": "narrow expert histories",
+  "test": "paired support/perturbed initial states; no continuing noise",
+  "loss": "mean squared full-state tracking error; exclude initial state",
+  "long_sample": "single canonical initial state [0.001,1]; diagnostic, not test-set mean"
+}

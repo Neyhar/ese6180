@@ -1,0 +1,68 @@
+\documentclass{l4dc2026}
+\usepackage{iftex,booktabs}
+\ifPDFTeX
+\usepackage{times}
+\else
+\usepackage{fontspec}
+\setmainfont{Times New Roman}
+\fi
+\jmlrvolume{}
+\jmlrproceedings{ESE 6180}{ESE 6180 Results Note}
+\jmlrworkshop{ESE 6180 Results Note}
+\title[History, Coverage, and Chunking]{History and Chunking Under Partial Observation}
+\author{\Name{Nihar Ballamudi}\and\Name{Kyle Horton}\\\addr University of Pennsylvania}
+\begin{document}
+\maketitle
+\begin{abstract}
+Simchowitz et al. (2025) show that perfect demonstration fit can hide control failure. In their linear example, we test whether history reduces the need for action sequences. Corrective training with two observations favors single actions; without corrective examples, sequences can still help.
+\end{abstract}
+
+\section{The experiment}
+The linear hard example of \citet{simchowitz2025} shows why matching training actions does not guarantee a good controller. The paper pairs two systems, $A_1,A_2$, with expert controllers $K_1,K_2$. Each expert stabilizes its own system. The state has two variables, $x_1,x_2$, but the demonstrations stay on $x_1=0$. On those states, both experts choose the same actions and generate identical demonstrations. Their responses to a nonzero $x_1$, however, differ. Even unlimited data confined to $x_1=0$ cannot reveal the correct recovery rule.
+
+We fix system $A_1$ and its expert $K_1$, at $\mu=1/8$. Applying $K_2$ matches the demonstrations but destabilizes $A_1$ after a small change in $x_1$. Our learner sees only $x_2$, while the expert sees both variables. We test whether remembering past observations, executing action sequences, or adding examples of corrective actions helps the learner avoid this failure.
+
+We compare action chunking against single actions, each with and without observation history.
+
+History length $r$ is the number of observations available at a decision. We test $r=2,4,8,16$, including the actions applied between those observations. Without history, the learner sees only the current observation ($r=1$). A sequence contains 16 predicted actions. We execute its first 2, 4, 8, or 16 actions before observing the system and predicting again. Without a sequence, the learner predicts one action, applies it, and observes the system again immediately.
+
+\section{The training and test data}
+We train with two datasets. In the first, called narrow data, the expert acts normally and $x_1$ stays zero. In the second, called recovery data, we add small random changes to the expert's actions while collecting trajectories. These changes move the system away from $x_1=0$. At each visited state, we calculate what the expert would do next, including its future action sequence if it continued without further random changes. These expert actions are the training answers. The learner's inputs contain only its observations and the actions actually applied.
+
+We fit a linear map using ridge regression: squared action-prediction error plus a small coefficient penalty ($\lambda=10^{-6}$). Three random seeds each generate 32 trajectories of 80 steps per dataset type. We match training target times across settings. Different numbers of executed actions share the same fitted sequence predictor. Predicting 16 actions but executing only the first also matches a separately trained single-action predictor.
+
+Testing uses 20 new starting states with $x_2$ sampled uniformly from $[-1,1]$. We first let the expert run for 15 steps to fill the history, then change $x_1$ by a signed amount between 0.0005 and 0.0015. The learner must correct this change without asking the expert for help. Each test lasts 200 steps, with no further disturbances or observation noise. Matching states with $x_1=0$ are tested separately.
+
+Test error is the average squared distance from a separate expert rollout starting at the same state, including hidden $x_1$. We average over 200 steps, 20 changed starting states, and three training seeds; smaller error means closer tracking. We separately check whether the learned linear feedback system eventually decays or grows; a controller can have small error over 200 steps and still grow later.
+
+\section{The results}
+\begin{center}\small
+\begin{tabular}{lrrrrr}\toprule
+Training data & History $r$ & Prediction horizon $H$ & Execution horizon $\ell$ & Test error & Stable?\\\midrule
+Narrow & 1 & 16 & 16 & $5.19\times10^{-3}$ & No\\
+Narrow & 8 & 1 & 1 & $7.58\times10^{-4}$ & No\\
+Narrow & 8 & 16 & 8 & $2.32\times10^{-6}$ & Yes\\
+Narrow & 16 & 1 & 1 & $6.65\times10^{-7}$ & Yes\\
+Recovery & 1 & 16 & 16 & $2.53\times10^{-1}$ & No\\
+Recovery & 2 & 1 & 1 & $7.33\times10^{-9}$ & Yes\\
+Recovery & 2 & 16 & 16 & $2.71\times10^{-7}$ & Yes\\\bottomrule
+\end{tabular}
+\end{center}
+\noindent Selected results; stability agrees across all three seeds.
+
+Without history, every tested learner is unstable, with either dataset. Longer sequences can reduce short-term error without fixing instability: the narrow-data learner executing 16 actions has test error $0.00519$, yet its separate 1000-step example has error $4.08\times10^{14}$.
+
+With recovery data, two observations and the action between them are enough for accurate, stable control. Predicting one action at a time gives error $7.33\times10^{-9}$, close to a controller that knows the system equations. Executing 16 actions before observing again makes error about 37 times larger. The learner cannot react to the hidden change until it affects a new observation; checking more often lets it correct sooner. Using 16 observations instead of two also increases single-action error to $3.04\times10^{-8}$, so more history is not always better.
+
+With narrow data, two observations are enough to infer the hidden state from the system equations, but the learner has not been shown how to correct it. All tested execution lengths at this history are unstable. At history eight, executing eight actions makes the learned controller stable and reduces error about 327-fold compared with checking after every action. At history sixteen, single-action control is already stable, and executing 16 actions improves error by only about 11\%.
+
+Here, history plus corrective examples makes single-action control effective. Longer sequences can still help when those examples are missing. This conclusion is limited to one system, three training seeds, small initial changes, and tests without continuing noise.
+
+\footnotesize
+\begin{thebibliography}{1}
+\bibitem[Simchowitz et al.(2025)]{simchowitz2025}
+M. Simchowitz, D. Pfrommer, and A. Jadbabaie.
+The pitfalls of imitation learning when actions are continuous.
+\emph{arXiv:2503.09722}, 2025.
+\end{thebibliography}
+\end{document}

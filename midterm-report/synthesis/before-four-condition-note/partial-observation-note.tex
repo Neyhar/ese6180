@@ -1,0 +1,71 @@
+\documentclass{l4dc2026}
+\usepackage{iftex,booktabs}
+\ifPDFTeX
+\usepackage{times}
+\else
+\usepackage{fontspec}
+\setmainfont{Times New Roman}
+\fi
+\jmlrvolume{}
+\jmlrproceedings{ESE 6180}{ESE 6180 Results Note}
+\jmlrworkshop{ESE 6180 Results Note}
+\title[History and Training Coverage]{History and Training Coverage in the Linear Hard Example}
+\author{\Name{Nihar Ballamudi}\and\Name{Kyle Horton}\\\addr University of Pennsylvania}
+\begin{document}
+\maketitle
+\begin{abstract}
+We test whether observation history reduces the need for action chunking in a linear imitation-learning example. With corrective training data, two observations enable accurate one-step control under partial observation. Narrow demonstrations remain underidentified. Expected tracking error and stability distinguish useful recovery from a good fit to demonstrations.
+\end{abstract}
+
+\section{Design and evaluation}
+We use the two-dimensional challenging plant of \citet{simchowitz2025}, with $\mu=1/8$ and deterministic expert $u=Kx$. Four conditions combine full observation ($x_1,x_2$) or partial observation ($x_2$ only) with narrow or recovery training. Narrow demonstrations keep $x_1=0$. Recovery training perturbs applied actions and labels visited states with the expert's recommended action sequence. Inputs retain the actual observations and past actions; the expert's recommendations are training targets.
+
+\citet{simchowitz2025} constructs two plants, $A_1,A_2$, with respective stabilizing experts $K_1,K_2$. When demonstrations remain on $x_1=0$, both experts produce the same actions, $u=(-cx_2,0)$, hiding their different recovery behavior. We fix plant $A_1$ and expert $K_1$: the alternative controller $K_2$ matches these demonstrations perfectly but destabilizes $A_1$ after a small departure. Our experiment asks whether observation history and action commitment help a learned controller recover, and how the answer changes when training includes corrective examples.
+
+We therefore compare narrow demonstrations with recovery training, which perturbs applied actions and labels the resulting states with the expert's recommended action sequence. This intervention draws on DART's use of noisy demonstrations \citep{laskey2017} and DAgger's expert labeling of visited states \citep{ross2011}, without implementing either algorithm in full. Following the commitment-and-coverage comparison of \citet{zhang2025}, we examine how this additional training coverage interacts with history and action chunking. Our model-generated chunk labels and paired testing procedure are adaptations.
+
+For each sensing and training condition, we vary history $r\in\{1,2,4,8,16\}$, prediction length $H\in\{1,4,16\}$, and execution length $\ell\in\{1,2,4,8,16\}$ with $\ell\le H$. Three training seeds, each using 32 trajectories of 80 steps, yield 540 fitted controllers across the four conditions. At deployment, we initialize history with a 15-step expert warm-up, introduce the test departure, and let the learner control independently for 200 steps without expert queries or continuing disturbances. A separate expert rollout provides the tracking reference. This evaluates recovery on one plant rather than the paper's two-plant worst-case guarantee.
+
+All controllers share 20 unseen test-state pairs: a common random $x_2$, with $x_1=0$ or a signed departure of magnitude $0.0005$--$0.0015$. The score averages squared full-state tracking error over perturbed runs, time, and training seeds, estimating expected MSE over test and training randomness. The expert is deterministic; unstable losses remain in the mean. We separately check the worst-seed spectral rate (below one indicates decay) and a 1000-step diagnostic. Sample counts and rollout lengths are exploratory choices.
+
+\section{Results}
+\begin{center}\small
+\begin{tabular}{llrrr}\toprule
+Observation & Training & $r$ & Mean test MSE & Worst rate\\\midrule
+Full & Narrow & 2 & $6.18\times10^9$ & 1.10405\\
+Partial & Narrow & 16 & $6.49\times10^{-7}$ & 0.97110\\
+Full & Recovery & 1 & $9.78\times10^{-19}$ & 0.75000\\
+Partial & Recovery & 1 & $1.54\times10^{19}$ & 1.14636\\
+Partial & Recovery & 2 & $7.15\times10^{-9}$ & 0.75000\\\bottomrule
+\end{tabular}
+\end{center}
+All rows use $H=16,\ell=1$. Means include unstable fits; three seeds give a rough expectation estimate.
+
+The strongest comparison is within partial observation: with recovery training, increasing history from one observation to two changes the controller from unstable to stable and reduces mean MSE from $1.54\times10^{19}$ to $7.15\times10^{-9}$. With full observation, recovery training already succeeds at history one. Thus the useful history threshold depends on what the learner can see. Longer partial histories do not further reduce error in the recovery condition.
+
+Training coverage matters separately. At the same history two, full-observation narrow training fails while recovery training succeeds. Full and partial narrow fits agree numerically because the omitted $x_1$ feature is always zero in their demonstrations. Their improvement with longer history therefore reflects a different ridge-selected feedback rule, not additional examples of recovery.
+
+Execution also matters: under narrow training, history eight requires execution eight to meet stability and test MSE $\le10^{-5}$ for every seed, while history sixteen permits execution one. This supports reduced reliance on commitment within this grid, not universal improvement with history or execution. Every seed must pass: a favorable mean or finite-rollout loss can hide instability.
+
+\section{Connection to Kyle}
+Kyle's reconstruction argument explains why two observations and the intervening applied action suffice in the partial-observation system. Recovery training at $r=2$ nearly matches the known-model observer. Both initially miss the hidden departure, which affects the next observation rather than the first one. Observability makes the corrective rule representable; the narrow-data failures show that it does not guarantee learning that rule.
+
+Kyle's chunk-stability proposition explains how commitment can suppress destabilizing feedback, but assumes $\ell\ge r-1$ and cannot certify $(r,\ell)=(16,1)$. Its other assumptions were not checked for these learners. The experiments support complementary roles for history, coverage and commitment, rather than directly validating the guarantee. Results concern one plant and one initial departure without continuing noise.
+
+\footnotesize
+\begin{thebibliography}{4}\setlength{\itemsep}{2pt}
+\bibitem[Simchowitz et al.(2025)]{simchowitz2025}
+M. Simchowitz, D. Pfrommer, and A. Jadbabaie.
+The pitfalls of imitation learning when actions are continuous.
+\emph{arXiv:2503.09722}, 2025.
+\bibitem[Laskey et al.(2017)]{laskey2017}
+M. Laskey, J. Lee, R. Fox, A. Dragan, and K. Goldberg.
+DART: Noise injection for robust imitation learning. \emph{CoRL}, 2017.
+\bibitem[Ross et al.(2011)]{ross2011}
+S. Ross, G. Gordon, and J.~A. Bagnell.
+A reduction of imitation learning and structured prediction to no-regret online learning. \emph{AISTATS}, 2011.
+\bibitem[Zhang et al.(2025)]{zhang2025}
+T.~T. Zhang, D. Pfrommer, C. Pan, N. Matni, and M. Simchowitz.
+Action chunking and exploratory data collection yield exponential improvements in behavior cloning for continuous control. \emph{arXiv:2507.09061}, 2025.
+\end{thebibliography}
+\end{document}

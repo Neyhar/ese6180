@@ -1,0 +1,4 @@
+dimension,support_dimension,observation_dimension,observability_index,action_agreement_residual,demonstration_dynamics_residual,support_invariance_residual,A1_radius,A2_radius,correct_K1_radius,correct_K2_radius,wrong_K2_on_A1_radius
+4,2,2,2,0.0,0.0,0.0,0.9375000034248626,0.96875,0.75,0.75,2.09375
+8,4,4,2,0.0,0.0,0.0,0.9375000034248626,0.96875,0.75,0.75,2.09375
+16,8,8,2,0.0,0.0,0.0,0.9375000034248626,0.96875,0.75,0.75,2.09375

@@ -1,11 +1,9 @@
-import sys
 from pathlib import Path
 import unittest
 import numpy as np
-sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'pitfalls'))
 from pitfalls import challenging_pair
 from model import LinearSystem, HistoryPolicy
-from evaluation import make_test_states, deploy, summarize_hypothesis
+from pitfalls.original.evaluation import make_test_states, deploy, summarize_hypothesis
 
 
 class ExperimentTests(unittest.TestCase):

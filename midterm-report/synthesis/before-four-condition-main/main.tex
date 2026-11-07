@@ -1,0 +1,153 @@
+\documentclass{l4dc2026}
+\usepackage{iftex,booktabs}
+\ifPDFTeX\usepackage{times}\else\usepackage{fontspec}\setmainfont{Times New Roman}\fi
+\jmlrvolume{}
+\jmlrproceedings{ESE 6180}{ESE 6180 Midterm Report}
+\jmlrworkshop{ESE 6180 Midterm Report}
+\title[History, Coverage, and Chunking]{History, Training Coverage, and Action Chunking}
+\author{\Name{Nihar Ballamudi}\and\Name{Kyle Horton}\\\addr University of Pennsylvania}
+\newcommand{\norm}[1]{\lVert#1\rVert}
+\newcommand{\col}{\operatorname{col}}
+\setlength{\emergencystretch}{1em}
+\begin{document}
+\maketitle
+\begin{abstract}
+We study how observation history and action commitment affect imitation learning. Observability permits exact expert reconstruction, while a history-based incremental stability bound makes sufficiently long chunks robust to imitation error. Neither result ensures identification from restricted demonstrations. In a linear hard example, recovery training and two-step history enable accurate one-step control under partial observation; narrow training requires substantially longer history or commitment. The results distinguish information, training coverage, and feedback stability.
+\end{abstract}
+
+\section{Theory: reconstruction and stable chunked imitation}
+Consider $x_{t+1}=Ax_t+Bu_t$, $y_t=Cx_t$, and a deterministic expert $u_t^*=Kx_t$, with $F=A+BK$ Schur stable. The learner receives $z_t=\col(y_{t-r+1:t},u_{t-r+1:t-1})$, predicts $H$ actions, and executes $\ell\le H$ before replanning. Let $h$ be the smallest integer with $\mathcal O_h=\col(C,CA,\ldots,CA^{h-1})$ full column rank. Norm $\norm{z}_{\mathcal Z}$ sums Euclidean norms of history blocks. We separate representation, stability, and learning.
+
+\paragraph{Proposition 1 (history can represent the expert).}
+On noiseless, dynamically consistent histories, exact recovery of the current expert action is possible if and only if
+\[
+\ker\mathcal O_r\subseteq\ker(KA^{r-1}).
+\]
+In particular, $r\ge h$ permits a linear state reconstruction $x_t=R_rz_t$. The chunk policy $\pi_k^*(z)=KF^kR_rz$ reproduces the expert for every execution length $1\le\ell\le H$.
+
+\emph{Proof.} With $s=t-r+1$, stacked observations $Y$, and applied inputs $U$, write $Y=\mathcal O_rx_s+\mathcal T_rU$ and $x_t=A^{r-1}x_s+\mathcal R_rU$. Identical histories leave ambiguity $d\in\ker\mathcal O_r$, producing action ambiguity $KA^{r-1}d$. Kernel inclusion is therefore necessary and sufficient. For $r\ge h$, left inversion gives
+\[
+R_r=[A^{r-1}\mathcal O_r^\dagger\quad
+\mathcal R_r-A^{r-1}\mathcal O_r^\dagger\mathcal T_r].
+\]
+Applying $KF^kx_t$ then yields $x_{t+k}=F^kx_t$ by induction. $\square$
+
+Reconstruction uses known dynamics, actual inputs, and consistent noiseless histories. This existence result does not imply identification from demonstrations: expert histories can have low rank, and more coordinates need not add independent training information.
+
+\subsection{Kyle's history-based chunk stability bound}
+The next result allows nonlinear plants and general Lipschitz policies. Assume all admissible trajectory pairs satisfy the history-based exponential incremental input-to-output bound
+\begin{equation}\label{eq:ios}
+\norm{\delta y_{t+k}}\le C_0\rho^k\norm{\delta z_t}_{\mathcal Z}
++C_0\sum_{i=0}^{k-1}\rho^{k-1-i}\norm{\delta u_{t+i}},
+\end{equation}
+with $C_0\ge1$ and $0<\rho<1$. Observable Schur-stable linear plants satisfy this bound for $r\ge h$, using reconstruction and exponential bounds on $A^k$. A state-based incremental stability bound alone also needs reconstruction to imply \eqref{eq:ios}.
+
+At chunk boundaries $t_j=j\ell$, apply
+\[
+u_{t_j+k}=\pi_k(z_{t_j})+v_{t_j+k},\qquad
+\operatorname{Lip}_{\mathcal Z}(\pi_k)\le D\rho^k.
+\]
+The offsets of $\pi_k$ are unrestricted; the decay requirement concerns sensitivity to context. Both compared trajectories use the same policy and chunk schedule.
+
+\paragraph{Proposition 2 (sufficient chunk length for incremental stability).}
+Fix $\alpha\in(0,1)$ and define
+\[
+\bar\rho=\rho^{1-\alpha},\quad C_r=2rC_0\rho^{-(r-1)},\quad
+\bar C=C_0\left(1+\frac{D}{e\alpha\rho\log(1/\rho)}\right).
+\]
+If $\ell\ge\max(1,r-1)$ and
+\begin{equation}\label{eq:criterion}
+C_r(1+D\ell/\rho)\rho^{\alpha\ell}\le1,
+\end{equation}
+then, writing $\widetilde C=\bar CC_r$,
+\begin{equation}\label{eq:closed}
+\norm{\delta y_t}\le\bar C\bar\rho^t\norm{\delta z_0}_{\mathcal Z}
++\widetilde C\sum_{i=0}^{t-1}\bar\rho^{t-1-i}\norm{\delta v_i}.
+\end{equation}
+
+\emph{Proof.} Let $Z_j=\norm{\delta z_{t_j}}_{\mathcal Z}$ and $V_i=\norm{\delta v_i}$. Within a chunk,
+$\norm{\delta u_{t_j+k}}\le D\rho^kZ_j+V_{t_j+k}$. Substitution into \eqref{eq:ios} gives, for $0\le k\le\ell$,
+\begin{equation}\label{eq:within}
+\norm{\delta y_{t_j+k}}\le C_0\rho^k(1+Dk/\rho)Z_j
++C_0\sum_{i<k}\rho^{k-1-i}V_{t_j+i}.
+\end{equation}
+Since $\ell\ge r-1$, every block of $z_{t_{j+1}}$ lies in this chunk. Sum its $r$ observation bounds and $r-1$ action bounds. Their coefficients on $Z_j$ total at most
+\[
+r\rho^{\ell-r+1}\{C_0(1+D\ell/\rho)+D\}
+\le C_r\rho^\ell(1+D\ell/\rho).
+\]
+Each disturbance coefficient is at most $(rC_0+1)\rho^{\ell-r-i}\le C_r\rho^{\ell-1-i}$, including inputs earlier than the retained history. Consequently,
+\[
+Z_{j+1}\le\bar\rho^\ell Z_j+
+C_r\sum_{i=0}^{\ell-1}\rho^{\ell-1-i}V_{t_j+i},
+\]
+where \eqref{eq:criterion} bounds the first coefficient. Iteration and $\rho\le\bar\rho$ imply
+\[
+Z_j\le\bar\rho^{t_j}Z_0+
+C_r\sum_{i<t_j}\bar\rho^{t_j-1-i}V_i.
+\]
+Finally $\sup_{k\ge0}k\rho^{\alpha k}\le[e\alpha\log(1/\rho)]^{-1}$ gives
+$C_0\rho^k(1+Dk/\rho)\le\bar C\bar\rho^k$.
+Insert the boundary estimate into \eqref{eq:within}, and absorb current-chunk disturbances using $C_0\le\widetilde C$. This yields \eqref{eq:closed}. $\square$
+
+\subsection{From expert-context error to trajectory error}
+\paragraph{Corollary 3 (finite-horizon squared-loss bound).}
+Assume Proposition 2 and identical initial histories. On a reference expert rollout define the chunk residual
+\[
+e_{t_j+k}=u^*_{t_j+k}-\pi_k(z^*_{t_j}),\quad 0\le k<\ell.
+\]
+For $T$ actions let $J_{\rm demo}=T^{-1}\sum_{i<T}\norm{e_i}^2$ and let $J_{\rm traj}=T^{-1}\sum_{t=1}^T\norm{y_t-y_t^*}^2$. Then
+\[
+J_{\rm traj}\le
+\left(\frac{\widetilde C}{1-\bar\rho}\right)^2J_{\rm demo}.
+\]
+\emph{Proof.} View the expert as the same chunked policy driven by $v_i=e_i$, and the learner as driven by $v_i=0$. The initial term in \eqref{eq:closed} vanishes. The convolution kernel $\widetilde C\bar\rho^k$ has sum $\widetilde C/(1-\bar\rho)$; the discrete $\ell_2$ convolution inequality gives the result after squaring and dividing by $T$. $\square$
+
+This loss uses reference deployment histories, not empirical training data; substituting training loss requires a coverage/generalization argument. Averaging yields an expected bound. Under partial sensing, output error does not automatically control the full-state MSE below.
+
+History can remove an information barrier; commitment can stabilize sensitive feedback. Proposition 2 does not prove shorter execution with more history: $C_r$ grows with $r$ and it cannot certify $(r,\ell)=(16,1)$. Its Lipschitz assumptions remain unverified for our learners; the simulations illustrate mechanisms rather than validate this bound.
+
+\section{Simulations: design, results, and interpretation}
+\paragraph{Why the example is hard.}
+We use the challenging pair of \citet[Def.~4.1]{simchowitz2025} at $\mu=1/8$, fixing $B=I$ and
+\[
+A_1=\begin{bmatrix}1+\mu&c\\-c&1-2\mu\end{bmatrix},\quad
+K_1=\begin{bmatrix}-(1+\mu)&-c\\c&0\end{bmatrix},\quad c=3\mu/2.
+\]
+Both plant and expert loop are stable. The paper's other expert, $K_2$, generates identical demonstrations on $x_1=0$ but destabilizes $A_1$ after a departure. Thus perfect training fit need not identify safe recovery. We study one plant with expert $K_1$, rather than the two-plant worst-case guarantee.
+
+\paragraph{Design and evaluation.}
+Four conditions cross full sensing $y=x$ or partial sensing $y=x_2$ with narrow or recovery training. Narrow trajectories remain on $x_1=0$. Recovery training applies $K_1x+0.05\xi$, with independent standard Gaussian probes, and labels visited histories with nominal expert chunks $K_1F^kx$. Actual applied actions remain input features. This draws on noisy collection and expert correction \citep{laskey2017,ross2011}, with chunking/coverage motivated by \citet{zhang2025}; it is not a full implementation of DART or DAgger.
+
+Ridge regression ($\lambda=10^{-6}$) predicts action chunks. We vary $r\in\{1,2,4,8,16\}$, $H\in\{1,4,16\}$, and $\ell\in\{1,2,4,8,16\}$ with $\ell\le H$. Three seeds, each with 32 training trajectories of 80 steps per condition, yield 540 fits. Target times are matched across $r,H$. All controllers share 20 held-out state pairs with $x_2$ uniform on $[-1,1]$ and $x_1=0$ or a signed departure of magnitude $0.0005$--$0.0015$. After a 15-step expert warm-up, we inject the departure and run the learner independently for 200 steps without expert queries or continuing noise. A separate expert rollout supplies the scoring reference.
+
+Test MSE averages squared full-state tracking error over time, perturbed states, and training seeds. This estimates expected loss over training and test randomness; the expert is deterministic. We retain unstable losses in the mean and separately report the worst-seed spectral rate (below one means asymptotic decay). A 1000-step single-state diagnostic checks longer behavior.
+
+\begin{center}\small
+\begin{tabular}{llrrr}\toprule
+Sensing & Training & $r$ & Mean test MSE & Worst rate\\\midrule
+Full & Narrow & 2 & $6.18\times10^9$ & 1.10405\\
+Partial & Narrow & 16 & $6.49\times10^{-7}$ & 0.97110\\
+Full & Recovery & 1 & $9.78\times10^{-19}$ & 0.75000\\
+Partial & Recovery & 1 & $1.54\times10^{19}$ & 1.14636\\
+Partial & Recovery & 2 & $7.15\times10^{-9}$ & 0.75000\\\bottomrule
+\end{tabular}
+\end{center}
+\noindent All rows use $H=16,\ell=1$. Three seeds give a descriptive expectation estimate, not a confidence guarantee.
+
+\paragraph{What the results establish.}
+With recovery coverage, partial sensing changes from unstable at $r=1$ to accurate and stable at $r=2$, matching this plant's observability index. Full sensing already succeeds at $r=1$. This agrees with Proposition 1's information threshold, conditional on learning the corrective rule. A hidden departure is initially invisible; both the learned $r=2$ controller and model-informed observer incur initial error, with observer MSE $7.15\times10^{-9}$. Longer recovery histories do not further improve tracking.
+
+Coverage is a separate requirement. Narrow full and partial fits agree because $x_1$ is always zero in training; full sensing alone therefore does not rescue the fit. In this condition, $r=8$ needs $\ell=8$ to meet stability and MSE $\le10^{-5}$ for every seed, whereas $r=16$ permits $\ell=1$. Their mean losses are $2.26\times10^{-6}$ and $6.49\times10^{-7}$, respectively. History changes ridge-selected feedback rather than adding recovery examples. Conversely, under partial recovery at $r=2$, increasing execution from one to sixteen worsens MSE from $7.15\times10^{-9}$ to $2.64\times10^{-7}$: delayed feedback can hurt once recovery is learned.
+
+\paragraph{Scope.}
+History, coverage, and commitment solve different problems; neither longer history nor longer execution universally improves loss. The plant is stable, departures are small, initialization uses an expert, and tests omit continuing noise. Matched training targets also have smaller state amplitudes than test states. These results do not establish generalization, verify Proposition 2's assumptions, or turn its output-error bound into a full-state guarantee.
+
+\footnotesize
+\begin{thebibliography}{4}\setlength{\itemsep}{1pt}
+\bibitem[Simchowitz et al.(2025)]{simchowitz2025} M. Simchowitz, D. Pfrommer, and A. Jadbabaie. The pitfalls of imitation learning when actions are continuous. \emph{arXiv:2503.09722}, 2025.
+\bibitem[Laskey et al.(2017)]{laskey2017} M. Laskey, J. Lee, R. Fox, A. Dragan, and K. Goldberg. DART: Noise injection for robust imitation learning. \emph{CoRL}, 2017.
+\bibitem[Ross et al.(2011)]{ross2011} S. Ross, G. Gordon, and J.~A. Bagnell. A reduction of imitation learning and structured prediction to no-regret online learning. \emph{AISTATS}, 2011.
+\bibitem[Zhang et al.(2025)]{zhang2025} T.~T. Zhang, D. Pfrommer, C. Pan, N. Matni, and M. Simchowitz. Action chunking and exploratory data collection yield exponential improvements in behavior cloning for continuous control. \emph{arXiv:2507.09061}, 2025.
+\end{thebibliography}
+\end{document}

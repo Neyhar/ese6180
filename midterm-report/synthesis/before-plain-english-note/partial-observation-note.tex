@@ -1,0 +1,75 @@
+\documentclass{l4dc2026}
+\usepackage{iftex,booktabs}
+\ifPDFTeX
+\usepackage{times}
+\else
+\usepackage{fontspec}
+\setmainfont{Times New Roman}
+\fi
+\jmlrvolume{}
+\jmlrproceedings{ESE 6180}{ESE 6180 Results Note}
+\jmlrworkshop{ESE 6180 Results Note}
+\title[History, Coverage, and Chunking]{History and Chunking Under Partial Observation}
+\author{\Name{Nihar Ballamudi}\and\Name{Kyle Horton}\\\addr University of Pennsylvania}
+\begin{document}
+\maketitle
+\begin{abstract}
+We compare history and action commitment in the linear hard example. Recovery training with history two favors single-action feedback. Narrow training can still benefit from chunking despite observability. Without history, every tested learner remains unstable. These results separate information, training coverage, and feedback stability.
+\end{abstract}
+
+\section{Design and evaluation}
+The hard example of \citet{simchowitz2025} pairs plants $A_1,A_2$ with experts $K_1,K_2$ that generate identical demonstrations on $x_1=0$ but require different recovery actions. We fix $A_1$ at $\mu=1/8$ and expert $K_1$. Both plant and expert loop are stable, yet $K_2$ matches the narrow demonstrations and destabilizes $A_1$ after a departure: training fit need not identify safe recovery.
+
+All runs observe only $y=x_2$. History $r$ contains $r$ observations and $r-1$ applied actions; no history means $r=1$. The four conditions cross history $r\in\{2,4,8,16\}$ versus $r=1$ with chunked versus single-action prediction. Chunking predicts $H=16$ actions and executes $\ell\in\{2,4,8,16\}$ before replanning; no chunking uses $H=\ell=1$.
+
+Both narrow training ($x_1=0$) and recovery training use ridge regression ($\lambda=10^{-6}$). Recovery collection applies known probes $u=K_1x+0.05\xi$, $\xi\sim\mathcal N(0,I)$, labeling visited histories with nominal expert chunks $K_1F^jx$, $F=A_1+K_1$. Inputs retain applied actions. This adapts noisy collection and expert correction \citep{laskey2017,ross2011}, motivated by \citet{zhang2025}, without implementing those algorithms in full.
+
+Seeds 818--820 each supply 32 trajectories of 80 steps; target times match across $r,H$. The 60 fits yield 150 four-condition records plus 30 $H=16,\ell=1$ controls, all numerically matching their single-action counterparts. Thus execution comparisons isolate commitment rather than extra prediction heads.
+
+Test seed 20261107 generates 20 paired states with $x_2$ uniform on $[-1,1]$ and $x_1=0$ or a signed departure of magnitude $0.0005$--$0.0015$. Following a common 15-step expert warm-up, we inject the departure and run the learner independently for 200 noiseless steps. A separate expert rollout supplies the reference. Mean MSE averages squared full-state tracking distance over post-action states, perturbed cases, and seeds, retaining unstable losses. All 180 seed-level means reconcile with raw rollout losses. Spectral rates below one indicate decay; 1000-step canonical rollouts are separate diagnostics.
+
+\section{Results and analysis}
+\begin{center}\small
+\begin{tabular}{lrrrr}\toprule
+Training & History $r$ & Execution $\ell$ & Mean test MSE & Worst rate\\\midrule
+Narrow & 1 & 16 & $5.19\times10^{-3}$ & 1.02547\\
+Narrow & 8 & 1 & $7.58\times10^{-4}$ & 1.01892\\
+Narrow & 8 & 8 & $2.32\times10^{-6}$ & 0.99544\\
+Narrow & 16 & 1 & $6.65\times10^{-7}$ & 0.97110\\
+Recovery & 1 & 16 & $2.53\times10^{-1}$ & 1.02618\\
+Recovery & 2 & 1 & $7.33\times10^{-9}$ & 0.75000\\
+Recovery & 2 & 16 & $2.71\times10^{-7}$ & 0.75000\\\bottomrule
+\end{tabular}
+\end{center}
+\noindent Rows with $\ell=1$ use $H=1$; others use $H=16$. All seeds agree on stability in all 50 cells.
+
+Without history, every fitted learner remains unstable. Narrow loss falls from $9.06\times10^{12}$ at $\ell=1$ to $5.19\times10^{-3}$ at $\ell=16$, yet the latter has 1000-step canonical MSE $4.08\times10^{14}$: commitment slows divergence without stabilizing. This is not an impossibility result; zero control stabilizes the plant.
+
+With recovery data, all $r\ge2$ settings are stable. History two with one-step feedback nearly matches the model-informed observer ($7.334\times10^{-9}$). Executing two or sixteen actions increases MSE 2.30- or 36.9-fold: commitment delays correction. Longer history also need not help: one-step MSE reaches $3.04\times10^{-8}$ at $r=16$, with rates still near 0.75.
+
+With narrow data, observable history two still fails at every execution. History eight is stable only at $\ell=8,16$; execution eight reduces MSE 327-fold. History sixteen is stable throughout, with only 11\% improvement from execution sixteen over one. Extra history changes ridge-selected feedback without adding corrective examples: observability alone does not eliminate chunking benefits.
+
+\section{Connection to Kyle}
+Kyle's reconstruction result explains the history-two threshold. The hidden departure becomes observable after one transition. Near-observer recovery performance supports reconstruction; narrow-data failure separates representation from identification.
+
+His chunk-stability condition requires $\ell\ge r-1$, excluding stable $(16,1)$; its Lipschitz assumptions remain unchecked. The loss corollary needs reference-deployment error, not training fit, and bounds output rather than full-state error. These experiments illustrate mechanisms, not verification of the guarantee.
+
+Context plus corrective coverage removes the observed commitment benefit here; observability alone does not. Three seeds, a stable plant, small departures, expert initialization, and amplitude shift limit generalization. Finite-rollout loss must be read alongside spectral stability.
+
+\footnotesize
+\begin{thebibliography}{4}\setlength{\itemsep}{0pt}
+\bibitem[Simchowitz et al.(2025)]{simchowitz2025}
+M. Simchowitz, D. Pfrommer, and A. Jadbabaie.
+The pitfalls of imitation learning when actions are continuous.
+\emph{arXiv:2503.09722}, 2025.
+\bibitem[Laskey et al.(2017)]{laskey2017}
+M. Laskey, J. Lee, R. Fox, A. Dragan, and K. Goldberg.
+DART: Noise injection for robust imitation learning. \emph{CoRL}, 2017.
+\bibitem[Ross et al.(2011)]{ross2011}
+S. Ross, G. Gordon, and J.~A. Bagnell.
+A reduction of imitation learning and structured prediction to no-regret online learning. \emph{AISTATS}, 2011.
+\bibitem[Zhang et al.(2025)]{zhang2025}
+T.~T. Zhang, D. Pfrommer, C. Pan, N. Matni, and M. Simchowitz.
+Action chunking and exploratory data collection yield exponential improvements in behavior cloning for continuous control. \emph{arXiv:2507.09061}, 2025.
+\end{thebibliography}
+\end{document}

@@ -1,12 +1,10 @@
-import sys
 from pathlib import Path
 import unittest
 import numpy as np
-sys.path[:0]=[str(Path(__file__).resolve().parents[1]/'pitfalls'),str(Path(__file__).resolve().parents[1])]
 from pitfalls import challenging_pair
 from model import LinearSystem,exact_policy,history_feature
-from evaluation import deploy_trace
-from recovery_data import recovery_windows,fit_recovery
+from pitfalls.original.evaluation import deploy_trace
+from pitfalls.original.data import recovery_windows,fit_recovery
 
 class PartialHardExampleTests(unittest.TestCase):
     def setUp(self):
